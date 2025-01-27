@@ -121,8 +121,8 @@ class _LoginState extends State<Login> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
-                        _boxLogin.put("loginStatus", true);
-                        _boxLogin.put("userName", _controllerUsername.text);
+                        /*_boxLogin.put("loginStatus", true);
+                        _boxLogin.put("userName", _controllerUsername.text)*/
 
                         Navigator.pushReplacement(
                           context,

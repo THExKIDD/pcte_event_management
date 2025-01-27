@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'main_app.dart';
 
 void main() async {
-  await _initHive();
+
   runApp(const MainApp());
 }
 

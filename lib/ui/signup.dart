@@ -17,10 +17,9 @@ class _SignupState extends State<Signup> {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword =
-      TextEditingController();
+  final TextEditingController _controllerConFirmPassword = TextEditingController();
 
-  final Box _boxAccounts = Hive.box("accounts");
+
   bool _obscurePassword = true;
 
   @override
@@ -60,9 +59,9 @@ class _SignupState extends State<Signup> {
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return "Please enter username.";
-                  } else if (_boxAccounts.containsKey(value)) {
+                  } /*else if (_boxAccounts.containsKey(value)) {
                     return "Username is already registered.";
-                  }
+                  }*/
 
                   return null;
                 },
@@ -174,7 +173,7 @@ class _SignupState extends State<Signup> {
                       ),
                     ),
                     onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
+                      /*if (_formKey.currentState?.validate() ?? false) {
                         _boxAccounts.put(
                           _controllerUsername.text,
                           _controllerConFirmPassword.text,
@@ -196,7 +195,7 @@ class _SignupState extends State<Signup> {
                         _formKey.currentState?.reset();
 
                         Navigator.pop(context);
-                      }
+                      }*/
                     },
                     child: const Text("Register"),
                   ),
