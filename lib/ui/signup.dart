@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Providers/pass_provider.dart';
+import 'package:provider/provider.dart';
 
 
 class Signup extends StatefulWidget {
@@ -20,7 +22,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _controllerConFirmPassword = TextEditingController();
 
 
-  bool _obscurePassword = true;
+
 
   @override
   Widget build(BuildContext context) {
@@ -93,73 +95,81 @@ class _SignupState extends State<Signup> {
                 onEditingComplete: () => _focusNodePassword.requestFocus(),
               ),
               const SizedBox(height: 10),
-              TextFormField(
-                controller: _controllerPassword,
-                obscureText: _obscurePassword,
-                focusNode: _focusNodePassword,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.password_outlined),
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: _obscurePassword
-                          ? const Icon(Icons.visibility_outlined)
-                          : const Icon(Icons.visibility_off_outlined)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter password.";
-                  } else if (value.length < 8) {
-                    return "Password must be at least 8 character.";
-                  }
-                  return null;
+              Consumer<PassProvider>(
+                builder: (context, passCheck,child) {
+
+                  return TextFormField(
+                    controller: _controllerPassword,
+                    obscureText: passCheck.obscurePass,
+                    focusNode: _focusNodePassword,
+                    keyboardType: TextInputType.visiblePassword,
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      prefixIcon: const Icon(Icons.password_outlined),
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            passCheck.passHider();
+                          },
+                          icon: passCheck.obscurePass
+                              ? const Icon(Icons.visibility_outlined)
+                              : const Icon(Icons.visibility_off_outlined)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter password.";
+                      } else if (value.length < 8) {
+                        return "Password must be at least 8 character.";
+                      }
+                      return null;
+                    },
+                    onEditingComplete: () =>
+                        _focusNodeConfirmPassword.requestFocus(),
+                  );
+
                 },
-                onEditingComplete: () =>
-                    _focusNodeConfirmPassword.requestFocus(),
+
               ),
               const SizedBox(height: 10),
-              TextFormField(
-                controller: _controllerConFirmPassword,
-                obscureText: _obscurePassword,
-                focusNode: _focusNodeConfirmPassword,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  labelText: "Confirm Password",
-                  prefixIcon: const Icon(Icons.password_outlined),
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: _obscurePassword
-                          ? const Icon(Icons.visibility_outlined)
-                          : const Icon(Icons.visibility_off_outlined)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter password.";
-                  } else if (value != _controllerPassword.text) {
-                    return "Password doesn't match.";
-                  }
-                  return null;
+              Consumer<PassProvider>(
+                builder: (context,passCheck,child) {
+                  return TextFormField(
+                    controller: _controllerConFirmPassword,
+                    obscureText: passCheck.obscurePass,
+                    focusNode: _focusNodeConfirmPassword,
+                    keyboardType: TextInputType.visiblePassword,
+                    decoration: InputDecoration(
+                      labelText: "Confirm Password",
+                      prefixIcon: const Icon(Icons.password_outlined),
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            passCheck.passHider();
+                          },
+                          icon: passCheck.obscurePass
+                              ? const Icon(Icons.visibility_outlined)
+                              : const Icon(Icons.visibility_off_outlined)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter password.";
+                      } else if (value != _controllerPassword.text) {
+                        return "Password doesn't match.";
+                      }
+                      return null;
+                    },
+                  );
+
                 },
               ),
               const SizedBox(height: 50),

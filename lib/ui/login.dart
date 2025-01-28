@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Providers/pass_provider.dart';
+import 'package:provider/provider.dart';
 
 
 import 'home.dart';
@@ -20,7 +22,6 @@ class _LoginState extends State<Login> {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
 
-  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -68,37 +69,41 @@ class _LoginState extends State<Login> {
                 },
               ),
               const SizedBox(height: 10),
-              TextFormField(
-                controller: _controllerPassword,
-                focusNode: _focusNodePassword,
-                obscureText: _obscurePassword,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.password_outlined),
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: _obscurePassword
-                          ? const Icon(Icons.visibility_outlined)
-                          : const Icon(Icons.visibility_off_outlined)),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter password.";
-                  }
+              Consumer<PassProvider>(
+                builder: (context,passCheck,child) {
 
-                  return null;
-                },
+                  return TextFormField(
+                    controller: _controllerPassword,
+                    focusNode: _focusNodePassword,
+                    obscureText:  passCheck.obscurePass,
+                    keyboardType: TextInputType.visiblePassword,
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      prefixIcon: const Icon(Icons.password_outlined),
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            passCheck.passHider();
+                          },
+                          icon: passCheck.obscurePass
+                              ? const Icon(Icons.visibility_outlined)
+                              : const Icon(Icons.visibility_off_outlined)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter password.";
+                      }
+
+                      return null;
+                    },
+                  );
+
+                } ,
               ),
               const SizedBox(height: 60),
               Column(

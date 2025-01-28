@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Providers/pass_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'ui/login.dart';
 
@@ -7,13 +9,18 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.from(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromRGBO(32, 63, 129, 1.0),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => PassProvider(),)
+      ],
+      child: MaterialApp(
+        theme: ThemeData.from(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromRGBO(32, 63, 129, 1.0),
+          ),
         ),
+        home: const Login(),
       ),
-      home: const Login(),
     );
   }
 }
