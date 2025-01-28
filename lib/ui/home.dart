@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
 
 import 'login.dart';
 
 class Home extends StatelessWidget {
-  Home({super.key});
+  const Home({super.key});
 
-  final Box _boxLogin = Hive.box("login");
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +23,6 @@ class Home extends StatelessWidget {
               ),
               child: IconButton(
                 onPressed: () {
-                  _boxLogin.clear();
-                  _boxLogin.put("loginStatus", false);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -52,7 +49,7 @@ class Home extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              _boxLogin.get("userName"),
+              'Welcome',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
           ],
