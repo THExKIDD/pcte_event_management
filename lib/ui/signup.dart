@@ -26,6 +26,7 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Form(
@@ -34,7 +35,18 @@ class _SignupState extends State<Signup> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              const SizedBox(height: 100),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 35),
+                    child: SizedBox(
+                        height: size.height*.09,
+                        child: Image.asset("assets/img/logo1.png")),
+                  ),
+                ],
+              ),
+              SizedBox(height: size.height*.05),
               Text(
                 "Register",
                 style: Theme.of(context).textTheme.headlineLarge,
