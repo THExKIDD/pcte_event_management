@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:provider/provider.dart';
-
-
 import 'home.dart';
 import 'signup.dart';
 
@@ -22,10 +20,9 @@ class _LoginState extends State<Login> {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
-
+    var size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -35,17 +32,29 @@ class _LoginState extends State<Login> {
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: [
-              const SizedBox(height: 150),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 15),
+                    child: SizedBox(
+                        height: size.height*.09,
+                        child: Image.asset("assets/img/logo1.png")),
+                  ),
+                ],
+              ),
+               SizedBox(height: size.height*.08),
               Text(
                 "Welcome back",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
-              const SizedBox(height: 10),
+               SizedBox(height: size.height*.01),
               Text(
                 "Login to your account",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const SizedBox(height: 60),
+
+               SizedBox(height: size.height*.06),
               TextFormField(
                 controller: _controllerUsername,
                 keyboardType: TextInputType.name,
@@ -68,7 +77,7 @@ class _LoginState extends State<Login> {
                   return null;
                 },
               ),
-              const SizedBox(height: 10),
+               SizedBox(height: size.height*.01),
               Consumer<PassProvider>(
                 builder: (context,passCheck,child) {
 
@@ -105,7 +114,7 @@ class _LoginState extends State<Login> {
 
                 } ,
               ),
-              const SizedBox(height: 60),
+               SizedBox(height: size.height*.04),
               Column(
                 children: [
                   ElevatedButton(
@@ -130,7 +139,7 @@ class _LoginState extends State<Login> {
                         );
                       }
                     },
-                    child: const Text("Login"),
+                    child:  Text("Login",style: Theme.of(context).textTheme.bodyMedium,),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +158,7 @@ class _LoginState extends State<Login> {
                             ),
                           );
                         },
-                        child: const Text("Signup"),
+                        child: Text("Signup",style: TextStyle(fontWeight: FontWeight.bold),),
                       ),
                     ],
                   ),
