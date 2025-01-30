@@ -33,28 +33,28 @@ class _LoginState extends State<Login> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center, // Center the logo
                 children: [
                   Padding(
                     padding: EdgeInsets.only(top: 15),
                     child: SizedBox(
-                        height: size.height*.09,
-                        child: Image.asset("assets/img/logo1.png")),
+                      height: size.height * 0.15, // Increased logo size
+                      child: Image.asset("assets/img/logo1.png"),
+                    ),
                   ),
                 ],
               ),
-               SizedBox(height: size.height*.08),
+              SizedBox(height: size.height * 0.08),
               Text(
                 "Welcome back",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
-               SizedBox(height: size.height*.01),
+              SizedBox(height: size.height * 0.01),
               Text(
                 "Login to your account",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-
-               SizedBox(height: size.height*.06),
+              SizedBox(height: size.height * 0.06),
               TextFormField(
                 controller: _controllerUsername,
                 keyboardType: TextInputType.name,
@@ -73,29 +73,28 @@ class _LoginState extends State<Login> {
                   if (value == null || value.isEmpty) {
                     return "Please enter username.";
                   }
-
                   return null;
                 },
               ),
-               SizedBox(height: size.height*.01),
+              SizedBox(height: size.height * 0.01),
               Consumer<PassProvider>(
-                builder: (context,passCheck,child) {
-
+                builder: (context, passCheck, child) {
                   return TextFormField(
                     controller: _controllerPassword,
                     focusNode: _focusNodePassword,
-                    obscureText:  passCheck.obscurePass,
+                    obscureText: passCheck.obscurePass,
                     keyboardType: TextInputType.visiblePassword,
                     decoration: InputDecoration(
                       labelText: "Password",
                       prefixIcon: const Icon(Icons.password_outlined),
                       suffixIcon: IconButton(
-                          onPressed: () {
-                            passCheck.passHider();
-                          },
-                          icon: passCheck.obscurePass
-                              ? const Icon(Icons.visibility_outlined)
-                              : const Icon(Icons.visibility_off_outlined)),
+                        onPressed: () {
+                          passCheck.passHider();
+                        },
+                        icon: passCheck.obscurePass
+                            ? const Icon(Icons.visibility_outlined)
+                            : const Icon(Icons.visibility_off_outlined),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -107,14 +106,12 @@ class _LoginState extends State<Login> {
                       if (value == null || value.isEmpty) {
                         return "Please enter password.";
                       }
-
                       return null;
                     },
                   );
-
-                } ,
+                },
               ),
-               SizedBox(height: size.height*.04),
+              SizedBox(height: size.height * 0.04),
               Column(
                 children: [
                   ElevatedButton(
@@ -126,20 +123,20 @@ class _LoginState extends State<Login> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
-                        /*_boxLogin.put("loginStatus", true);
-                        _boxLogin.put("userName", _controllerUsername.text)*/
-
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return Home();
+                              return HomeScreen();
                             },
                           ),
                         );
                       }
                     },
-                    child:  Text("Login",style: Theme.of(context).textTheme.bodyMedium,),
+                    child: Text(
+                      "Login",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +145,6 @@ class _LoginState extends State<Login> {
                       TextButton(
                         onPressed: () {
                           _formKey.currentState?.reset();
-
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -158,7 +154,10 @@ class _LoginState extends State<Login> {
                             ),
                           );
                         },
-                        child: Text("Signup",style: TextStyle(fontWeight: FontWeight.bold),),
+                        child: Text(
+                          "Signup",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),

@@ -1,59 +1,277 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'login.dart'; // Import the Login page
 
+class HomeScreen extends StatefulWidget {
+  HomeScreen({super.key});
 
-import 'login.dart';
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class _HomeScreenState extends State<HomeScreen> {
+  // List of images and event names for slider and vertical cards
+  final List<Map<String, String>> sliderEvents = [
+    {"image": "assets/img/image1.jpg", "name": "solo dance"},
+    {"image": "assets/img/image2.jpg", "name": "indian singing"},
+    {"image": "assets/img/image3.jpg", "name": "group dance"},
+    {"image": "assets/img/image4.jpg", "name": "western dance"},
+    {"image": "assets/img/image5.jpeg", "name": "videography"},
+  ];
 
+  final List<Map<String, String>> verticalEvents = [
+    {"image": "assets/img/image1.jpg", "name": "solo dance"},
+    {"image": "assets/img/image1.jpg", "name": "Event B"},
+    {"image": "assets/img/image2.jpg", "name": "Event C"},
+    {"image": "assets/img/image2.jpg", "name": "Event D"},
+  ];
+
+  late PageController _pageController;
+  late Timer _timer;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.8);
+    // Start the timer that changes the page every 3 seconds
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      if (_currentPage < sliderEvents.length - 1) {
+        _currentPage++;
+      } else {
+        _currentPage = 0; // Loop back to the first item
+      }
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _timer.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login App"),
-        elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white),
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const Login();
-                      },
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.logout_rounded),
-              ),
-            ),
-          )
-        ],
+        title: const Text("Card Slider with Images"),
+        centerTitle: true,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
+        ),
       ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+
+      // Navigation Drawer
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            Text(
-              "Welcome 🎉",
-              style: Theme.of(context).textTheme.bodyLarge,
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blueAccent),
+              child: Text(
+                "Navigation Menu",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
             ),
-            const SizedBox(height: 10),
-            Text(
-              'Welcome',
-              style: Theme.of(context).textTheme.headlineLarge,
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text("Home"),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text("Settings"),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text("About"),
+              onTap: () => Navigator.pop(context),
+            ),
+            // Logout Option
+            ListTile(
+              leading: const Icon(Icons.exit_to_app),
+              title: const Text("Logout"),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => Login()),  // Navigate to Login page
+                );
+              },
             ),
           ],
         ),
+      ),
+
+      body: Column(
+        children: [
+          // Horizontal Image Slider
+          SizedBox(
+            height: 220,
+            child: PageView.builder(
+              itemCount: sliderEvents.length, // Dynamically based on events count
+              controller: _pageController,
+              itemBuilder: (context, index) {
+                return SliderCard(
+                  imagePath: sliderEvents[index]['image']!,
+                  eventName: sliderEvents[index]['name']!,
+                  index: index,
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Vertical List of Image Cards
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              itemCount: verticalEvents.length, // Dynamically based on events count
+              itemBuilder: (context, index) {
+                return VerticalCard(
+                  imagePath: verticalEvents[index]['image']!,
+                  eventName: verticalEvents[index]['name']!,
+                  index: index,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Slider Cards with Images
+class SliderCard extends StatelessWidget {
+  final String imagePath;
+  final String eventName;
+  final int index;
+  const SliderCard({required this.imagePath, required this.eventName, required this.index, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.blueAccent.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            spreadRadius: 3,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Stack(
+          children: [
+            Image.asset(
+              imagePath,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Center(
+                child: Text(
+                  eventName,  // Display event name
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Vertical Cards with Images
+class VerticalCard extends StatelessWidget {
+  final String imagePath;
+  final String eventName;
+  final int index;
+  const VerticalCard({required this.imagePath, required this.eventName, required this.index, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 150, // Increased height
+      width: double.infinity, // Full width
+      margin: const EdgeInsets.only(bottom: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5,
+            spreadRadius: 2,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(15),
+              bottomLeft: Radius.circular(15),
+            ),
+            child: Image.asset(
+              imagePath,
+              width: 140, // Increased width
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    eventName,  // Display event name
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 5),
+                  const Text("This card now includes an image."),
+                ],
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: Icon(Icons.arrow_forward_ios, color: Colors.blueAccent),
+          ),
+        ],
       ),
     );
   }
