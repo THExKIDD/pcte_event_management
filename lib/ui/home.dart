@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blueAccent),
+              decoration: BoxDecoration(color: Color(0xFF9E2A2F)),
               child: Text(
                 "Navigation Menu",
                 style: TextStyle(color: Colors.white, fontSize: 20),
@@ -219,9 +219,14 @@ class VerticalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use MediaQuery to make the card size responsive
+    double screenWidth = MediaQuery.of(context).size.width;
+    double cardWidth = screenWidth * 0.8; // 80% of the screen width
+    double cardHeight = 140; // Reduced height
+
     return Container(
-      height: 150, // Increased height
-      width: double.infinity, // Full width
+      height: cardHeight, // Adjusted height
+      width: cardWidth, // Adjusted width
       margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -244,7 +249,7 @@ class VerticalCard extends StatelessWidget {
             ),
             child: Image.asset(
               imagePath,
-              width: 140, // Increased width
+              width: 120, // Slightly reduced width
               height: double.infinity,
               fit: BoxFit.cover,
             ),
@@ -259,7 +264,7 @@ class VerticalCard extends StatelessWidget {
                 children: [
                   Text(
                     eventName,  // Display event name
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), // Slightly smaller font
                   ),
                   const SizedBox(height: 5),
                   const Text("This card now includes an image."),
