@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
+import 'package:pcte_event_management/widgets/dropdown.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
+
 
 import 'home.dart';
-import 'signup.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -16,11 +17,14 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodePassword = FocusNode();
+  final FocusNode _focusNodeUserName = FocusNode();
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
 
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
+
+  final dropDownList = ['Admin','Teacher','Convenor'];
 
   @override
   void initState() {
@@ -113,15 +117,25 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildLoginCard(Size size) {
+
     return Container(
+
       padding: const EdgeInsets.all(20),
+
       decoration: BoxDecoration(
+
         color: Colors.white.withOpacity(0.9),
+
         borderRadius: BorderRadius.circular(20),
+
         boxShadow: [
+
           BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 3),
+
         ],
+
       ),
+
       child: Form(
         key: _formKey,
         child: Column(
@@ -134,13 +148,29 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             Text(
               "Login to your account",
               style: TextStyle(color: Colors.grey[700], fontSize: 14),
+
             ),
+
             SizedBox(height: size.height * 0.03),
-            _buildTextField("Username", Icons.person_outline, _controllerUsername, TextInputType.name),
+            DropDown.showDropDown(dropDownList,_focusNodeUserName), // Ensure this is a valid widget
+            SizedBox(height: size.height * 0.02),
+            _buildTextField((_){
+              FocusScope.of(context).requestFocus(_focusNodePassword);
+            },
+                _focusNodeUserName,
+                "Username",
+                Icons.person_outline,
+                _controllerUsername,
+                TextInputType.name
+            ),
             SizedBox(height: size.height * 0.02),
             Consumer<PassProvider>(
               builder: (context, passCheck, child) {
                 return _buildTextField(
+                  (value){
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                  },
+                  _focusNodePassword,
                   "Password",
                   Icons.lock_outline,
                   _controllerPassword,
@@ -153,19 +183,23 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 );
               },
             ),
+
             SizedBox(height: size.height * 0.03),
+
             _buildLoginButton(size),
+
             SizedBox(height: size.height * 0.02),
-            _buildSignupOption(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String label, IconData icon, TextEditingController controller, TextInputType type,
+  Widget _buildTextField(Function(String)? onFinalSubmission, FocusNode focusNode, String label, IconData icon, TextEditingController controller, TextInputType type,
       {bool obscureText = false, Widget? suffixIcon}) {
     return TextFormField(
+      onFieldSubmitted: onFinalSubmission,
+      focusNode: focusNode,
       controller: controller,
       keyboardType: type,
       obscureText: obscureText,
@@ -200,21 +234,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildSignupOption() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Don't have an account?"),
-        TextButton(
-          onPressed: () {
-            _formKey.currentState?.reset();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const Signup()));
-          },
-          child: const Text("Signup", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF9E2A2F))),
-        ),
-      ],
-    );
-  }
+
 
   @override
   void dispose() {
