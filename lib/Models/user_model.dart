@@ -9,10 +9,10 @@ class UserModel{
 
 
   UserModel({
-    required this.userName,
+    this.userName,
     required this.userType,
     required this.email,
-    required this.phoneNumber,
+     this.phoneNumber,
     required this.password,
      this.googleId,
      this.otp

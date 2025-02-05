@@ -120,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             height: 220,
             child: PageView.builder(
+              padEnds: false,
               itemCount: sliderEvents.length, // Dynamically based on events count
               controller: _pageController,
               itemBuilder: (context, index) {

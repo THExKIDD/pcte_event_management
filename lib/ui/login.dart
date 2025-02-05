@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
 import 'package:provider/provider.dart';
@@ -228,6 +231,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       onPressed: () {
         if (_formKey.currentState?.validate() ?? false) {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          log(_controllerUsername.text);
+          log(_controllerPassword.text);
+          log(Provider.of<LoginProvider>(context).selectedValue.toString());
+
         }
       },
       child: const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
