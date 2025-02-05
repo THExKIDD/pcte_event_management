@@ -1,6 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
+import 'package:pcte_event_management/Controllers/login_controller.dart';
+import 'package:pcte_event_management/Models/user_model.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
@@ -21,7 +24,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeUserName = FocusNode();
-  final TextEditingController _controllerUsername = TextEditingController();
+  final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
 
   late AnimationController _animationController;
@@ -120,23 +123,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildLoginCard(Size size) {
-
     return Container(
-
       padding: const EdgeInsets.all(20),
-
       decoration: BoxDecoration(
-
         color: Colors.white.withOpacity(0.9),
-
         borderRadius: BorderRadius.circular(20),
-
         boxShadow: [
-
           BoxShadow(color: Colors.black26, blurRadius: 10, spreadRadius: 3),
-
         ],
-
       ),
 
       child: Form(
@@ -161,9 +155,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               FocusScope.of(context).requestFocus(_focusNodePassword);
             },
                 _focusNodeUserName,
-                "Username",
+                "Email",
                 Icons.person_outline,
-                _controllerUsername,
+                _controllerEmail,
                 TextInputType.name
             ),
             SizedBox(height: size.height * 0.02),
@@ -171,7 +165,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               builder: (context, passCheck, child) {
                 return _buildTextField(
                   (value){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                    //Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
                   },
                   _focusNodePassword,
                   "Password",
@@ -228,12 +222,22 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 5,
       ),
-      onPressed: () {
+      onPressed: () async {
+        final apiCalls = ApiCalls();
+       final loginController = LoginController(apiCalls);
         if (_formKey.currentState?.validate() ?? false) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-          log(_controllerUsername.text);
-          log(_controllerPassword.text);
-          log(Provider.of<LoginProvider>(context).selectedValue.toString());
+
+          loginController.logInfo(
+              ctx: context,
+              email: _controllerEmail.text,
+              password: _controllerPassword.text
+          );
+          await apiCalls.loginCall(loginController.loginCred).then((value){
+            if(value)
+              {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
+              }
+          });
 
         }
       },
@@ -247,7 +251,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   void dispose() {
     _animationController.dispose();
     _focusNodePassword.dispose();
-    _controllerUsername.dispose();
+    _controllerEmail.dispose();
     _controllerPassword.dispose();
     super.dispose();
   }
