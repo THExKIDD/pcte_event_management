@@ -37,14 +37,17 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   provider: ^6.1.2
+  http: ^0.13.6
   dio: ^5.8.0+1
   flutter_dotenv: ^5.2.1
+
   flutter_secure_storage: ^9.2.4
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
