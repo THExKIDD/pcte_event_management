@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/Controllers/login_controller.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
@@ -26,10 +28,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   final FocusNode _focusNodeUserName = FocusNode();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
-
+  final storage = FlutterSecureStorage();
+  final SecureStorage secureStorage = SecureStorage();
   final dropDownList = ['Admin','Teacher','Convenor'];
 
   @override
@@ -226,7 +228,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         final apiCalls = ApiCalls();
        final loginController = LoginController(apiCalls);
         if (_formKey.currentState?.validate() ?? false) {
-
           loginController.logInfo(
               ctx: context,
               email: _controllerEmail.text,
@@ -239,6 +240,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               }
           });
 
+          await secureStorage.saveData("jwtToken",apiCalls.tkn);
+          String? s = await secureStorage.getData("jwtToken");
+          log("Testing ::: $s");
         }
       },
       child: const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),

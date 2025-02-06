@@ -4,8 +4,6 @@ import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/ui/splashScreen.dart';
 import 'package:provider/provider.dart';
 
-import 'ui/login.dart';
-
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
