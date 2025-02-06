@@ -16,12 +16,12 @@ class ApiCalls {
 
       );
 
-      log(response.data);
+      log(response.data.toString());
 
       if(response.statusCode == 200)
         {
           log("Logged in Successfully");
-          log(response.statusMessage.toString());
+          log(response.data.toString());
           return true;
         }
       else{
@@ -32,6 +32,36 @@ class ApiCalls {
       return false;
     }
   }
+
+
+
+  Future<bool> signUpCall(UserModel loginCred) async {
+    try {
+      final response = await dio.post(
+        dotenv.env['LOGIN_API']!,
+        data: loginCred.toJson(),
+
+
+      );
+
+      log(response.data.toString());
+
+      if(response.statusCode == 200)
+      {
+        log("Logged in Successfully");
+        log(response.statusMessage.toString());
+        return true;
+      }
+      else{
+        return false;
+      }
+    } on DioException catch (e) {
+      log("DioException: ${e.toString()} \n ${e.error.toString()}");
+      return false;
+    }
+  }
+
+  
 
 
 

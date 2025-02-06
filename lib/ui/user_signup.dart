@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/Controllers/login_controller.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
@@ -13,14 +14,14 @@ import 'package:provider/provider.dart';
 import 'home.dart';
 
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
+class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeUserName = FocusNode();
@@ -31,7 +32,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   late Animation<double> _bubbleAnimation;
 
   final dropDownList = ['Admin','Teacher','Convenor'];
-
 
   @override
   void initState() {
@@ -51,10 +51,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bul, obj){
-        
+
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       },
-
       child: Scaffold(
         body: Stack(
           children: [
@@ -147,18 +146,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         child: Column(
           children: [
             Text(
-              "Welcome Back",
+              "PCTE",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: size.height * 0.01),
             Text(
-              "Login to your account",
+              "Sign Up a User",
               style: TextStyle(color: Colors.grey[700], fontSize: 14),
 
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Login as',dropDownList,_focusNodeUserName), // Ensure this is a valid widget
+            DropDown.showDropDown('Select User Type',dropDownList,_focusNodeUserName), // Ensure this is a valid widget
             SizedBox(height: size.height * 0.02),
             _buildTextField((_){
               FocusScope.of(context).requestFocus(_focusNodePassword);
@@ -173,36 +172,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             Consumer<PassProvider>(
               builder: (context, passCheck, child) {
                 return _buildTextField(
-                  (value) async {
-
-                    final apiCalls = ApiCalls();
-                    final loginController = LoginController(apiCalls);
-                    if (_formKey.currentState?.validate() ?? false) {
-
-                      loginController.logInfo(
-                          ctx: context,
-                          email: _controllerEmail.text,
-                          password: _controllerPassword.text
-                      );
-                      await apiCalls.loginCall(loginController.loginCred).then((value){
-                        if(value)
-                        {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
-                        }
-                      });
-
-                    }
-
+                      (value){
+                    //Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
                   },
                   _focusNodePassword,
                   "Password",
                   Icons.lock_outline,
                   _controllerPassword,
                   TextInputType.visiblePassword,
-                  obscureText: passCheck.obscurePass,
+                  obscureText: passCheck.signObscurePass,
                   suffixIcon: IconButton(
                     icon: Icon(passCheck.obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                    onPressed: () => passCheck.passHider(),
+                    onPressed: () => passCheck.signObscurePass,
                   ),
                 );
               },
@@ -251,7 +232,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       ),
       onPressed: () async {
         final apiCalls = ApiCalls();
-       final loginController = LoginController(apiCalls);
+        final loginController = LoginController(apiCalls);
         if (_formKey.currentState?.validate() ?? false) {
 
           loginController.logInfo(
@@ -261,14 +242,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           );
           await apiCalls.loginCall(loginController.loginCred).then((value){
             if(value)
-              {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
-              }
+            {
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
+            }
           });
 
         }
       },
-      child: const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: const Text("Sign Up User", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 

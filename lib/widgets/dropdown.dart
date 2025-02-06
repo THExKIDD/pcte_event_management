@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class DropDown{
 
 
-  static Widget showDropDown(List<String> listItems, FocusNode nextFocus){
+  static Widget showDropDown(String labelText ,List<String> listItems, FocusNode nextFocus){
 
     return Consumer<LoginProvider>(
       builder: (context,dropDownValue,child) {
@@ -26,7 +26,7 @@ class DropDown{
 
           },
           validator: (value) => value == null ? "Please Select an Option" : null,
-          hint: Text('Login as'),
+          hint: Text(labelText),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.person_add_alt_1_outlined,color: Colors.black,),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -34,7 +34,7 @@ class DropDown{
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.black45),
             ),
-            label: Text('Log in as'),
+            label: Text(labelText),
           ),
         );
 
