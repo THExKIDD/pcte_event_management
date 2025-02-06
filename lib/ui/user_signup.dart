@@ -1,10 +1,9 @@
+import 'package:flutter/material.dart';
+
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/Controllers/login_controller.dart';
-import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
@@ -15,25 +14,29 @@ import 'package:provider/provider.dart';
 import 'home.dart';
 
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
+class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeUserName = FocusNode();
+  final FocusNode _focusNodeUserType = FocusNode();
+  final FocusNode _focusNodeEmail = FocusNode();
+  final TextEditingController _controllerUserName = TextEditingController();
+  final FocusNode _focusNodePhone = FocusNode();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _controllerPhone = TextEditingController();
+
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
-  final storage = FlutterSecureStorage();
-  final SecureStorage secureStorage = SecureStorage();
-  final dropDownList = ['Admin','Teacher','Convenor'];
 
+  final dropDownList = ['Teacher','Convenor'];
 
   @override
   void initState() {
@@ -53,10 +56,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bul, obj){
-        
+
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       },
-
       child: Scaffold(
         body: Stack(
           children: [
@@ -75,7 +77,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               },
             ),
             SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 80),
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 40),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -149,62 +151,66 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         child: Column(
           children: [
             Text(
-              "Welcome Back",
+              "PCTE",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: size.height * 0.01),
             Text(
-              "Login to your account",
+              "Sign Up a User",
               style: TextStyle(color: Colors.grey[700], fontSize: 14),
 
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Login as',dropDownList,_focusNodeUserName), // Ensure this is a valid widget
+            DropDown.showDropDown('Select User Type',dropDownList,_focusNodeUserType), // Ensure this is a valid widget
+            SizedBox(height: size.height * 0.02),
+            _buildTextField(
+                (_){},
+                _focusNodeUserName,
+                'Name',
+                Icons.person_outline,
+                _controllerUserName,
+                TextInputType.name
+            ),
             SizedBox(height: size.height * 0.02),
             _buildTextField((_){
-              FocusScope.of(context).requestFocus(_focusNodePassword);
+
             },
-                _focusNodeUserName,
+                _focusNodeEmail,
                 "Email",
-                Icons.person_outline,
+                Icons.email_outlined,
                 _controllerEmail,
-                TextInputType.name
+                TextInputType.emailAddress
+            ),
+            SizedBox(height: size.height * 0.02),
+            _buildTextField(
+                    (_)
+                {
+
+
+                },
+                _focusNodePhone,
+                'Phone Number',
+                Icons.phone,
+                _controllerPhone,
+                TextInputType.phone
             ),
             SizedBox(height: size.height * 0.02),
             Consumer<PassProvider>(
               builder: (context, passCheck, child) {
                 return _buildTextField(
-                  (value) async {
-
-                    final apiCalls = ApiCalls();
-                    final loginController = LoginController(apiCalls);
-                    if (_formKey.currentState?.validate() ?? false) {
-
-                      loginController.logInfo(
-                          ctx: context,
-                          email: _controllerEmail.text,
-                          password: _controllerPassword.text
-                      );
-                      await apiCalls.loginCall(loginController.loginCred).then((value){
-                        if(value)
-                        {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
-                        }
-                      });
-
-                    }
-
+                      (value){
+                    //Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
                   },
                   _focusNodePassword,
                   "Password",
                   Icons.lock_outline,
                   _controllerPassword,
                   TextInputType.visiblePassword,
-                  obscureText: passCheck.obscurePass,
+                  obscureText: passCheck.signObscurePass,
                   suffixIcon: IconButton(
                     icon: Icon(passCheck.obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                    onPressed: () => passCheck.passHider(),
+                    onPressed: () => passCheck.signObscurePass,
                   ),
                 );
               },
@@ -253,8 +259,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       ),
       onPressed: () async {
         final apiCalls = ApiCalls();
-       final loginController = LoginController(apiCalls);
+        final loginController = LoginController(apiCalls);
         if (_formKey.currentState?.validate() ?? false) {
+
           loginController.logInfo(
               ctx: context,
               email: _controllerEmail.text,
@@ -262,17 +269,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           );
           await apiCalls.loginCall(loginController.loginCred).then((value){
             if(value)
-              {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
-              }
+            {
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
+            }
           });
 
-          await secureStorage.saveData("jwtToken",apiCalls.tkn);
-          String? s = await secureStorage.getData("jwtToken");
-          log("Testing ::: $s");
         }
       },
-      child: const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: const Text("Sign Up User", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 
@@ -284,6 +288,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     _focusNodePassword.dispose();
     _controllerEmail.dispose();
     _controllerPassword.dispose();
+    _focusNodePhone.dispose();
+    _controllerPhone.dispose();
     super.dispose();
   }
 }

@@ -4,8 +4,10 @@ class PassProvider with ChangeNotifier
 {
 
   bool _obscurePass = true;
+  bool _signObscurePass = true;
 
   bool get obscurePass => _obscurePass;
+  bool get signObscurePass => _signObscurePass;
 
   void passHider ()
   {
@@ -14,4 +16,15 @@ class PassProvider with ChangeNotifier
     notifyListeners();
 
   }
+
+  void signPassHider()
+  {
+
+    _signObscurePass = !_signObscurePass;
+    notifyListeners();
+
+  }
+
+
+
 }
