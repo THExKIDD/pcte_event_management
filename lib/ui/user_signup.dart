@@ -162,7 +162,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Select User Type',dropDownList,_focusNodeUserType), // Ensure this is a valid widget
+            DropDown.showDropDown('Select User Type',Icon(Icons.person_add),dropDownList,_focusNodeUserType), // Ensure this is a valid widget
             SizedBox(height: size.height * 0.02),
             _buildTextField(
                 (_){},
