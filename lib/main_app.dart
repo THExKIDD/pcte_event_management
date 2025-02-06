@@ -15,6 +15,7 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => LoginProvider(),)
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.from(
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromRGBO(32, 63, 129, 1.0),
