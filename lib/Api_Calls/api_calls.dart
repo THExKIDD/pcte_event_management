@@ -27,10 +27,12 @@ class ApiCalls {
       else{
         return false;
       }
-    }
-    catch (e) {
+    } on DioException catch (e) {
       log("DioException: ${e.toString()}");
       return false;
     }
   }
+
+
+
 }

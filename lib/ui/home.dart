@@ -91,6 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings),
+              title: const Text("Login"),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Login())),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
               title: const Text("Settings"),
               onTap: () => Navigator.pop(context),
             ),
