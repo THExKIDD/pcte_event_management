@@ -180,18 +180,22 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     final apiCalls = ApiCalls();
                     final loginController = LoginController(apiCalls);
                     if (_formKey.currentState?.validate() ?? false) {
-
                       loginController.logInfo(
                           ctx: context,
                           email: _controllerEmail.text,
                           password: _controllerPassword.text
                       );
-                      await apiCalls.loginCall(loginController.loginCred).then((value){
+                      await apiCalls.loginCall(loginController.loginCred).then((value) async {
+                        await secureStorage.saveData("jwtToken",apiCalls.tkn);
+                        String? s = await secureStorage.getData("jwtToken");
+                        log("Testing ::: $s");
                         if(value)
                         {
+
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
                         }
                       });
+
 
                     }
 
@@ -260,16 +264,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               email: _controllerEmail.text,
               password: _controllerPassword.text
           );
-          await apiCalls.loginCall(loginController.loginCred).then((value){
+          await apiCalls.loginCall(loginController.loginCred).then((value) async {
+            await secureStorage.saveData("jwtToken",apiCalls.tkn);
+            String? s = await secureStorage.getData("jwtToken");
+            log("Testing ::: $s");
             if(value)
               {
+
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
               }
           });
 
-          await secureStorage.saveData("jwtToken",apiCalls.tkn);
-          String? s = await secureStorage.getData("jwtToken");
-          log("Testing ::: $s");
+
         }
       },
       child: const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
