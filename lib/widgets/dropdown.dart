@@ -10,7 +10,7 @@ import '../LocalStorage/StoringUser.dart';
 class DropDown{
   static late String? userType;
 
-  static Widget showDropDown(String labelText ,List<String> listItems, FocusNode nextFocus){
+  static Widget showDropDown(String labelText, Icon icon,List<String> listItems, FocusNode nextFocus){
 
     return Consumer<LoginProvider>(
       builder: (context,dropDownValue,child) {
@@ -40,7 +40,7 @@ class DropDown{
           validator: (value) => value == null ? "Please Select an Option" : null,
           hint: Text(labelText),
           decoration: InputDecoration(
-            prefixIcon: Icon(Icons.person_add_alt_1_outlined,color: Colors.black,),
+            prefixIcon: icon,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
