@@ -25,13 +25,18 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeUserName = FocusNode();
+  final FocusNode _focusNodeUserType = FocusNode();
+  final FocusNode _focusNodeEmail = FocusNode();
+  final TextEditingController _controllerUserName = TextEditingController();
+  final FocusNode _focusNodePhone = FocusNode();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _controllerPhone = TextEditingController();
 
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
 
-  final dropDownList = ['Admin','Teacher','Convenor'];
+  final dropDownList = ['Teacher','Convenor'];
 
   @override
   void initState() {
@@ -72,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
               },
             ),
             SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 80),
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 40),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -157,16 +162,38 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Select User Type',dropDownList,_focusNodeUserName), // Ensure this is a valid widget
+            DropDown.showDropDown('Select User Type',dropDownList,_focusNodeUserType), // Ensure this is a valid widget
+            SizedBox(height: size.height * 0.02),
+            _buildTextField(
+                (_){},
+                _focusNodeUserName,
+                'Name',
+                Icons.person_outline,
+                _controllerUserName,
+                TextInputType.name
+            ),
             SizedBox(height: size.height * 0.02),
             _buildTextField((_){
-              FocusScope.of(context).requestFocus(_focusNodePassword);
+
             },
-                _focusNodeUserName,
+                _focusNodeEmail,
                 "Email",
-                Icons.person_outline,
+                Icons.email_outlined,
                 _controllerEmail,
-                TextInputType.name
+                TextInputType.emailAddress
+            ),
+            SizedBox(height: size.height * 0.02),
+            _buildTextField(
+                    (_)
+                {
+
+
+                },
+                _focusNodePhone,
+                'Phone Number',
+                Icons.phone,
+                _controllerPhone,
+                TextInputType.phone
             ),
             SizedBox(height: size.height * 0.02),
             Consumer<PassProvider>(
@@ -261,6 +288,8 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
     _focusNodePassword.dispose();
     _controllerEmail.dispose();
     _controllerPassword.dispose();
+    _focusNodePhone.dispose();
+    _controllerPhone.dispose();
     super.dispose();
   }
 }
