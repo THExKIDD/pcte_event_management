@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
+import '../LocalStorage/Secure_Store.dart';
 import 'login.dart'; // Import the Login page
 
 class HomeScreen extends StatefulWidget {
@@ -30,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late PageController _pageController;
   late Timer _timer;
   int _currentPage = 0;
+  final SecureStorage secureStorage = SecureStorage();
 
   @override
   void initState() {
@@ -90,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text("Home"),
               onTap: () => Navigator.pop(context),
             ),
+
             ListTile(
               leading: const Icon(Icons.home),
               title: const Text("Register a User"),
@@ -131,10 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.exit_to_app),
               title: const Text("Logout"),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),  // Navigate to Login page
-                );
+               Navigator.pop(context);
               },
             ),
           ],

@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/Controllers/login_controller.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
@@ -26,10 +28,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   final FocusNode _focusNodeUserName = FocusNode();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
-
+  final storage = FlutterSecureStorage();
+  final SecureStorage secureStorage = SecureStorage();
   final dropDownList = ['Admin','Teacher','Convenor'];
 
 
@@ -158,7 +160,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Login as',dropDownList,_focusNodeUserName), // Ensure this is a valid widget
+            DropDown.showDropDown('Login as',Icon(Icons.person_add_alt),dropDownList,_focusNodeUserName), // Ensure this is a valid widget
             SizedBox(height: size.height * 0.02),
             _buildTextField((_){
               FocusScope.of(context).requestFocus(_focusNodePassword);
@@ -178,18 +180,22 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     final apiCalls = ApiCalls();
                     final loginController = LoginController(apiCalls);
                     if (_formKey.currentState?.validate() ?? false) {
-
                       loginController.logInfo(
                           ctx: context,
                           email: _controllerEmail.text,
                           password: _controllerPassword.text
                       );
-                      await apiCalls.loginCall(loginController.loginCred).then((value){
+                      await apiCalls.loginCall(loginController.loginCred).then((value) async {
+                        await secureStorage.saveData("jwtToken",apiCalls.tkn);
+                        String? s = await secureStorage.getData("jwtToken");
+                        log("Testing ::: $s");
                         if(value)
                         {
+
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
                         }
                       });
+
 
                     }
 
@@ -253,18 +259,22 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         final apiCalls = ApiCalls();
        final loginController = LoginController(apiCalls);
         if (_formKey.currentState?.validate() ?? false) {
-
           loginController.logInfo(
               ctx: context,
               email: _controllerEmail.text,
               password: _controllerPassword.text
           );
-          await apiCalls.loginCall(loginController.loginCred).then((value){
+          await apiCalls.loginCall(loginController.loginCred).then((value) async {
+            await secureStorage.saveData("jwtToken",apiCalls.tkn);
+            String? s = await secureStorage.getData("jwtToken");
+            log("Testing ::: $s");
             if(value)
               {
+
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
               }
           });
+
 
         }
       },
