@@ -16,7 +16,7 @@ class ApiCalls {
 
       );
 
-      log(response.data);
+      log(response.data.toString());
 
       if(response.statusCode == 200)
         {
