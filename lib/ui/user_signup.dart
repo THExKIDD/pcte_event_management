@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/Controllers/login_controller.dart';
+import 'package:pcte_event_management/Controllers/signup_controller.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
@@ -11,6 +12,7 @@ import 'package:pcte_event_management/widgets/dropdown.dart';
 import 'package:provider/provider.dart';
 
 
+import '../LocalStorage/Secure_Store.dart';
 import 'home.dart';
 
 
@@ -32,6 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerPhone = TextEditingController();
+  final SecureStorage secureStorage = SecureStorage();
 
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
@@ -259,15 +262,18 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
       ),
       onPressed: () async {
         final apiCalls = ApiCalls();
-        final loginController = LoginController(apiCalls);
+        final signupController = SignupController(apiCalls);
         if (_formKey.currentState?.validate() ?? false) {
+          signupController.signInfo(
+                  ctx: context,
+                  name: _controllerUserName.text,
+                  email: _controllerEmail.text,
+                  password: _controllerPassword.text,
+                  phn_no: _controllerPhone.text
+              );
+         String? tkn = await secureStorage.getData('jwtToken');
 
-          loginController.logInfo(
-              ctx: context,
-              email: _controllerEmail.text,
-              password: _controllerPassword.text
-          );
-          await apiCalls.loginCall(loginController.loginCred).then((value){
+          await apiCalls.signupCall(signupController.signupCred, tkn! ).then((value){
             if(value)
             {
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
