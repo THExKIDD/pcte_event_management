@@ -1,36 +1,24 @@
 import 'package:flutter/material.dart';
-
-import 'dart:developer';
-
-import 'package:pcte_event_management/Api_Calls/api_calls.dart';
-import 'package:pcte_event_management/Controllers/login_controller.dart';
-import 'package:pcte_event_management/Models/user_model.dart';
-import 'package:pcte_event_management/Providers/login_provider.dart';
-import 'package:pcte_event_management/Providers/pass_provider.dart';
-import 'package:pcte_event_management/widgets/dropdown.dart';
 import 'package:provider/provider.dart';
-
-
+import '../widgets/dropdown.dart';
 import 'home.dart';
 
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class UserUpdateScreen extends StatefulWidget {
+  const UserUpdateScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<UserUpdateScreen> createState() => _UserUpdateScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderStateMixin {
+class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeUserName = FocusNode();
   final FocusNode _focusNodeUserType = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
   final TextEditingController _controllerUserName = TextEditingController();
   final FocusNode _focusNodePhone = FocusNode();
   final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerPhone = TextEditingController();
 
   late AnimationController _animationController;
@@ -53,42 +41,35 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (bul, obj){
-
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
-      },
-      child: Scaffold(
-        body: Stack(
-          children: [
-            _buildGradientBackground(),
-            AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return Stack(
-                  children: [
-                    _buildBubble(size, 60, Color.fromRGBO(255,0,0,0.3), -40, _bubbleAnimation.value),
-                    _buildBubble(size, 90, Color.fromRGBO(255,0,0,0.2), size.width - 80, -_bubbleAnimation.value),
-                    _buildBubble(size, 70, Color.fromRGBO(255,0,0,0.2), 30, size.height * 0.4 + _bubbleAnimation.value),
-                    _buildBubble(size, 100,Color.fromRGBO(255,0,0,0.3), size.width - 100, size.height * 0.7 - _bubbleAnimation.value),
-                  ],
-                );
-              },
-            ),
-            SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 40),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      body: Stack(
+        children: [
+          _buildGradientBackground(),
+          AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              return Stack(
                 children: [
-                  _buildLogo(size),
-                  SizedBox(height: size.height * 0.05),
-                  _buildLoginCard(size),
+                  _buildBubble(size, 60, Color.fromRGBO(255, 0, 0, 0.3), -40, _bubbleAnimation.value),
+                  _buildBubble(size, 90, Color.fromRGBO(255, 0, 0, 0.2), size.width - 80, -_bubbleAnimation.value),
+                  _buildBubble(size, 70, Color.fromRGBO(255, 0, 0, 0.2), 30, size.height * 0.4 + _bubbleAnimation.value),
+                  _buildBubble(size, 100, Color.fromRGBO(255, 0, 0, 0.3), size.width - 100, size.height * 0.7 - _bubbleAnimation.value),
                 ],
-              ),
+              );
+            },
+          ),
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 40),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildLogo(size),
+                SizedBox(height: size.height * 0.05),
+                _buildLoginCard(size),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -116,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
           shape: BoxShape.circle,
           color: color,
           boxShadow: [
-            BoxShadow(color: Color.fromRGBO(255,0,0,0.5), blurRadius: 10, spreadRadius: 5),
+            BoxShadow(color: Color.fromRGBO(255, 0, 0, 0.5), blurRadius: 10, spreadRadius: 5),
           ],
         ),
       ),
@@ -156,16 +137,16 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
             ),
             SizedBox(height: size.height * 0.01),
             Text(
-              "Sign Up a User",
+              "Please Add these details",
               style: TextStyle(color: Colors.grey[700], fontSize: 14),
 
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Select User Type',Icon(Icons.person_add),dropDownList,_focusNodeUserType), // Ensure this is a valid widget
+            // DropDown.showDropDown('Select User Type',dropDownList("Name" , Icons.add , ["Teacher" , "Student"] , _focusNodeEmail),_focusNodeUserType), // Ensure this is a valid widget
             SizedBox(height: size.height * 0.02),
             _buildTextField(
-                (_){},
+                    (_){},
                 _focusNodeUserName,
                 'Name',
                 Icons.person_outline,
@@ -185,37 +166,13 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
             SizedBox(height: size.height * 0.02),
             _buildTextField(
                     (_)
-                {
-
-
-                },
+                {},
                 _focusNodePhone,
                 'Phone Number',
                 Icons.phone,
                 _controllerPhone,
                 TextInputType.phone
             ),
-            SizedBox(height: size.height * 0.02),
-            Consumer<PassProvider>(
-              builder: (context, passCheck, child) {
-                return _buildTextField(
-                      (value){
-                    //Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
-                  },
-                  _focusNodePassword,
-                  "Password",
-                  Icons.lock_outline,
-                  _controllerPassword,
-                  TextInputType.visiblePassword,
-                  obscureText: passCheck.signObscurePass,
-                  suffixIcon: IconButton(
-                    icon: Icon(passCheck.obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                    onPressed: () => passCheck.signObscurePass,
-                  ),
-                );
-              },
-            ),
-
             SizedBox(height: size.height * 0.03),
 
             _buildLoginButton(size),
@@ -257,26 +214,11 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 5,
       ),
-      onPressed: () async {
-        final apiCalls = ApiCalls();
-        final loginController = LoginController(apiCalls);
-        if (_formKey.currentState?.validate() ?? false) {
+      onPressed: ()  {
 
-          loginController.logInfo(
-              ctx: context,
-              email: _controllerEmail.text,
-              password: _controllerPassword.text
-          );
-          await apiCalls.loginCall(loginController.loginCred).then((value){
-            if(value)
-            {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
-            }
-          });
 
-        }
       },
-      child: const Text("Sign Up User", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: const Text("Let's Go", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 
@@ -285,9 +227,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   @override
   void dispose() {
     _animationController.dispose();
-    _focusNodePassword.dispose();
     _controllerEmail.dispose();
-    _controllerPassword.dispose();
     _focusNodePhone.dispose();
     _controllerPhone.dispose();
     super.dispose();
