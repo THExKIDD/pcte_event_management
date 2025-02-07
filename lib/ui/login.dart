@@ -268,6 +268,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             await secureStorage.saveData("jwtToken",apiCalls.tkn);
             String? s = await secureStorage.getData("jwtToken");
             log("Testing ::: $s");
+            await apiCalls.getUserCall(s!);
+
             if(value)
               {
 
