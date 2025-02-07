@@ -8,6 +8,7 @@ class LoginController {
   final ApiCalls apiCall;
 
   late UserModel loginCred;
+  late UserModel signupCred;
 
   // Constructor that accepts an ApiCalls instance
   LoginController(this.apiCall);
@@ -18,7 +19,6 @@ class LoginController {
       email: email,
       password: password,
     );
-
 
   }
 }
