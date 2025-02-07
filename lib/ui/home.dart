@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/ui/user_signup.dart';
 import 'login.dart'; // Import the Login page
 
 class HomeScreen extends StatefulWidget {
@@ -90,9 +91,30 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text("Register a User"),
+              onTap: () {
+                if(mounted)
+                {
+                  Navigator.pop(context);
+                }
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => (SignUpScreen())));
+
+
+              },
+            ),
+
+            ListTile(
               leading: const Icon(Icons.settings),
               title: const Text("Login"),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Login())),
+              onTap: () {
+                if(mounted)
+                  {
+                    Navigator.pop(context);
+                  }
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
+
+              },
             ),
             ListTile(
               leading: const Icon(Icons.settings),
@@ -109,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.exit_to_app),
               title: const Text("Logout"),
               onTap: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Login()),  // Navigate to Login page
                 );
