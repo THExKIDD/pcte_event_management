@@ -3,6 +3,7 @@ import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 
 import 'package:pcte_event_management/ui/Event.dart';
+import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/result.dart';
 
 import 'package:pcte_event_management/ui/forgot_email.dart';
@@ -29,7 +30,7 @@ class MainApp extends StatelessWidget {
           ),
         ),
 
-        home: SplashScreen(),
+        home: EventDetailsPage(),
       ),
     );
   }
