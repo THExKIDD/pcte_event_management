@@ -5,8 +5,6 @@ import 'package:pcte_event_management/Models/user_model.dart';
 
 class ApiCalls {
   final Dio dio = Dio();
-
-
   Future<bool> loginCall(UserModel loginCred) async {
     try {
       final response = await dio.post(

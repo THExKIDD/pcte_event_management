@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/ui/InfoPage.dart';
 import 'package:pcte_event_management/ui/home.dart';
 import 'package:pcte_event_management/ui/login.dart';
+import 'package:pcte_event_management/ui/user_signup.dart';
 import 'package:pcte_event_management/widgets/bottomNavBar.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -34,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     Timer(Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => bottomNavBar()),
+        MaterialPageRoute(builder: (context) => UserUpdateScreen()),
       );
     });
   }
