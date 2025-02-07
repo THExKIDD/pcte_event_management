@@ -52,10 +52,10 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
             builder: (context, child) {
               return Stack(
                 children: [
-                  _buildBubble(size, 60, Colors.redAccent.withOpacity(0.3), -40,
+                  _buildBubble(size, 60, Color.fromRGBO(255, 0, 0, 0.3), -40,
                       _bubbleAnimation.value),
                   _buildBubble(
-                      size, 90, Colors.red.withOpacity(0.2), size.width - 80,
+                      size, 90, Color.fromRGBO(255, 0, 0, 0.2), size.width - 80,
                       -_bubbleAnimation.value),
                 ],
               );
@@ -118,7 +118,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Color.fromRGBO(255, 255, 255, 0.9),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(

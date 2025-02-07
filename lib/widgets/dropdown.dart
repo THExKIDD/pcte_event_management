@@ -1,10 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
-import 'package:pcte_event_management/ui/login.dart';
 import 'package:provider/provider.dart';
 
-class DropDown{
+import '../LocalStorage/Secure_Store.dart';
+import '../LocalStorage/StoringUser.dart';
 
+class DropDown{
+  static late String? userType;
 
   static Widget showDropDown(String labelText, Icon icon,List<String> listItems, FocusNode nextFocus){
 
@@ -19,11 +23,19 @@ class DropDown{
               child: Text(item),
             );
           }).toList(),
-          onChanged: (String? newValue){
-
+          onChanged: (String? newValue)async{
+            if (newValue != null) {
+              await StoreUser.saveUserType(newValue);// Save selected value
+              print("Doneeeee");
+            } else{
+              print("Nullllll");
+            }
+            // userType = newValue;
+            // await SecureStorage().saveData("user_type", newValue!);
+            // String? s = await SecureStorage().getData("user_type");
+            // print('object ::::: $s');
             dropDownValue.updateSelectedValue(newValue);
             FocusScope.of(context).requestFocus(nextFocus);
-
           },
           validator: (value) => value == null ? "Please Select an Option" : null,
           hint: Text(labelText),

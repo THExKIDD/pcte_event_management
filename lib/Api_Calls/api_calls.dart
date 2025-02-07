@@ -84,6 +84,33 @@ class ApiCalls {
 
   }
 
+  Future<bool> signupCall(UserModel signupCred,String tkn) async {
+    try {
 
+       dio.options.headers['Authorization'] = 'Bearer $tkn';
+      final response = await dio.post(
+        dotenv.env['SIGNUP_API']!,
+        data: signupCred.toJson(),
+
+      );
+
+      String res = response.data.toString();
+      log("Res :::: $res");
+      log(response.data.toString());
+
+      if(response.statusCode == 200)
+      {
+        log("Signup Successfully");
+        log(response.statusMessage.toString());
+        return true;
+      }
+      else{
+        return false;
+      }
+    } on DioException catch (e) {
+      log("DioException: ${e.toString()}");
+      return false;
+    }
+  }
 
 }

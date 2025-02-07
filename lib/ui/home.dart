@@ -194,11 +194,11 @@ class SliderCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.blueAccent.withOpacity(0.8),
+        color: Color.fromRGBO(38, 81, 120, 0.8),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Color.fromRGBO(0, 0, 0, 0.9),
             blurRadius: 8,
             spreadRadius: 3,
             offset: const Offset(0, 3),
@@ -217,7 +217,7 @@ class SliderCard extends StatelessWidget {
             ),
             Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
+                color: Color.fromRGBO(0, 0, 0, 0.3),
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Center(
@@ -261,7 +261,7 @@ class VerticalCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Color.fromRGBO(0, 0, 0, 0.1),
             blurRadius: 5,
             spreadRadius: 2,
             offset: const Offset(0, 3),
