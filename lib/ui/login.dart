@@ -256,28 +256,42 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         elevation: 5,
       ),
       onPressed: () async {
-        final apiCalls = ApiCalls();
-       final loginController = LoginController(apiCalls);
-        if (_formKey.currentState?.validate() ?? false) {
-          loginController.logInfo(
-              ctx: context,
-              email: _controllerEmail.text,
-              password: _controllerPassword.text
-          );
-          await apiCalls.loginCall(loginController.loginCred).then((value) async {
-            await secureStorage.saveData("jwtToken",apiCalls.tkn);
-            String? s = await secureStorage.getData("jwtToken");
-            log("Testing ::: $s");
-            await apiCalls.getUserCall(s!);
+        try {
+          final apiCalls = ApiCalls();
+          final loginController = LoginController(apiCalls);
+          if (_formKey.currentState?.validate() ?? false) {
+            loginController.logInfo(
+                ctx: context,
+                email: _controllerEmail.text,
+                password: _controllerPassword.text
+            );
+            await apiCalls.loginCall(loginController.loginCred).then((value) async {
+              await secureStorage.saveData("jwtToken",apiCalls.tkn);
+              String? s = await secureStorage.getData('jwtToken');
+              await apiCalls.getUserCall(s!);
 
-            if(value)
-              {
+              if(value)
+                {
 
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
-              }
-          });
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
+                }
+              else
+                {
+                  return ScaffoldMessenger.of(context)
+                      .showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              'Unexpected Error Occured \n Please Try Again Later...'
+                          )
+                      ),
+                  );
+                }
+            });
 
 
+          }
+        } on Exception catch (e) {
+          log('Error in login function : ${e.toString()}');
         }
       },
       child: const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),

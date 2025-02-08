@@ -18,7 +18,7 @@ class ApiCalls {
 
       );
 
-      String res = response.data.toString();
+
       log(response.data.toString());
 
       tkn = response.data['token'].toString();
@@ -55,14 +55,15 @@ class ApiCalls {
 
       if(response.statusCode == 200)
       {
+        final SecureStorage secureStorage = SecureStorage();
         log("Got THE USER");
         log(response.statusMessage.toString());
         Map<String , dynamic> userDetails = response.data['user'];
         String userTypeGet = response.data['user']['user_type'];
         final data2 = userTypeGet.toString();
         log(data2);
+        secureStorage.saveData('user_type', data2);
         final data = userDetails.toString();
-        final SecureStorage secureStorage = SecureStorage();
         secureStorage.saveData('userDetails', data);
         final msg = await secureStorage.getData('userDetails');
         log(msg!);

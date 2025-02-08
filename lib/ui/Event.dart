@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
 
@@ -147,7 +149,7 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      print("Event Saved: $eventName");
+                      log("Event Saved: $eventName");
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Event Saved!")),
                       );

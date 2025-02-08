@@ -10,14 +10,14 @@ class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
 
   @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
   // Create a PageController for the horizontal scroll effect
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
 
   // Function to change page based on BottomNavigationBar selection
   void _onItemTapped(int index) {

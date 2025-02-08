@@ -12,6 +12,8 @@ class EventDetailsPage extends StatelessWidget {
   final String convener = "John Doe";
   final int points = 50;
 
+  const EventDetailsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

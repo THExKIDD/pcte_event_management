@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
 import '../LocalStorage/Secure_Store.dart';
 import 'login.dart'; // Import the Login page
@@ -12,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   // List of images and event names for slider and vertical cards
   final List<Map<String, String>> sliderEvents = [
     {"image": "assets/img/image1.jpg", "name": "solo dance"},
@@ -61,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Card Slider with Images"),
@@ -76,69 +80,100 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       // Navigation Drawer
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFF9E2A2F)),
-              child: Text(
-                "Navigation Menu",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+      drawer: FutureBuilder(
+        future: secureStorage.getData('user_type'),
+        builder: (BuildContext context,AsyncSnapshot<String?> snapshot){
+
+          if(snapshot.connectionState == ConnectionState.waiting)
+            {
+              return Center(child: CircularProgressIndicator(strokeWidth: 10,));
+            }
+
+          if(snapshot.hasError)
+            {
+              return SnackBar(content: Text('Unexpected Error Occured!'));
+            }
+
+          final userType = snapshot.data.toString();
+          log(snapshot.data.toString());
+
+
+          return  SizedBox(
+            width: size.width * 0.66,
+            child: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  const DrawerHeader(
+                    decoration: BoxDecoration(color: Color(0xFF9E2A2F)),
+                    child: Text(
+                      "Navigation Menu",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.home),
+                    title: const Text("Home"),
+                    onTap: () => Navigator.pop(context),
+                  ),
+
+                  if (userType == 'Admin' )
+                      ListTile(
+                        leading: const Icon(Icons.home),
+                        title: const Text("Register a User"),
+                        onTap: () {
+                          if(mounted)
+                          {
+                            Navigator.pop(context);
+                          }
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignUpScreen()));
+
+
+                        },
+                      ),
+
+
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text("Login"),
+                    onTap: () {
+                      if(mounted)
+                      {
+                        Navigator.pop(context);
+                      }
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
+
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text("Settings"),
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.info),
+                    title: const Text("About"),
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  // Logout Option
+                  ListTile(
+                    leading: const Icon(Icons.exit_to_app),
+                    title: const Text("Logout"),
+                    onTap: () async {
+                      await secureStorage.deleteData('user_type').then((value){
+                        log('user type deleted');
+                      }).onError((error,stacktrace){
+                        log(error.toString());
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Home"),
-              onTap: () => Navigator.pop(context),
-            ),
+          );
+        }
 
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Register a User"),
-              onTap: () {
-                if(mounted)
-                {
-                  Navigator.pop(context);
-                }
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => (SignUpScreen())));
-
-
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Login"),
-              onTap: () {
-                if(mounted)
-                  {
-                    Navigator.pop(context);
-                  }
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
-
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text("About"),
-              onTap: () => Navigator.pop(context),
-            ),
-            // Logout Option
-            ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text("Logout"),
-              onTap: () {
-               Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
       ),
 
       body: Column(
@@ -168,10 +203,15 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 15),
               itemCount: verticalEvents.length, // Dynamically based on events count
               itemBuilder: (context, index) {
-                return VerticalCard(
-                  imagePath: verticalEvents[index]['image']!,
-                  eventName: verticalEvents[index]['name']!,
-                  index: index,
+                return InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage()));
+                  },
+                  child: VerticalCard(
+                    imagePath: verticalEvents[index]['image']!,
+                    eventName: verticalEvents[index]['name']!,
+                    index: index,
+                  ),
                 );
               },
             ),
