@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
 import '../LocalStorage/Secure_Store.dart';
+import 'bottomNavBar.dart';
 import 'login.dart'; // Import the Login page
 
 class HomeScreen extends StatefulWidget {
@@ -12,7 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // List of images and event names for slider and vertical cards
   final List<Map<String, String>> sliderEvents = [
     {"image": "assets/img/image1.jpg", "name": "solo dance"},
     {"image": "assets/img/image2.jpg", "name": "indian singing"},
@@ -33,16 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentPage = 0;
   final SecureStorage secureStorage = SecureStorage();
 
+  bool _isSearching = false;
+  TextEditingController _searchController = TextEditingController();
+
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.8);
-    // Start the timer that changes the page every 3 seconds
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_currentPage < sliderEvents.length - 1) {
         _currentPage++;
       } else {
-        _currentPage = 0; // Loop back to the first item
+        _currentPage = 0;
       }
       _pageController.animateToPage(
         _currentPage,
@@ -50,12 +53,15 @@ class _HomeScreenState extends State<HomeScreen> {
         curve: Curves.easeInOut,
       );
     });
+
   }
+
 
   @override
   void dispose() {
     _pageController.dispose();
-    _timer.cancel(); // Cancel the timer when the widget is disposed
+    _timer.cancel();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -63,20 +69,82 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Card Slider with Images"),
-        centerTitle: true,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
-        ),
-      ),
+        backgroundColor: Color(0xFF9E2A2F),
+    centerTitle: false,  // Ensures proper alignment
+    title: Row(
+    children: [
+    Expanded(
+    child: AnimatedContainer(
+    duration: Duration(milliseconds: 300),
+    width: _isSearching ? MediaQuery.of(context).size.width * 0.6 : 180, // Adjusted width
+    height: 40,
+    alignment: Alignment.centerLeft,
+    child: _isSearching
+    ? TextField(
+    controller: _searchController,
+    autofocus: true,
+    decoration: InputDecoration(
+    hintText: "Search events...",
+    border: InputBorder.none,
+    hintStyle: TextStyle(color: Colors.white60),
+    ),
+    style: TextStyle(color: Colors.white),
+    cursorColor: Colors.white,
+    )
+        : Text(
+    "Koshish Events",
+    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+    ),
+    ),
+    ),
+    ],
+    ),
+    leading: Builder(
+    builder: (context) => IconButton(
+    icon: const Icon(Icons.menu, color: Colors.white),
+    onPressed: () {
+    Scaffold.of(context).openDrawer();
+    },
+    ),
+    ),
+    actions: [
+    IconButton(
+    icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.white),
+    onPressed: () {
+    setState(() {
+    _isSearching = !_isSearching;
+    if (!_isSearching) _searchController.clear();
+    });
+    },
+    ),
+    Padding(
+    padding: const EdgeInsets.only(right: 10),
+    child: GestureDetector(
+    onTap: () {
+    // Navigate to Profile
+    },
+    child: CircleAvatar(
+    radius: 18,
+    backgroundColor: Colors.white,
+    backgroundImage: AssetImage("assets/profile.jpg"),
+    child: ClipOval(
+    child: Image.asset(
+    "assets/img/logo1.png",
+    fit: BoxFit.cover,
+    width: 36,
+    height: 36,
+    errorBuilder: (context, error, stackTrace) {
+    return Icon(Icons.person, color: Colors.black, size: 24);
+    },
+    ),
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
 
-      // Navigation Drawer
-      drawer: Drawer(
+    drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -93,30 +161,20 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => Navigator.pop(context),
             ),
 
+              ListTile(
+                leading: const Icon(Icons.person_add),
+                title: const Text("Register a User"),
+                onTap: () {
+                  if (mounted) Navigator.pop(context);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignUpScreen()));
+                },
+              ),
             ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Register a User"),
-              onTap: () {
-                if(mounted)
-                {
-                  Navigator.pop(context);
-                }
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => (SignUpScreen())));
-
-
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.settings),
+              leading: const Icon(Icons.login),
               title: const Text("Login"),
               onTap: () {
-                if(mounted)
-                  {
-                    Navigator.pop(context);
-                  }
+                if (mounted) Navigator.pop(context);
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
-
               },
             ),
             ListTile(
@@ -129,26 +187,25 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text("About"),
               onTap: () => Navigator.pop(context),
             ),
-            // Logout Option
             ListTile(
               leading: const Icon(Icons.exit_to_app),
               title: const Text("Logout"),
               onTap: () {
-               Navigator.pop(context);
+                secureStorage.deleteData("jwtToken");
+                secureStorage.deleteData("userRole");
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
               },
             ),
           ],
         ),
       ),
-
       body: Column(
         children: [
-          // Horizontal Image Slider
           SizedBox(
             height: 220,
             child: PageView.builder(
               padEnds: false,
-              itemCount: sliderEvents.length, // Dynamically based on events count
+              itemCount: sliderEvents.length,
               controller: _pageController,
               itemBuilder: (context, index) {
                 return SliderCard(
@@ -159,14 +216,11 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-
           const SizedBox(height: 20),
-
-          // Vertical List of Image Cards
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 15),
-              itemCount: verticalEvents.length, // Dynamically based on events count
+              itemCount: verticalEvents.length,
               itemBuilder: (context, index) {
                 return VerticalCard(
                   imagePath: verticalEvents[index]['image']!,
@@ -181,8 +235,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// Slider Cards with Images
 class SliderCard extends StatelessWidget {
   final String imagePath;
   final String eventName;
@@ -198,7 +250,7 @@ class SliderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.9),
+            color: Color.fromRGBO(0, 0, 0, 0.4),
             blurRadius: 8,
             spreadRadius: 3,
             offset: const Offset(0, 3),
@@ -217,17 +269,12 @@ class SliderCard extends StatelessWidget {
             ),
             Container(
               decoration: BoxDecoration(
-                color: Color.fromRGBO(0, 0, 0, 0.3),
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Center(
                 child: Text(
-                  eventName,  // Display event name
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  eventName,
+                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -237,8 +284,6 @@ class SliderCard extends StatelessWidget {
     );
   }
 }
-
-// Vertical Cards with Images
 class VerticalCard extends StatelessWidget {
   final String imagePath;
   final String eventName;

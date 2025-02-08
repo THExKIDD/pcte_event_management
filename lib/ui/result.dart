@@ -64,7 +64,8 @@ class _ResultScreenState extends State<ResultScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Leaderboard"),
+        backgroundColor:  Color(0xFF9E2A2F),
+        title: const Text("Leaderboard",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
         centerTitle: true,
         leading: Builder(
           builder: (context) => IconButton(
@@ -72,6 +73,7 @@ class _ResultScreenState extends State<ResultScreen> {
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
+            color: Colors.white,
           ),
         ),
       ),
