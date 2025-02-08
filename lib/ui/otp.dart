@@ -131,6 +131,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
             children: List.generate(6, (index) {
               return Container(
                 width: 40,
+                height: 50,
                 child: TextFormField(
                   controller: _controllers[index],
                   textAlign: TextAlign.center,

@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/ui/otp.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
 
@@ -136,8 +137,17 @@ class _ForgotEmailState extends State<ForgotEmail> with SingleTickerProviderStat
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Please enter your email";
+        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+          return "Enter a valid email address";
+        }
+        return null;
+      },
     );
   }
+
 
   Widget _buildLoginButton(Size size) {
     return ElevatedButton(
@@ -148,7 +158,7 @@ class _ForgotEmailState extends State<ForgotEmail> with SingleTickerProviderStat
       ),
       onPressed: () async {
         if (_formKey.currentState?.validate() ?? false) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => OtpScreen()));
         }
       },
       child: const Text("Send OTP", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
