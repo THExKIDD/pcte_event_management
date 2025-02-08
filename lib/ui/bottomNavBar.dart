@@ -50,7 +50,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationBarItem(
             icon: _selectedIndex==0
                 ?
-            Icon(Icons.home ,  color: Colors.red)
+            Icon(Icons.home ,  color: Color(0xFF9E2A2F))
                 :
             Icon(Icons.home ,  color: Colors.black),
             label: 'Home',
@@ -58,7 +58,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationBarItem(
             icon: _selectedIndex==1
                 ?
-            Icon(Icons.bar_chart ,  color: Colors.red)
+            Icon(Icons.bar_chart ,  color: Color(0xFF9E2A2F))
                 :
             Icon(Icons.bar_chart ,  color: Colors.black),
             label: 'Results',
