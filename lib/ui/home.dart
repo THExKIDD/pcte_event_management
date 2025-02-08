@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Providers/login_provider.dart';
+import 'package:pcte_event_management/ui/Event.dart';
+import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
+import 'package:provider/provider.dart';
 import '../LocalStorage/Secure_Store.dart';
-import 'bottomNavBar.dart';
-import 'login.dart'; // Import the Login page
+import 'login.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final SecureStorage secureStorage = SecureStorage();
 
   bool _isSearching = false;
-  TextEditingController _searchController = TextEditingController();
+  final _searchController = TextEditingController();
 
 
   @override
@@ -67,138 +71,186 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF9E2A2F),
-    centerTitle: false,  // Ensures proper alignment
-    title: Row(
-    children: [
-    Expanded(
-    child: AnimatedContainer(
-    duration: Duration(milliseconds: 300),
-    width: _isSearching ? MediaQuery.of(context).size.width * 0.6 : 180, // Adjusted width
-    height: 40,
-    alignment: Alignment.centerLeft,
-    child: _isSearching
-    ? TextField(
-    controller: _searchController,
-    autofocus: true,
-    decoration: InputDecoration(
-    hintText: "Search events...",
-    border: InputBorder.none,
-    hintStyle: TextStyle(color: Colors.white60),
-    ),
-    style: TextStyle(color: Colors.white),
-    cursorColor: Colors.white,
-    )
-        : Text(
-    "Koshish Events",
-    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-    ),
-    ),
-    ),
-    ],
-    ),
-    leading: Builder(
-    builder: (context) => IconButton(
-    icon: const Icon(Icons.menu, color: Colors.white),
-    onPressed: () {
-    Scaffold.of(context).openDrawer();
-    },
-    ),
-    ),
-    actions: [
-    IconButton(
-    icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.white),
-    onPressed: () {
-    setState(() {
-    _isSearching = !_isSearching;
-    if (!_isSearching) _searchController.clear();
-    });
-    },
-    ),
-    Padding(
-    padding: const EdgeInsets.only(right: 10),
-    child: GestureDetector(
-    onTap: () {
-    // Navigate to Profile
-    },
-    child: CircleAvatar(
-    radius: 18,
-    backgroundColor: Colors.white,
-    backgroundImage: AssetImage("assets/profile.jpg"),
-    child: ClipOval(
-    child: Image.asset(
-    "assets/img/logo1.png",
-    fit: BoxFit.cover,
-    width: 36,
-    height: 36,
-    errorBuilder: (context, error, stackTrace) {
-    return Icon(Icons.person, color: Colors.black, size: 24);
-    },
-    ),
-    ),
-    ),
-    ),
-    ),
-    ],
-    ),
-
-    drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        centerTitle: false, // Ensures proper alignment
+        title: Row(
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFF9E2A2F)),
-              child: Text(
-                "Navigation Menu",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+            Expanded(
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                width: _isSearching ? MediaQuery.of(context).size.width * 0.6 : 180, // Adjusted width
+                height: 40,
+                alignment: Alignment.centerLeft,
+                child: _isSearching
+                    ? TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: "Search events...",
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.white60),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
+                )
+                    : Text(
+                  "Koshish Events",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
               ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Home"),
-              onTap: () => Navigator.pop(context),
-            ),
-
-              ListTile(
-                leading: const Icon(Icons.person_add),
-                title: const Text("Register a User"),
-                onTap: () {
-                  if (mounted) Navigator.pop(context);
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignUpScreen()));
-                },
-              ),
-            ListTile(
-              leading: const Icon(Icons.login),
-              title: const Text("Login"),
-              onTap: () {
-                if (mounted) Navigator.pop(context);
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text("About"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text("Logout"),
-              onTap: () {
-                secureStorage.deleteData("jwtToken");
-                secureStorage.deleteData("userRole");
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
-              },
             ),
           ],
         ),
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.white),
+            onPressed: () {
+              setState(() {
+                _isSearching = !_isSearching;
+                if (!_isSearching) _searchController.clear();
+              });
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: GestureDetector(
+              onTap: () {
+                // Navigate to Profile
+              },
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.white,
+                child: ClipOval(
+                  child: Image.asset(
+                    "assets/img/logo1.png",
+                    fit: BoxFit.cover,
+                    width: 36,
+                    height: 36,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.person, color: Colors.black, size: 24);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
+    drawer: Consumer<LoginProvider>(
+        builder: (context,userProvider,child)
+    {
+      return FutureBuilder(
+      future: secureStorage.getData('user_type'),
+      builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+        String? userType = snapshot.data;
+        log(userType.toString());
+
+
+        return Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+               DrawerHeader(
+                decoration: BoxDecoration(color: Color(0xFF9E2A2F)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Navigation Menu",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    SizedBox(height: size.width * .15,),
+                    Text(
+                    userType ?? "Student",
+                    style: TextStyle(
+                      fontSize: 32,
+                      color: Colors.white
+                    ),
+        ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.home),
+                title: const Text("Home"),
+                onTap: () => Navigator.pop(context),
+              ),
+
+              if(userType == "Admin")
+                ListTile(
+                  leading: const Icon(Icons.person_add),
+                  title: const Text("Register a User"),
+                  onTap: () {
+                    if (mounted) Navigator.pop(context);
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => SignUpScreen()));
+                  },
+                ),
+
+              if(userType == "Admin" || userType == "Convenor")
+                ListTile(
+                  leading: const Icon(Icons.library_add),
+                  title: const Text("Create an Event"),
+                  onTap: () {
+                    if (mounted) Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => EventScreen()));
+                  },
+                ),
+              if(userType == null)
+                ListTile(
+                leading: const Icon(Icons.login),
+                title: const Text("Login"),
+                onTap: () {
+                  if (mounted) Navigator.pop(context);
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => Login()));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text("Settings"),
+                onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: const Text("About"),
+                onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                leading: const Icon(Icons.exit_to_app),
+                title: const Text("Logout"),
+                onTap: () async {
+                  userProvider.onLogOut();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("User Logged Out")));
+                },
+              ),
+            ],
+          ),
+        );
+      }
+      );
+      },
+    ),
+
+
       body: Column(
         children: [
           SizedBox(
@@ -222,10 +274,15 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 15),
               itemCount: verticalEvents.length,
               itemBuilder: (context, index) {
-                return VerticalCard(
-                  imagePath: verticalEvents[index]['image']!,
-                  eventName: verticalEvents[index]['name']!,
-                  index: index,
+                return InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage()));
+                  },
+                  child: VerticalCard(
+                    imagePath: verticalEvents[index]['image']!,
+                    eventName: verticalEvents[index]['name']!,
+                    index: index,
+                  ),
                 );
               },
             ),
