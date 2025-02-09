@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'dart:developer';
@@ -8,6 +10,7 @@ import 'package:pcte_event_management/Controllers/signup_controller.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
+import 'package:pcte_event_management/ui/bottomNavBar.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
 import 'package:provider/provider.dart';
 
@@ -276,7 +279,14 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
           await apiCalls.signupCall(signupController.signupCred, tkn! ).then((value){
             if(value)
             {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(
+                  SnackBar(
+                    content: Text("User Registered Successfully"),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BottomNavBar() ));
             }
           });
 

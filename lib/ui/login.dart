@@ -8,7 +8,9 @@ import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
+import 'package:pcte_event_management/ui/bottomNavBar.dart';
 import 'package:pcte_event_management/ui/forgot_email.dart';
+import 'package:pcte_event_management/widgets/bottomNavBar.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
 import 'package:provider/provider.dart';
 
@@ -276,7 +278,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               if(value)
                 {
 
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen() ));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BottomNavBar() ));
                 }
               else
                 {

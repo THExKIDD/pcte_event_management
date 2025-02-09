@@ -1,4 +1,6 @@
-import 'dart:math';
+
+
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
@@ -24,16 +26,7 @@ class DropDown{
             );
           }).toList(),
           onChanged: (String? newValue)async{
-            if (newValue != null) {
-              await StoreUser.saveUserType(newValue);// Save selected value
-              print("Doneeeee");
-            } else{
-              print("Nullllll");
-            }
-            // userType = newValue;
-            // await SecureStorage().saveData("user_type", newValue!);
-            // String? s = await SecureStorage().getData("user_type");
-            // print('object ::::: $s');
+
             dropDownValue.updateSelectedValue(newValue);
             FocusScope.of(context).requestFocus(nextFocus);
           },

@@ -97,14 +97,19 @@ class ApiCalls {
 
       String res = response.data.toString();
       log("Res :::: $res");
-      log(response.data.toString());
 
-      if(response.statusCode == 200)
+      if(response.statusCode == 201)
       {
-        log("Signup Successfully");
+        log("Signed up Successfully");
         log(response.statusMessage.toString());
         return true;
       }
+      else if (response.statusCode == 400)
+        {
+          log("Bad Request ");
+          log(response.statusMessage.toString());
+          return false;
+        }
       else{
         return false;
       }
