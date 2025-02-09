@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import 'login.dart';
 
 class ResultScreen extends StatefulWidget {
@@ -78,45 +79,7 @@ class _ResultScreenState extends State<ResultScreen> {
         ),
       ),
 
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFF9E2A2F)),
-              child: Text(
-                "Navigation Menu",
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Home"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Settings"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text("About"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text("Logout"),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: CustomDrawer(),
 
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
