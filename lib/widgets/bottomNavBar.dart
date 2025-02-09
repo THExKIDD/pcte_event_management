@@ -1,21 +1,22 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:pcte_event_management/ui/home.dart';
 
 
 
 
 class bottomNavBar extends StatefulWidget {
+  const bottomNavBar({super.key});
+
   @override
-  _bottomNavBarState createState() => _bottomNavBarState();
+  State<bottomNavBar> createState() => _bottomNavBarState();
 }
 
 class _bottomNavBarState extends State<bottomNavBar> {
   int _selectedIndex = 0;
 
   // Create a PageController for the horizontal scroll effect
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
 
   // Function to change page based on BottomNavigationBar selection
   void _onItemTapped(int index) {

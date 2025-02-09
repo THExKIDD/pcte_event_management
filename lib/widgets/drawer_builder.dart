@@ -47,7 +47,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             "Navigation Menu",
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
-                          SizedBox(height: size.width * .15,),
+                          SizedBox(height: size.height * .07,),
                           Text(
                             userType ?? "Student",
                             style: TextStyle(
