@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -118,5 +119,41 @@ class ApiCalls {
       return false;
     }
   }
+
+  Future<bool> sendOtp(String email) async {
+
+    try{
+
+      String emailObj = '"email" : $email';
+
+
+      final response = await dio.post(dotenv.env['FORGOT_PASS_API']!,
+          data: jsonEncode(emailObj) );
+
+
+      if(response.statusCode == 200)
+        {
+          log('OTP SENT');
+          log(response.statusMessage.toString());
+          return true;
+        }
+      else if(response.statusCode == 500)
+        {
+          log("Internal Server Error");
+          log(response.statusMessage.toString());
+          return true;
+        }
+      return true;
+
+
+    }
+
+    on DioException catch(e){
+      log("DioException: ${e.toString()}");
+      return false;
+    }
+
+  }
+
 
 }

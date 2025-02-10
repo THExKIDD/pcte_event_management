@@ -63,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
       canPop: false,
       onPopInvokedWithResult: (bul, obj){
 
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BottomNavBar()));
       },
       child: Scaffold(
         body: Stack(

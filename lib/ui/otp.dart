@@ -29,6 +29,13 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
         CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _animationController.dispose();
+  }
+
   void _onChanged(String value, int index) {
     if (value.length == 1 && index < 5) {
       FocusScope.of(context).nextFocus(); // Move to the next field
@@ -150,6 +157,18 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
           ),
           SizedBox(height: size.height * 0.03),
           _buildSubmitButton(size),
+          SizedBox(height: size.height * 0.03),
+          ElevatedButton(
+              onPressed: (){
+
+
+
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+              ),
+              child: Text('RESEND OTP')
+          ),
         ],
       ),
     );

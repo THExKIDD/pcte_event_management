@@ -216,7 +216,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 );
               },
             ),
-            TextButton(onPressed:()=> Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ForgotEmail() )),
+            TextButton(onPressed:()=> Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotEmail() )),
                 child: Text("Forgot Password", style: TextStyle(color: Colors.blueAccent),)),
 
             SizedBox(height: size.height * 0.03),

@@ -67,7 +67,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     if(userType == "Admin")
                       ListTile(
                         leading: const Icon(Icons.person_add),
-                        title: const Text("Register a User"),
+                        title: const Text("Add Faculty"),
                         onTap: () {
                           if (mounted) Navigator.pop(context);
                           Navigator.pushReplacement(context,
