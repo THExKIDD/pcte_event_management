@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
@@ -57,7 +58,7 @@ class _ResultScreenState extends State<ResultScreen> {
           {"position": "3", "class": "C", "points": "100"},
         ];
       });
-      print('Error fetching leaderboard: $e');
+      log('Error fetching leaderboard: $e');
     }
   }
 

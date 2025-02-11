@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
@@ -47,7 +48,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             "Navigation Menu",
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
-                          SizedBox(height: size.height * .07,),
+                          SizedBox(height: size.height * .06,),
                           Text(
                             userType ?? "Student",
                             style: TextStyle(
@@ -60,6 +61,22 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ),
 
 
+                    if(userType == "Admin")
+                      ListTile(
+                        leading: const Icon(Icons.people),
+                        title: const Text("Get Faculty"),
+                        onTap: () async {
+                          if (mounted) Navigator.pop(context);
+
+                          SecureStorage secureStorage = SecureStorage();
+                          ApiCalls apiCalls = ApiCalls();
+
+                          String? token =  await secureStorage.getData('jwtToken');
+
+                          apiCalls.getFacultyCall(token!);
+
+                        },
+                      ),
                     if(userType == "Admin")
                       ListTile(
                         leading: const Icon(Icons.person_add),

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
@@ -190,12 +189,40 @@ class ApiCalls {
         return false;
       }
 
-
-
-
-
-
+      
   }
+  
+  Future<void> getFacultyCall(String tkn) async {
+
+
+    try {
+      dio.options.headers ['Authorization'] = 'Bearer $tkn';
+       final response =  await dio.get(dotenv.env['GET_FACULTY_API']!);
+
+      log(response.statusCode.toString());
+      String responseData = response.data.toString();
+
+      List<dynamic> jsonData = response.data['data'];
+
+      log(jsonData[1]);
+
+
+
+
+
+
+    } on Exception catch (e) {
+      log(e.toString());
+    }
+
+
+
+
+    
+    
+  }
+  
+  
 
 
 }
