@@ -37,8 +37,8 @@ class ClassModel {
     data['incharge'] = incharge;
     data['type'] = type;
     data['is_active'] = isActive;
-    data['createdAt'] = createdAt?.toIso8601String();
-    data['updatedAt'] = updatedAt?.toIso8601String();
+    data['createdAt'] = createdAt!.toIso8601String();
+    data['updatedAt'] = updatedAt!.toIso8601String();
     return data;
 
 

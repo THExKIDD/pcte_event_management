@@ -10,12 +10,12 @@ class UserModel{
 
   UserModel({
     this.userName,
-    required this.userType,
-    required this.email,
-     this.phoneNumber,
-    required this.password,
-     this.googleId,
-     this.otp
+    this.userType,
+    this.email,
+    this.phoneNumber,
+    this.password,
+    this.googleId,
+    this.otp
   });
 
   UserModel.fromJson(Map<String,dynamic> json)

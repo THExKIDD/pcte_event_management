@@ -215,8 +215,8 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                   TextInputType.visiblePassword,
                   obscureText: passCheck.signObscurePass,
                   suffixIcon: IconButton(
-                    icon: Icon(passCheck.obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                    onPressed: () => passCheck.signObscurePass,
+                    icon: Icon(passCheck.signObscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                    onPressed: () => passCheck.signPassHider(),
                   ),
                 );
               },

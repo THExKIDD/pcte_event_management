@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
@@ -124,11 +125,11 @@ class ApiCalls {
 
     try{
 
-      String emailObj = '"email" : $email';
+      final emailObj = UserModel(email: email);
 
 
       final response = await dio.post(dotenv.env['FORGOT_PASS_API']!,
-          data: jsonEncode(emailObj) );
+          data: emailObj.toJson() );
 
 
       if(response.statusCode == 200)
@@ -152,6 +153,47 @@ class ApiCalls {
       log("DioException: ${e.toString()}");
       return false;
     }
+
+  }
+
+   Future<bool> forgotPass({String? Email, String? Otp, String? NewPass}) async {
+
+    final String? email = Email;
+    final String? otp = Otp;
+    final String? newPass = NewPass;
+
+    
+
+      
+      try {
+        final request = UserModel(email: email, otp: otp, password: newPass);
+
+        final response = await dio.post(
+            dotenv.env['PASS_RESET_API']!,
+            data: request.toJson()
+        );
+
+
+
+        log(response.statusCode.toString());
+        log(response.statusMessage.toString());
+
+        if(response.statusCode == 200){
+          return true;
+        }
+        else{
+          return false;
+        }
+
+      } on Exception catch (e) {
+        log(e.toString());
+        return false;
+      }
+
+
+
+
+
 
   }
 

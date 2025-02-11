@@ -58,11 +58,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ],
                       ),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.home),
-                      title: const Text("Home"),
-                      onTap: () => Navigator.pop(context),
-                    ),
+
 
                     if(userType == "Admin")
                       ListTile(
@@ -99,7 +95,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     if(userType == null)
                       ListTile(
                         leading: const Icon(Icons.login),
-                        title: const Text("Login"),
+                        title: const Text("Login as Faculty"),
                         onTap: () {
                           if (mounted) Navigator.pop(context);
                           Navigator.pushReplacement(context,
@@ -116,7 +112,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       title: const Text("About"),
                       onTap: () => Navigator.pop(context),
                     ),
-                    ListTile(
+                    if(userType == 'Admin' || userType == 'Convenor' || userType == 'Teacher')
+                      ListTile(
                       leading: const Icon(Icons.exit_to_app),
                       title: const Text("Logout"),
                       onTap: () async {
