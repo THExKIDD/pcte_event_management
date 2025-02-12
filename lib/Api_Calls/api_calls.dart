@@ -192,7 +192,7 @@ class ApiCalls {
       
   }
   
-  Future<void> getFacultyCall(String tkn) async {
+  Future<List<Map<String,dynamic>>> getFacultyCall(String tkn) async {
 
 
     try {
@@ -200,11 +200,19 @@ class ApiCalls {
        final response =  await dio.get(dotenv.env['GET_FACULTY_API']!);
 
       log(response.statusCode.toString());
-      String responseData = response.data.toString();
 
-      List<dynamic> jsonData = response.data['data'];
+      Map<String,dynamic> jsonData = response.data;
 
-      log(jsonData[1]);
+      List<Map<String, dynamic>> facultyList = List<Map<String, dynamic>>.from(jsonData['data']);
+
+      log(facultyList.toString());
+
+      if(response.statusCode == 200)
+        {
+          return facultyList;
+        }
+
+      return [];
 
 
 
@@ -213,6 +221,7 @@ class ApiCalls {
 
     } on Exception catch (e) {
       log(e.toString());
+      return [];
     }
 
 
@@ -220,6 +229,43 @@ class ApiCalls {
 
     
     
+  }
+
+
+  Future<bool> updateFaculty({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String token,
+    required String userid}) async {
+
+    try {
+      final updateDetails = UserModel(userName: name,email: email, phoneNumber: phoneNumber,userId: userid  );
+
+
+      dio.options.headers['Authorization'] = 'Bearer $token';
+
+      final response = await dio.put(
+          'https://koshish-backend.vercel.app/api/user/update',
+        data: updateDetails.toJson(),
+      );
+
+      log(response.statusCode.toString());
+
+      if(response.statusCode == 200)
+      {
+        log('User Updated');
+        return true;
+
+      }
+      else{
+        throw Exception;
+      }
+    } on Exception catch (e) {
+      log('userUpdate Exception : ${e.toString()}');
+      return false;
+    }
+
   }
   
   

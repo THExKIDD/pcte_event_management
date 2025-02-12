@@ -5,7 +5,7 @@ import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/bottomNavBar.dart';
-import 'package:pcte_event_management/ui/listView.dart';
+import 'package:pcte_event_management/ui/get_users.dart';
 import 'package:pcte_event_management/ui/result.dart';
 
 import 'package:pcte_event_management/ui/forgot_email.dart';

@@ -121,13 +121,6 @@ class _EventScreenState extends State<EventScreen> {
               SizedBox(height: screenSize.height * 0.02),
 
               _buildTextField(
-                label: "Convener",
-                onChanged: (value) => convener = value,
-              ),
-
-              SizedBox(height: screenSize.height * 0.02),
-
-              _buildTextField(
                 label: "Points",
                 keyboardType: TextInputType.number,
                 onChanged: (value) => points = int.tryParse(value) ?? 0,
@@ -149,10 +142,8 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      log("Event Saved: $eventName");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Event Saved!")),
-                      );
+
+
                     }
                   },
                   child: const Text(
