@@ -13,7 +13,6 @@ class EventDetailsPage extends StatelessWidget {
   final int points = 50;
 
   const EventDetailsPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,6 +20,7 @@ class EventDetailsPage extends StatelessWidget {
         title: Text("Event Details", style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: Color(0xFF9E2A2F),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
