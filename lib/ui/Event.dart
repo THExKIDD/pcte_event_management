@@ -35,7 +35,7 @@ class _EventScreenState extends State<EventScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Event Details",
+          "Create Event",
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: primaryColor,

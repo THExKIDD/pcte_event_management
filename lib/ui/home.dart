@@ -1,16 +1,13 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
-import 'package:pcte_event_management/ui/UserUpdateScreen.dart';
-import 'package:pcte_event_management/ui/user_signup.dart';
+import 'package:pcte_event_management/ui/result.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
+import 'package:pcte_event_management/widgets/textButton.dart';
 import 'package:provider/provider.dart';
 import '../LocalStorage/Secure_Store.dart';
-import 'login.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -314,6 +311,16 @@ class VerticalCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   const Text("This card now includes an image."),
+                 Row(
+                   children: [
+                     CustomTextButton(
+                       text: "Show Result",
+                       onPressed: () {
+                         Navigator.push(context,MaterialPageRoute(builder:  (_)=> ResultScreen()));
+                       },
+                     ),
+                   ],
+                 ),
                 ],
               ),
             ),
