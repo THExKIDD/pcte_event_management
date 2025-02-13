@@ -26,6 +26,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
+  bool isLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeUserName = FocusNode();
@@ -262,6 +263,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       ),
       onPressed: () async {
         try {
+          isLoading = true;
           final apiCalls = ApiCalls();
           final loginController = LoginController(apiCalls);
           if (_formKey.currentState?.validate() ?? false) {
@@ -274,6 +276,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               await secureStorage.saveData("jwtToken",apiCalls.tkn);
               String? s = await secureStorage.getData('jwtToken');
               await apiCalls.getUserCall(s!);
+              isLoading = false;
 
               if(value)
                 {
@@ -299,7 +302,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           log('Error in login function : ${e.toString()}');
         }
       },
-      child: const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: isLoading ?
+      Center(child: CircularProgressIndicator(strokeWidth: 20,),)
+      :
+      Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 

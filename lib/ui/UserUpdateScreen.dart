@@ -229,7 +229,9 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
             email: _controllerEmail.text,
             phoneNumber: _controllerPhone.text,
             token: tkn!,
-        );
+        ).then((value){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Details Updated')));
+        });
 
 
       },
