@@ -8,7 +8,7 @@ import 'package:pcte_event_management/Models/user_model.dart';
 
 class ApiCalls {
   final Dio dio = Dio();
-  final storage = FlutterSecureStorage();
+  final secureStorage = SecureStorage();
   late String tkn ;
 
   Future<bool> loginCall(UserModel loginCred) async {
@@ -56,7 +56,6 @@ class ApiCalls {
 
       if(response.statusCode == 200)
       {
-        final SecureStorage secureStorage = SecureStorage();
         log("Got THE USER");
         log(response.statusMessage.toString());
         Map<String , dynamic> userDetails = response.data['user'];
@@ -237,38 +236,46 @@ class ApiCalls {
     required String email,
     required String phoneNumber,
     required String token,
-    required String userid}) async {
+    required String userid,
+    required bool isActive,
+  }) async {
+     try {
+       final userType = await secureStorage.getData('user_type');
+    final updateDetails =
+    UserModel(userName: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        isActive: isActive,
+      userType: userType
+    );
+    log(userid);
 
-    try {
-      final updateDetails = UserModel(userName: name,email: email, phoneNumber: phoneNumber,userId: userid  );
 
+    dio.options.headers['Authorization'] = 'Bearer $token';
 
-      dio.options.headers['Authorization'] = 'Bearer $token';
-
-      final response = await dio.put(
-          'https://koshish-backend.vercel.app/api/user/update',
+    final response = await dio.put(
+        'https://koshish-backend.vercel.app/api/user/update/$userid',
         data: updateDetails.toJson(),
-      );
 
-      log(response.statusCode.toString());
+    );
 
-      if(response.statusCode == 200)
-      {
-        log('User Updated');
-        return true;
+    log(response.statusCode.toString());
 
-      }
-      else{
-        throw Exception;
-      }
-    } on Exception catch (e) {
+    if (response.statusCode == 200) {
+      log('User Updated');
+      return true;
+    }
+    else {
+      throw Exception;
+    }
+  } on Exception catch(e) {
       log('userUpdate Exception : ${e.toString()}');
       return false;
     }
 
   }
-  
-  
+
+
 
 
 }

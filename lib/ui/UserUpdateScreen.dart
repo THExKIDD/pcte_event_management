@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
-import 'package:provider/provider.dart';
-import '../widgets/dropdown.dart';
-import 'home.dart';
+
 
 
 class UserUpdateScreen extends StatefulWidget {
   final String userId;
-  const UserUpdateScreen({super.key, required this.userId});
+  final bool isActive;
+  const UserUpdateScreen({super.key, required this.userId, required this.isActive});
 
   @override
   State<UserUpdateScreen> createState() => _UserUpdateScreenState();
 }
 
 class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerProviderStateMixin {
+  late bool isChecked;
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodeUserName = FocusNode();
-  final FocusNode _focusNodeUserType = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
   final TextEditingController _controllerUserName = TextEditingController();
   final FocusNode _focusNodePhone = FocusNode();
@@ -31,7 +30,9 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
 
   @override
   void initState() {
+    isChecked = widget.isActive;
     super.initState();
+
     _animationController =
     AnimationController(vsync: this, duration: const Duration(seconds: 5))
       ..repeat(reverse: true);
@@ -176,6 +177,21 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
                 _controllerPhone,
                 TextInputType.phone
             ),
+            SizedBox(height: size.height * 0.02),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text('Is Active',style: TextStyle(fontSize: 18),),
+                Checkbox(
+                    value: isChecked,
+                    onChanged: (val){
+                      setState(() {
+                        isChecked = val!;
+                      });
+                    }
+                ),
+              ],
+            ),
             SizedBox(height: size.height * 0.03),
 
             _buildLoginButton(size),
@@ -229,8 +245,10 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
             email: _controllerEmail.text,
             phoneNumber: _controllerPhone.text,
             token: tkn!,
+          isActive: isChecked,
         ).then((value){
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Details Updated')));
+          Navigator.pop(context);
         });
 
 

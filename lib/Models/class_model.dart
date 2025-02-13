@@ -22,7 +22,7 @@ class ClassModel {
       name: json['name'],
       incharge: json['incharge'],
       type: json['type'],
-      isActive: json['is_active'] ?? true, // Default to true if not provided
+      isActive: json['is_active'] ?? false, // Default to true if not provided
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );

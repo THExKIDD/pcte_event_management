@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/ui/UserUpdateScreen.dart';
 
 class GetAllUsers extends StatefulWidget {
@@ -93,8 +94,9 @@ class _GetAllUsersState extends State<GetAllUsers> {
                             onPressed: () {
                               final userId = filteredItems[index]['_id'].toString();
                               log(userId);
+                              bool isActive = filteredItems[index]['is_active'];
 
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => UserUpdateScreen(userId: userId,)));
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => UserUpdateScreen(userId: userId,isActive: isActive)));
 
                             },
                             style: ElevatedButton.styleFrom(

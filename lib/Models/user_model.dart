@@ -7,6 +7,7 @@ class UserModel{
   String? password;
   String? otp;
   String? googleId;
+  bool? isActive;
 
 
   UserModel({
@@ -17,7 +18,8 @@ class UserModel{
     this.phoneNumber,
     this.password,
     this.googleId,
-    this.otp
+    this.otp,
+    this.isActive
   });
 
   UserModel.fromJson(Map<String,dynamic> json)
@@ -30,6 +32,8 @@ class UserModel{
     password = json['password'];
     googleId = json['google_id'];
     otp = json['otp'];
+    isActive = json['is_active'];
+
 
   }
 
@@ -44,6 +48,7 @@ class UserModel{
     data['password'] = password;
     data['google_id'] = googleId;
     data['otp'] = otp;
+    data['is_active']= isActive;
     return data;
 
   }
