@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:provider/provider.dart';
 import '../widgets/dropdown.dart';
 import 'home.dart';
 
 
 class UserUpdateScreen extends StatefulWidget {
-  const UserUpdateScreen({super.key});
+  final String userId;
+  const UserUpdateScreen({super.key, required this.userId});
 
   @override
   State<UserUpdateScreen> createState() => _UserUpdateScreenState();
@@ -132,7 +135,7 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
         child: Column(
           children: [
             Text(
-              "PCTE",
+              "Update User Details",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: size.height * 0.01),
@@ -214,11 +217,23 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 5,
       ),
-      onPressed: ()  {
+      onPressed: () async {
+        final secureStorage = SecureStorage();
+        final apiCalls = ApiCalls();
+
+        String? tkn = await secureStorage.getData('jwtToken');
+
+        await apiCalls.updateFaculty(
+          userid: widget.userId,
+            name: _controllerUserName.text,
+            email: _controllerEmail.text,
+            phoneNumber: _controllerPhone.text,
+            token: tkn!,
+        );
 
 
       },
-      child: const Text("Let's Go", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: const Text("Update", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 

@@ -163,7 +163,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Login as',Icon(Icons.person_add_alt),dropDownList,_focusNodeUserName), // Ensure this is a valid widget
+            DropDown.showDropDown('Login as',Icon(Icons.person_add_alt),dropDownList,_focusNodeUserName),
             SizedBox(height: size.height * 0.02),
             _buildTextField((_){
               FocusScope.of(context).requestFocus(_focusNodePassword);
@@ -216,7 +216,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 );
               },
             ),
-            TextButton(onPressed:()=> Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ForgotEmail() )),
+            TextButton(onPressed:()=> Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotEmail() )),
                 child: Text("Forgot Password", style: TextStyle(color: Colors.blueAccent),)),
 
             SizedBox(height: size.height * 0.03),

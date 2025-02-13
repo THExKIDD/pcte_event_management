@@ -1,21 +1,28 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
-import 'package:pcte_event_management/ui/changepass_screen.dart';
+import 'package:pcte_event_management/ui/login.dart';
+import 'package:pcte_event_management/widgets/bottomNavBar.dart';
+import 'package:provider/provider.dart';
 import '../widgets/button.dart';
 import 'home.dart';
 
-class OtpScreen extends StatefulWidget {
+class ChangePassScreen extends StatefulWidget {
   final String email;
-  const OtpScreen({super.key, required this.email});
+  final String otp;
+  const ChangePassScreen({super.key, required this.email, required this.otp});
 
   @override
-  State<OtpScreen> createState() => _OtpScreenState();
+  State<ChangePassScreen> createState() => _ChangePassScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMixin {
-  final List<TextEditingController> _controllers = List.generate(
-      6, (index) => TextEditingController());
+class _ChangePassScreenState extends State<ChangePassScreen> with SingleTickerProviderStateMixin {
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  final _newPassController = TextEditingController();
+  final _confirmPassController = TextEditingController();
+  final _newPassFocus = FocusNode();
+  final _confirmPassFocus = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
@@ -34,6 +41,8 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
   void dispose() {
     // TODO: implement dispose
     _animationController.dispose();
+    _newPassController.dispose();
+    _confirmPassController.dispose();
     super.dispose();
   }
 
@@ -131,45 +140,28 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
       ),
       child: Column(
         children: [
-          Text("Enter OTP", style: TextStyle(
-              fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black)),
-          SizedBox(height: size.height * 0.01),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(6, (index) {
-              return Container(
-                width: 40,
-                height: 50,
-                child: TextFormField(
-                  controller: _controllers[index],
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  maxLength: 1,
-                  decoration: InputDecoration(
-                    counterText: '',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) {
-                    _onChanged(value, index);
-                  },
-                ),
-              );
-            }),
+          _buildTextField(
+                  (_){},
+              _newPassFocus,
+              'New Password',
+              Icons.lock,
+              _newPassController,
+              TextInputType.text,
+            obscureText: true,
+          ),
+          SizedBox(height: size.height * 0.03),
+          _buildTextField(
+                (_){},
+            _confirmPassFocus,
+            'Confirm Password',
+            Icons.lock,
+            _confirmPassController,
+            TextInputType.text,
+            obscureText: true,
           ),
           SizedBox(height: size.height * 0.03),
           _buildSubmitButton(size),
           SizedBox(height: size.height * 0.03),
-          ElevatedButton(
-              onPressed: (){
-
-
-
-              },
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-              ),
-              child: Text('RESEND OTP')
-          ),
         ],
       ),
     );
@@ -179,23 +171,59 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     return SizedBox(
       width: double.infinity,
       child: CustomButton(
-        text: 'Verify OTP',
+        text: 'Set Password',
         onPressed: () {
-          String otp = _controllers.map((controller) => controller.text).join();
-          if (otp.length == 6) {
-            log("Entered OTP: $otp");
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => ChangePassScreen(email: widget.email,otp: otp,)));
 
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Please enter a valid 6-digit OTP")),
-            );
+          ApiCalls apiCalls = ApiCalls();
+
+          if(comparePass()){
+
+            apiCalls.forgotPass(
+                Email: widget.email,
+                Otp: widget.otp,
+                NewPass: _confirmPassController.text).then((value){
+                  if(value){
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Password Changed')));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Login()));
+                  }
+            });
+
           }
-          FocusScope.of(context).unfocus();
-        }, // Optional: Change the border radius
+
+          }, // Optional: Change the border radius
       ),
+    );
+  }
+
+  bool comparePass(){
+    if(_newPassController.text != _confirmPassController.text){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("passwords doesn't match")));
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
+  Widget _buildTextField(Function(String)? onFinalSubmission, FocusNode focusNode, String label, IconData icon, TextEditingController controller, TextInputType type,
+      {bool obscureText = false, Widget? suffixIcon}) {
+    return TextFormField(
+      onFieldSubmitted: onFinalSubmission,
+      focusNode: focusNode,
+      controller: controller,
+      keyboardType: type,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Colors.black),
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.black45),
+        ),
+      ),
+      validator: (value) => value == null || value.isEmpty ? "Please enter $label." : null,
     );
   }
 

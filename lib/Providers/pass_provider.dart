@@ -7,11 +7,21 @@ class PassProvider with ChangeNotifier
   bool _signObscurePass = true;
   bool _isSearching = false;
 
+
   bool get obscurePass => _obscurePass;
   bool get signObscurePass => _signObscurePass;
   bool get isSearching => _isSearching;
 
 
+
+  bool defaultPassHider(bool obscurePass){
+
+    bool visibility = !obscurePass;
+    notifyListeners();
+    return visibility;
+
+
+  }
 
   void passHider ()
   {
@@ -36,6 +46,9 @@ class PassProvider with ChangeNotifier
     notifyListeners();
 
   }
+
+
+
 
 
 

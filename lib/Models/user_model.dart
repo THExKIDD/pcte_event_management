@@ -1,4 +1,5 @@
 class UserModel{
+  String? userId;
   String? userName;
   String? userType;
   String? email;
@@ -9,17 +10,19 @@ class UserModel{
 
 
   UserModel({
+    this.userId,
     this.userName,
-    required this.userType,
-    required this.email,
-     this.phoneNumber,
-    required this.password,
-     this.googleId,
-     this.otp
+    this.userType,
+    this.email,
+    this.phoneNumber,
+    this.password,
+    this.googleId,
+    this.otp
   });
 
   UserModel.fromJson(Map<String,dynamic> json)
   {
+    userId = json['user_id'] ?? [''];
     userName = json['name'];
     userType = json['user_type'];
     email = json['email'];
@@ -33,6 +36,7 @@ class UserModel{
   Map<String,dynamic> toJson(){
 
     final data = <String, dynamic>{};
+    data['user_id'] = userId;
     data['name'] = userName;
     data['user_type'] = userType;
     data['email'] = email;
