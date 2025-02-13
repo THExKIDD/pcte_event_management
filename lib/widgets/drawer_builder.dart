@@ -67,22 +67,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         leading: const Icon(Icons.people),
                         title: const Text("Get Faculty"),
                         onTap: () async {
-                          try {
-
-                            SecureStorage secureStorage = SecureStorage();
-                            ApiCalls apiCalls = ApiCalls();
-
-                            String? token =  await secureStorage.getData('jwtToken');
-
-                            await apiCalls.getFacultyCall(token!).then((value){
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => GetAllUsers(items: value)));
-                            });
-
-
-
-                          } on Exception catch (e) {
-                            log(e.toString());
-                          }
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => GetAllUsers()));
 
                         },
                       ),

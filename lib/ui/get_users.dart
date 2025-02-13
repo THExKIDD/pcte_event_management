@@ -6,31 +6,59 @@ import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/ui/UserUpdateScreen.dart';
 
 class GetAllUsers extends StatefulWidget {
-  final List<Map<String, dynamic>> items;
-  const GetAllUsers({super.key, required this.items});
+  const GetAllUsers({super.key});
 
   @override
   State<GetAllUsers> createState() => _GetAllUsersState();
 }
 
 class _GetAllUsersState extends State<GetAllUsers> {
+
   TextEditingController searchController = TextEditingController();
+  List<Map<String, dynamic>> items = [];
 
 
   List<Map<String, dynamic>> filteredItems = [];
   @override
   void initState() {
     super.initState();
+    _fetchItems();
+
+  }
+
+  Future<List<Map<String, dynamic>>> filteredItemsGetter()
+  async {
+    try {
+
+      SecureStorage secureStorage = SecureStorage();
+      ApiCalls apiCalls = ApiCalls();
+
+      String? token =  await secureStorage.getData('jwtToken');
+
+      final filteredItems = await apiCalls.getFacultyCall(token!);
+      return filteredItems;
 
 
-    filteredItems = List.from(widget.items);
+
+    } on Exception catch (e) {
+      log(e.toString());
+      return [];
+    }
   }
 
   void filterSearch(String query) {
     setState(() {
-      filteredItems = widget.items
+      filteredItems = items
           .where((item) => item['name'].toLowerCase().contains(query.toLowerCase()))
           .toList();
+    });
+  }
+
+
+  Future<void> _fetchItems() async {
+    items = await filteredItemsGetter(); // Await the result
+    setState(() {
+      filteredItems = List.from(items); // Update filteredItems
     });
   }
 
