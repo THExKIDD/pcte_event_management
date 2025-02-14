@@ -199,6 +199,8 @@ Future<void> _fetchEvents ()async
                           child: VerticalCard(
                             onPressed: (){
 
+                              log(verticalEvents[index]['_id']);
+
                               final resultApiCalls = ResultApiCalls();
 
                               resultApiCalls.getResultById(eventId: verticalEvents[index]['_id'] );
