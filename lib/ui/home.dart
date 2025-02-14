@@ -200,12 +200,13 @@ Future<void> _fetchEvents ()async
                             onPressed: (){
 
                               log(verticalEvents[index]['_id']);
-
-                              final resultApiCalls = ResultApiCalls();
-
-                              resultApiCalls.getResultById(eventId: verticalEvents[index]['_id'] );
-
-                             // Navigator.push(context,MaterialPageRoute(builder:  (_)=> EventResultScreen()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => EventResultScreen(eventId: verticalEvents[index]['_id'],
+                                      )
+                                  )
+                              );
                             },
                             eventType: verticalEvents[index]['type']!,
                             eventName: verticalEvents[index]['name']!,

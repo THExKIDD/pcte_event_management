@@ -1,12 +1,16 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
+import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import 'login.dart';
 import 'package:animate_do/animate_do.dart';
 
 class EventResultScreen extends StatefulWidget {
-  const EventResultScreen({super.key});
+  final String eventId;
+  const EventResultScreen({super.key, required this.eventId});
 
   @override
   State<EventResultScreen> createState() => _EventResultScreenState();
@@ -16,9 +20,37 @@ class _EventResultScreenState extends State<EventResultScreen> {
   List<Map<String, dynamic>> tableData = [];
   bool isLoading = true;
 
+
+  Future<List<Map<String, dynamic>>> getResult() async
+  {
+
+    ResultApiCalls resultApiCalls = ResultApiCalls();
+
+    List<Map<String, dynamic>> resultList = await resultApiCalls.getResultById(eventId: widget.eventId);
+    return resultList;
+
+
+  }
+
+  Future<void> _fetchResult () async
+  {
+
+    tableData = await getResult();
+    setState(() {
+      log(tableData[1].toString());
+      isLoading =false;
+    });
+
+  }
+
+
+
+
+
   @override
   void initState() {
     super.initState();
+    _fetchResult();
   }
 
 
@@ -41,9 +73,10 @@ class _EventResultScreenState extends State<EventResultScreen> {
         ),
       ),
       drawer: CustomDrawer(),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
+      body:  isLoading ?
+      Center(child: CircularProgressIndicator(),)
+          :
+      Column(
         children: [
           const SizedBox(height: 20),
           const Text("Event Winners ", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
@@ -60,12 +93,12 @@ class _EventResultScreenState extends State<EventResultScreen> {
 
   Widget _buildWinnerStand() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        _buildPodium(Colors.grey, 2, tableData[1]["class"]!),
-        _buildPodium(Colors.yellow, 1, tableData[0]["class"]!),
-        _buildPodium(Colors.brown, 3, tableData[2]["class"]!),
+        Flexible(child: _buildPodium(Colors.grey, 2, tableData[1]['studentName'])),
+        Flexible(child: _buildPodium(Colors.yellow, 1, tableData[0]['studentName'])),
+        Flexible(child: _buildPodium(Colors.brown, 3, tableData[2]['studentName'])),
       ],
     );
   }
@@ -126,15 +159,15 @@ class _EventResultScreenState extends State<EventResultScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(data["position"]!),
+                child: Text(data["position"]!.toString()),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(data["class"]!),
+                child: Text(data["classId"]["name"]!),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(data["points"]!),
+                child: Text('20'),
               ),
             ],
           )),
