@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
+import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
@@ -22,7 +23,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = true;
-
   List<Map<String , dynamic>> filteredEvents = [];
   List<Map<String, dynamic>> verticalEvents = [];
 
@@ -52,7 +52,6 @@ Future<void> _fetchEvents ()async
 
 
   late PageController _pageController;
-  late Timer _timer;
   final SecureStorage secureStorage = SecureStorage();
 
   final _searchController = TextEditingController();
@@ -72,7 +71,6 @@ Future<void> _fetchEvents ()async
   @override
   void dispose() {
     _pageController.dispose();
-    _timer.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -199,6 +197,14 @@ Future<void> _fetchEvents ()async
                             )));
                           },
                           child: VerticalCard(
+                            onPressed: (){
+
+                              final resultApiCalls = ResultApiCalls();
+
+                              resultApiCalls.getResultById(eventId: verticalEvents[index]['_id'] );
+
+                             // Navigator.push(context,MaterialPageRoute(builder:  (_)=> EventResultScreen()));
+                            },
                             eventType: verticalEvents[index]['type']!,
                             eventName: verticalEvents[index]['name']!,
                             index: index,
@@ -216,53 +222,13 @@ Future<void> _fetchEvents ()async
     );
   }
 }
-class SliderCard extends StatelessWidget {
-  final String eventName;
-  final int index;
-  const SliderCard({required this.eventName, required this.index, super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: BoxDecoration(
-        color: Color.fromRGBO(38, 81, 120, 0.8),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.4),
-            blurRadius: 8,
-            spreadRadius: 3,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Center(
-                child: Text(
-                  eventName,
-                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 class VerticalCard extends StatelessWidget {
+  final VoidCallback onPressed;
   final String eventName;
   final int index;
   final String eventType;
-  const VerticalCard({required this.eventName, required this.index, super.key, required this.eventType});
+  const VerticalCard({required this.eventName, required this.index, super.key, required this.eventType, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -306,9 +272,7 @@ class VerticalCard extends StatelessWidget {
                    children: [
                      CustomTextButton(
                        text: "Show Result",
-                       onPressed: () {
-                         Navigator.push(context,MaterialPageRoute(builder:  (_)=> EventResultScreen()));
-                       },
+                       onPressed: onPressed
                      ),
                    ],
                  ),

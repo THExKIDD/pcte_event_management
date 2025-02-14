@@ -19,41 +19,9 @@ class _EventResultScreenState extends State<EventResultScreen> {
   @override
   void initState() {
     super.initState();
-    fetchEventResults();
   }
 
-  Future<void> fetchEventResults() async {
-    try {
-      final response = await http.get(Uri.parse('YOUR_BACKEND_URL/event_results'));
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-
-        setState(() {
-          tableData = data.isNotEmpty
-              ? data.map((e) => {
-            "position": e["position"].toString(),
-            "class": e["class"],
-            "points": e["points"].toString(),
-          }).toList()
-              : [];
-          isLoading = false;
-        });
-      } else {
-        throw Exception('Failed to load event results');
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-        tableData = [
-          {"position": "1", "class": "A", "points": "100"},
-          {"position": "2", "class": "B", "points": "90"},
-          {"position": "3", "class": "C", "points": "80"},
-        ];
-      });
-      print('Error fetching event results: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
