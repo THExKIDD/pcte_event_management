@@ -188,7 +188,15 @@ Future<void> _fetchEvents ()async
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage(eventName: verticalEvents[index]['name'],)));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage(
+                              eventName: verticalEvents[index]['name'],
+                              description: verticalEvents[index]['description'],
+                              maxStudents: verticalEvents[index]['maxStudents'],
+                              minStudents: verticalEvents[index]['minStudents'],
+                              location: verticalEvents[index]['location'],
+                              convener: verticalEvents[index]['convenor'],
+
+                            )));
                           },
                           child: VerticalCard(
                             eventType: verticalEvents[index]['type']!,
