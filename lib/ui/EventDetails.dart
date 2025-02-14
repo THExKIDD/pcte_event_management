@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EventDetailsPage extends StatelessWidget {
-  final String eventName = "Tech Fest 2025";
+  final String eventName;
   final String description =
       "Join us for an exciting tech fest filled with competitions, workshops, and networking!";
   final String rules =
@@ -12,7 +12,7 @@ class EventDetailsPage extends StatelessWidget {
   final String convener = "John Doe";
   final int points = 50;
 
-  const EventDetailsPage({super.key});
+  const EventDetailsPage({super.key,required this.eventName});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

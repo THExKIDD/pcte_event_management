@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
 
 class EventScreen extends StatefulWidget {
@@ -142,7 +143,9 @@ class _EventScreenState extends State<EventScreen> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      final eventApiCalls = EventApiCalls();
 
+                      eventApiCalls.createEventCall();
 
                     }
                   },

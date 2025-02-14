@@ -13,7 +13,7 @@ class GetAllUsers extends StatefulWidget {
 }
 
 class _GetAllUsersState extends State<GetAllUsers> {
-
+  bool isLoading = true;
   TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> items = [];
 
@@ -26,7 +26,7 @@ class _GetAllUsersState extends State<GetAllUsers> {
 
   }
 
-  Future<List<Map<String, dynamic>>> filteredItemsGetter()
+  Future<List<Map<String, dynamic>>> itemsGetter()
   async {
     try {
 
@@ -35,8 +35,8 @@ class _GetAllUsersState extends State<GetAllUsers> {
 
       String? token =  await secureStorage.getData('jwtToken');
 
-      final filteredItems = await apiCalls.getFacultyCall(token!);
-      return filteredItems;
+      final items = await apiCalls.getFacultyCall(token!);
+      return items;
 
 
 
@@ -56,9 +56,10 @@ class _GetAllUsersState extends State<GetAllUsers> {
 
 
   Future<void> _fetchItems() async {
-    items = await filteredItemsGetter(); // Await the result
+    items = await itemsGetter(); // Await the result
     setState(() {
-      filteredItems = List.from(items); // Update filteredItems
+      filteredItems = List.from(items);
+      isLoading = false; // Update filteredItems
     });
   }
 
@@ -79,7 +80,11 @@ class _GetAllUsersState extends State<GetAllUsers> {
           ),
           backgroundColor: Color(0xFF9E2A2F),
         ),
-        body: Column(
+        body: isLoading
+            ?
+        Center(child: CircularProgressIndicator(),)
+            :
+        Column(
           children: [
             Padding(
               padding: EdgeInsets.all(screenWidth * 0.02),

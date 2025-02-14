@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
+import 'package:pcte_event_management/ui/event_result.dart';
 import 'package:pcte_event_management/ui/result.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import 'package:pcte_event_management/widgets/textButton.dart';
@@ -17,24 +21,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Map<String, String>> sliderEvents = [
-    {"image": "assets/img/image1.jpg", "name": "solo dance"},
-    {"image": "assets/img/image2.jpg", "name": "indian singing"},
-    {"image": "assets/img/image3.jpg", "name": "group dance"},
-    {"image": "assets/img/image4.jpg", "name": "western dance"},
-    {"image": "assets/img/image5.jpeg", "name": "videography"},
-  ];
+  bool isLoading = true;
 
-  final List<Map<String, String>> verticalEvents = [
-    {"image": "assets/img/image1.jpg", "name": "solo dance"},
-    {"image": "assets/img/image1.jpg", "name": "Event B"},
-    {"image": "assets/img/image2.jpg", "name": "Event C"},
-    {"image": "assets/img/image2.jpg", "name": "Event D"},
-  ];
+  List<Map<String , dynamic>> filteredEvents = [];
+  List<Map<String, dynamic>> verticalEvents = [];
+
+Future<List<Map<String , dynamic>>> getAllEvents() async{
+
+  final eventApi = EventApiCalls();
+
+  List<Map<String , dynamic>> allEvents = await eventApi.getAllEvents();
+  return allEvents;
+
+}
+
+Future<void> _fetchEvents ()async
+{
+
+  verticalEvents = await getAllEvents();
+  setState(() {
+    filteredEvents = List.from(verticalEvents);
+    isLoading =false;
+  });
+
+}
+
+
+
+
+
 
   late PageController _pageController;
   late Timer _timer;
-  int _currentPage = 0;
   final SecureStorage secureStorage = SecureStorage();
 
   final _searchController = TextEditingController();
@@ -43,19 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    _fetchEvents();
+
     _pageController = PageController(viewportFraction: 0.8);
-    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < sliderEvents.length - 1) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
-      _pageController.animateToPage(
-        _currentPage,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    });
 
   }
 
@@ -165,24 +174,13 @@ class _HomeScreenState extends State<HomeScreen> {
               drawer: CustomDrawer(),
 
 
-              body: Column(
+              body: isLoading
+                  ?
+              Center(child: CircularProgressIndicator(),)
+                  :
+              Column(
                 children: [
-                  SizedBox(
-                    height: 220,
-                    child: PageView.builder(
-                      padEnds: false,
-                      itemCount: sliderEvents.length,
-                      controller: _pageController,
-                      itemBuilder: (context, index) {
-                        return SliderCard(
-                          imagePath: sliderEvents[index]['image']!,
-                          eventName: sliderEvents[index]['name']!,
-                          index: index,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                  Padding(padding: EdgeInsets.only(top: 15)),
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -190,10 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage(eventName: verticalEvents[index]['name'],)));
                           },
                           child: VerticalCard(
-                            imagePath: verticalEvents[index]['image']!,
+                            eventType: verticalEvents[index]['type']!,
                             eventName: verticalEvents[index]['name']!,
                             index: index,
                           ),
@@ -211,10 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 class SliderCard extends StatelessWidget {
-  final String imagePath;
   final String eventName;
   final int index;
-  const SliderCard({required this.imagePath, required this.eventName, required this.index, super.key});
+  const SliderCard({required this.eventName, required this.index, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -236,12 +233,6 @@ class SliderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         child: Stack(
           children: [
-            Image.asset(
-              imagePath,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
-            ),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
@@ -260,10 +251,10 @@ class SliderCard extends StatelessWidget {
   }
 }
 class VerticalCard extends StatelessWidget {
-  final String imagePath;
   final String eventName;
   final int index;
-  const VerticalCard({required this.imagePath, required this.eventName, required this.index, super.key});
+  final String eventType;
+  const VerticalCard({required this.eventName, required this.index, super.key, required this.eventType});
 
   @override
   Widget build(BuildContext context) {
@@ -290,38 +281,25 @@ class VerticalCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(15),
-              bottomLeft: Radius.circular(15),
-            ),
-            child: Image.asset(
-              imagePath,
-              width: 120, // Slightly reduced width
-              height: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(width: 15),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
                     eventName,  // Display event name
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), // Slightly smaller font
                   ),
                   const SizedBox(height: 5),
-                  const Text("This card now includes an image."),
+                  Text(eventType),
                  Row(
                    children: [
                      CustomTextButton(
                        text: "Show Result",
                        onPressed: () {
-                         Navigator.push(context,MaterialPageRoute(builder:  (_)=> ResultScreen()));
+                         Navigator.push(context,MaterialPageRoute(builder:  (_)=> EventResultScreen()));
                        },
                      ),
                    ],
