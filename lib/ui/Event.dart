@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
@@ -16,18 +15,59 @@ class _EventScreenState extends State<EventScreen> {
 
   String eventName = '';
   String description = '';
-  String rules = '';
   int maxStudents = 1;
   int minStudents = 1;
   String location = '';
-  String convener = '';
   int points = 0;
 
-  final FocusNode _eventTypeFocus = FocusNode();
-  final FocusNode _participationTypeFocus = FocusNode();
-  final FocusNode _descriptionFocus = FocusNode();
+  final List<TextEditingController> _rulesControllers =
+  List.generate(3, (index) => TextEditingController());
+  final List<TextEditingController> _pointsControllers =
+  List.generate(3, (index) => TextEditingController());
 
-  final Color primaryColor = const Color(0xFF9E2A2F); // Custom color
+  final FocusNode _descriptionFocus = FocusNode();
+  final _participationTypeFocus = FocusNode();
+
+  final Color primaryColor = const Color(0xFF9E2A2F);
+
+  @override
+  void dispose() {
+    for (var controller in _rulesControllers) {
+      controller.dispose();
+    }
+    for (var controller in _pointsControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _addRuleField() {
+    setState(() {
+      _rulesControllers.add(TextEditingController());
+    });
+  }
+
+  void _removeRuleField() {
+    if (_rulesControllers.isNotEmpty) {
+      setState(() {
+        _rulesControllers.removeLast();
+      });
+    }
+  }
+
+  void _addPointField() {
+    setState(() {
+      _pointsControllers.add(TextEditingController());
+    });
+  }
+
+  void _removePointField() {
+    if (_pointsControllers.isNotEmpty) {
+      setState(() {
+        _pointsControllers.removeLast();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,31 +94,14 @@ class _EventScreenState extends State<EventScreen> {
               _buildTextField(
                 label: "Event Name",
                 onChanged: (value) => eventName = value,
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) =>
-                    FocusScope.of(context).requestFocus(_eventTypeFocus),
               ),
 
               SizedBox(height: screenSize.height * 0.02),
 
-              // Event Type Dropdown with Event Icon
-              DropDown.showDropDown(
-                "Event Type",
-                const Icon(Icons.event, color: Colors.black),
-                ["Junior", "Senior"],
-                _participationTypeFocus,
-              ),
-
+              DropDown.showDropDown("Event Type", const Icon(Icons.event, color: Colors.black), ["Junior", "Senior"], _participationTypeFocus,),
               SizedBox(height: screenSize.height * 0.02),
 
-              // Participation Type Dropdown with Group Icon
-              DropDown.showDropDown(
-                "Participation Type",
-                const Icon(Icons.group, color: Colors.black),
-                ["Solo", "Group"],
-                _descriptionFocus,
-              ),
-
+              DropDown.showDropDown("Participation Type", const Icon(Icons.group, color: Colors.black), ["Solo", "Group"], _descriptionFocus),
               SizedBox(height: screenSize.height * 0.02),
 
               _buildTextField(
@@ -90,12 +113,7 @@ class _EventScreenState extends State<EventScreen> {
 
               SizedBox(height: screenSize.height * 0.02),
 
-              _buildTextField(
-                label: "Rules",
-                maxLines: 3,
-                onChanged: (value) => rules = value,
-              ),
-
+              _buildDynamicFields("Rules", _rulesControllers, _addRuleField, _removeRuleField),
               SizedBox(height: screenSize.height * 0.02),
 
               _buildTextField(
@@ -121,37 +139,29 @@ class _EventScreenState extends State<EventScreen> {
 
               SizedBox(height: screenSize.height * 0.02),
 
-              _buildTextField(
-                label: "Points",
-                keyboardType: TextInputType.number,
-                onChanged: (value) => points = int.tryParse(value) ?? 0,
-              ),
-
+              _buildDynamicFields("Points", _pointsControllers, _addPointField, _removePointField),
               SizedBox(height: screenSize.height * 0.04),
 
-              // Save Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: screenSize.width * 0.8,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      final eventApiCalls = EventApiCalls();
-
-                      eventApiCalls.createEventCall();
-
-                    }
-                  },
-                  child: const Text(
-                    "Save Event",
-                    style: TextStyle(color: Colors.white),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        final eventApiCalls = EventApiCalls();
+                        eventApiCalls.createEventCall();
+                      }
+                    },
+                    child: const Text("Save Event", style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ),
@@ -162,38 +172,63 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  // Helper method for text fields with consistent styling and borders
-  Widget _buildTextField({
-    required String label,
-    int maxLines = 1,
-    TextInputType keyboardType = TextInputType.text,
-    TextInputAction textInputAction = TextInputAction.done,
-    FocusNode? focusNode,
-    required Function(String) onChanged,
-    Function(String)? onFieldSubmitted,
-  }) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.black45),
+  Widget _buildDynamicFields(String label, List<TextEditingController> controllers, VoidCallback addField, VoidCallback removeField) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        ...controllers.map((controller) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          child: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: label,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.black45),
+              ),
+            ),
+          ),
+        )),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton.icon(
+              onPressed: addField,
+              icon: const Icon(Icons.add, color: Colors.blue),
+              label: Text("Add $label", style: const TextStyle(color: Colors.blue)),
+            ),
+            TextButton.icon(
+              onPressed: removeField,
+              icon: const Icon(Icons.remove, color: Colors.red),
+              label: Text("Remove $label", style: const TextStyle(color: Colors.red)),
+            ),
+          ],
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.black45),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: const Color(0xFF9E2A2F)),
-        ),
-      ),
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
-      focusNode: focusNode,
-      onChanged: onChanged,
-      onFieldSubmitted: onFieldSubmitted,
+      ],
     );
   }
+}
+Widget _buildTextField({
+  required String label,
+  int maxLines = 1,
+  TextInputType keyboardType = TextInputType.text,
+  TextInputAction textInputAction = TextInputAction.done,
+  FocusNode? focusNode,
+  required Function(String) onChanged,
+}) {
+  return TextFormField(
+    decoration: InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.black45),
+      ),
+    ),
+    maxLines: maxLines,
+    keyboardType: keyboardType,
+    textInputAction: textInputAction,
+    focusNode: focusNode,
+    onChanged: onChanged,
+  );
 }
