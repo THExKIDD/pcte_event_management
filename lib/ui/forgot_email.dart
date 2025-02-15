@@ -1,8 +1,11 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
+import 'package:pcte_event_management/Providers/login_provider.dart';
+import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/ui/otp.dart';
 import 'package:provider/provider.dart';
-import 'home.dart';
+
 
 class ForgotEmail extends StatefulWidget {
   const ForgotEmail({super.key});
@@ -114,7 +117,7 @@ class _ForgotEmailState extends State<ForgotEmail> with SingleTickerProviderStat
             Text("Forgot Password ?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
             SizedBox(height: size.height * 0.01),
 
-            _buildTextField(_focusNodeUserName, "Email", Icons.person_outline, _controllerEmail, TextInputType.name),
+            _buildTextField(_focusNodeUserName, "Email", Icons.person_outline, _controllerEmail, TextInputType.emailAddress),
             SizedBox(height: size.height * 0.02),
             SizedBox(height: size.height * 0.03),
             _buildLoginButton(size),
@@ -158,7 +161,25 @@ class _ForgotEmailState extends State<ForgotEmail> with SingleTickerProviderStat
       ),
       onPressed: () async {
         if (_formKey.currentState?.validate() ?? false) {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => OtpScreen()));
+
+          final apiCalls = ApiCalls();
+
+          await apiCalls.sendOtp(_controllerEmail.text).then((value){
+
+            if(value){
+
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => OtpScreen(email: _controllerEmail.text)));
+            }
+            else{
+              log("Error : Bad Request on forgot email");
+            }
+
+
+          });
+
+
         }
       },
       child: const Text("Send OTP", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),

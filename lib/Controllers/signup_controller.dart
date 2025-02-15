@@ -43,12 +43,13 @@ class SignupController {
     createEventCred = EventModel(
       name: name,
       type: type,
-      part_type: part_type,
+      partType: part_type,
       description: description,
       rules: rules,
       maxStudents: maxStudents,
       minStudents: minStudents,
       location: location,
+      convenor: '',
     );
   }
 }

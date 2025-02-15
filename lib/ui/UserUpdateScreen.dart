@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../widgets/dropdown.dart';
-import 'home.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
+
 
 
 class UserUpdateScreen extends StatefulWidget {
-  const UserUpdateScreen({super.key});
+  final String userId;
+  final bool isActive;
+  const UserUpdateScreen({super.key, required this.userId, required this.isActive});
 
   @override
   State<UserUpdateScreen> createState() => _UserUpdateScreenState();
 }
 
 class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerProviderStateMixin {
+  late bool isChecked;
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodeUserName = FocusNode();
-  final FocusNode _focusNodeUserType = FocusNode();
   final FocusNode _focusNodeEmail = FocusNode();
   final TextEditingController _controllerUserName = TextEditingController();
   final FocusNode _focusNodePhone = FocusNode();
@@ -28,7 +30,9 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
 
   @override
   void initState() {
+    isChecked = widget.isActive;
     super.initState();
+
     _animationController =
     AnimationController(vsync: this, duration: const Duration(seconds: 5))
       ..repeat(reverse: true);
@@ -132,7 +136,7 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
         child: Column(
           children: [
             Text(
-              "PCTE",
+              "Update User Details",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: size.height * 0.01),
@@ -172,6 +176,21 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
                 Icons.phone,
                 _controllerPhone,
                 TextInputType.phone
+            ),
+            SizedBox(height: size.height * 0.02),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text('Is Active',style: TextStyle(fontSize: 18),),
+                Checkbox(
+                    value: isChecked,
+                    onChanged: (val){
+                      setState(() {
+                        isChecked = val!;
+                      });
+                    }
+                ),
+              ],
             ),
             SizedBox(height: size.height * 0.03),
 
@@ -214,11 +233,27 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 5,
       ),
-      onPressed: ()  {
+      onPressed: () async {
+        final secureStorage = SecureStorage();
+        final apiCalls = ApiCalls();
+
+        String? tkn = await secureStorage.getData('jwtToken');
+
+        await apiCalls.updateFaculty(
+          userid: widget.userId,
+            name: _controllerUserName.text,
+            email: _controllerEmail.text,
+            phoneNumber: _controllerPhone.text,
+            token: tkn!,
+          isActive: isChecked,
+        ).then((value){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Details Updated')));
+          Navigator.pop(context);
+        });
 
 
       },
-      child: const Text("Let's Go", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: const Text("Update", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 

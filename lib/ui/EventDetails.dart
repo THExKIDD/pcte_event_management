@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
 class EventDetailsPage extends StatelessWidget {
-  final String eventName = "Tech Fest 2025";
-  final String description =
-      "Join us for an exciting tech fest filled with competitions, workshops, and networking!";
+  final String eventName;
+  final String description;
   final String rules =
       "1. Teams must register before the deadline.\n2. Each team should have 2-5 members.\n3. Follow the event code of conduct. \n4.Teams must register before the deadline.\n2. Each team should have 2-5 members.\n3. Follow the event code of conduct.";
-  final int maxStudents = 5;
-  final int minStudents = 2;
-  final String location = "Auditorium, PCTE";
-  final String convener = "John Doe";
+  final int maxStudents;
+  final int minStudents;
+  final String location;
+  final String convener;
   final int points = 50;
 
-  const EventDetailsPage({super.key});
-
+  const EventDetailsPage({super.key,required this.eventName, required this.description, required this.maxStudents, required this.minStudents, required this.location, required this.convener});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,6 +19,7 @@ class EventDetailsPage extends StatelessWidget {
         title: Text("Event Details", style: TextStyle(color: Colors.white),),
         centerTitle: true,
         backgroundColor: Color(0xFF9E2A2F),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

@@ -42,6 +42,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
 
   flutter_secure_storage: ^9.2.4
+  animate_do: ^4.0.0
 
 
 dev_dependencies:

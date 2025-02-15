@@ -26,6 +26,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
+  bool isLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey();
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeUserName = FocusNode();
@@ -163,7 +164,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Login as',Icon(Icons.person_add_alt),dropDownList,_focusNodeUserName), // Ensure this is a valid widget
+            DropDown.showDropDown('Login as',Icon(Icons.person_add_alt),dropDownList,_focusNodeUserName),
             SizedBox(height: size.height * 0.02),
             _buildTextField((_){
               FocusScope.of(context).requestFocus(_focusNodePassword);
@@ -216,7 +217,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 );
               },
             ),
-            TextButton(onPressed:()=> Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ForgotEmail() )),
+            TextButton(onPressed:()=> Navigator.push(context, MaterialPageRoute(builder: (_) => ForgotEmail() )),
                 child: Text("Forgot Password", style: TextStyle(color: Colors.blueAccent),)),
 
             SizedBox(height: size.height * 0.03),
@@ -262,6 +263,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       ),
       onPressed: () async {
         try {
+          isLoading = true;
           final apiCalls = ApiCalls();
           final loginController = LoginController(apiCalls);
           if (_formKey.currentState?.validate() ?? false) {
@@ -274,6 +276,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               await secureStorage.saveData("jwtToken",apiCalls.tkn);
               String? s = await secureStorage.getData('jwtToken');
               await apiCalls.getUserCall(s!);
+              isLoading = false;
 
               if(value)
                 {
@@ -299,7 +302,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           log('Error in login function : ${e.toString()}');
         }
       },
-      child: const Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: isLoading ?
+      Center(child: CircularProgressIndicator(strokeWidth: 20,),)
+      :
+      Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 

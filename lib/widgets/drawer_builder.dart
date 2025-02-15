@@ -1,9 +1,11 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/UserUpdateScreen.dart';
+import 'package:pcte_event_management/ui/get_users.dart';
 import 'package:pcte_event_management/ui/login.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +48,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             "Navigation Menu",
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),
-                          SizedBox(height: size.height * .07,),
+                          SizedBox(height: size.height * .06,),
                           Text(
                             userType ?? "Student",
                             style: TextStyle(
@@ -57,16 +59,21 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ],
                       ),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.home),
-                      title: const Text("Home"),
-                      onTap: () => Navigator.pop(context),
-                    ),
+
 
                     if(userType == "Admin")
                       ListTile(
+                        leading: const Icon(Icons.people),
+                        title: const Text("Get Faculty"),
+                        onTap: () async {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => GetAllUsers()));
+
+                        },
+                      ),
+                    if(userType == "Admin")
+                      ListTile(
                         leading: const Icon(Icons.person_add),
-                        title: const Text("Register a User"),
+                        title: const Text("Add Faculty"),
                         onTap: () {
                           if (mounted) Navigator.pop(context);
                           Navigator.pushReplacement(context,
@@ -74,16 +81,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         },
                       ),
 
-                    if(userType == "Admin")
-                      ListTile(
-                        leading: const Icon(Icons.person_pin_rounded),
-                        title: const Text("Update Faculty Details"),
-                        onTap: () {
-                          if (mounted) Navigator.pop(context);
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => UserUpdateScreen()));
-                        },
-                      ),
 
                     if(userType == "Admin" || userType == "Convenor")
                       ListTile(
@@ -98,7 +95,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     if(userType == null)
                       ListTile(
                         leading: const Icon(Icons.login),
-                        title: const Text("Login"),
+                        title: const Text("Login as Faculty"),
                         onTap: () {
                           if (mounted) Navigator.pop(context);
                           Navigator.pushReplacement(context,
@@ -115,7 +112,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       title: const Text("About"),
                       onTap: () => Navigator.pop(context),
                     ),
-                    ListTile(
+                    if(userType == 'Admin' || userType == 'Convenor' || userType == 'Teacher')
+                      ListTile(
                       leading: const Icon(Icons.exit_to_app),
                       title: const Text("Logout"),
                       onTap: () async {

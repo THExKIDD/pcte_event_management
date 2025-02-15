@@ -1,14 +1,14 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
-import 'package:pcte_event_management/Models/event_model.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 
 class ApiCalls {
   final Dio dio = Dio();
-  final storage = FlutterSecureStorage();
+  final secureStorage = SecureStorage();
   late String tkn ;
 
   Future<bool> loginCall(UserModel loginCred) async {
@@ -56,7 +56,6 @@ class ApiCalls {
 
       if(response.statusCode == 200)
       {
-        final SecureStorage secureStorage = SecureStorage();
         log("Got THE USER");
         log(response.statusMessage.toString());
         Map<String , dynamic> userDetails = response.data['user'];
@@ -120,36 +119,163 @@ class ApiCalls {
     }
   }
 
-  Future<bool> createEventCall(EventModel createEventCred,String tkn) async {
-    try {
-      log("Token :: $tkn");
-      dio.options.headers['Authorization'] = 'Bearer $tkn';
-      final response = await dio.post(
-        dotenv.env['CREATE_EVENT_API']!,
-        data: createEventCred.toJson(),
-      );
+  Future<bool> sendOtp(String email) async {
 
-      String res = response.data.toString();
-      log("Res :::: $res");
+    try{
 
-      if(response.statusCode == 201)
-      {
-        log("Signup Successfully");
-        log(response.statusMessage.toString());
-        return true;
-      }
-      else if (response.statusCode == 400)
-      {
-        log("Bad Request ");
-        log(response.statusMessage.toString());
-        return false;
-      }
-      else{
-        return false;
-      }
-    } on DioException catch (e) {
+      final emailObj = UserModel(email: email);
+
+
+      final response = await dio.post(dotenv.env['FORGOT_PASS_API']!,
+          data: emailObj.toJson() );
+
+
+      if(response.statusCode == 200)
+        {
+          log('OTP SENT');
+          log(response.statusMessage.toString());
+          return true;
+        }
+      else if(response.statusCode == 500)
+        {
+          log("Internal Server Error");
+          log(response.statusMessage.toString());
+          return true;
+        }
+      return true;
+
+
+    }
+
+    on DioException catch(e){
       log("DioException: ${e.toString()}");
       return false;
     }
+
   }
+
+   Future<bool> forgotPass({String? Email, String? Otp, String? NewPass}) async {
+
+    final String? email = Email;
+    final String? otp = Otp;
+    final String? newPass = NewPass;
+
+    
+
+      
+      try {
+        final request = UserModel(email: email, otp: otp, password: newPass);
+
+        final response = await dio.post(
+            dotenv.env['PASS_RESET_API']!,
+            data: request.toJson()
+        );
+
+
+
+        log(response.statusCode.toString());
+        log(response.statusMessage.toString());
+
+        if(response.statusCode == 200){
+          return true;
+        }
+        else{
+          return false;
+        }
+
+      } on Exception catch (e) {
+        log(e.toString());
+        return false;
+      }
+
+      
+  }
+  
+  Future<List<Map<String,dynamic>>> getFacultyCall(String tkn) async {
+
+
+    try {
+      dio.options.headers ['Authorization'] = 'Bearer $tkn';
+       final response =  await dio.get(dotenv.env['GET_FACULTY_API']!);
+
+      log(response.statusCode.toString());
+
+      Map<String,dynamic> jsonData = response.data;
+
+      List<Map<String, dynamic>> facultyList = List<Map<String, dynamic>>.from(jsonData['data']);
+
+      log(facultyList.toString());
+
+      if(response.statusCode == 200)
+        {
+          return facultyList;
+        }
+
+      return [];
+
+
+
+
+
+
+    } on Exception catch (e) {
+      log(e.toString());
+      return [];
+    }
+
+
+
+
+    
+    
+  }
+
+
+  Future<bool> updateFaculty({
+    required String name,
+    required String email,
+    required String phoneNumber,
+    required String token,
+    required String userid,
+    required bool isActive,
+  }) async {
+     try {
+       final userType = await secureStorage.getData('user_type');
+    final updateDetails =
+    UserModel(userName: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        isActive: isActive,
+      userType: userType
+    );
+    log(userid);
+
+
+    dio.options.headers['Authorization'] = 'Bearer $token';
+
+    final response = await dio.put(
+        'https://koshish-backend.vercel.app/api/user/update/$userid',
+        data: updateDetails.toJson(),
+
+    );
+
+    log(response.statusCode.toString());
+
+    if (response.statusCode == 200) {
+      log('User Updated');
+      return true;
+    }
+    else {
+      throw Exception;
+    }
+  } on Exception catch(e) {
+      log('userUpdate Exception : ${e.toString()}');
+      return false;
+    }
+
+  }
+
+
+
+
 }
