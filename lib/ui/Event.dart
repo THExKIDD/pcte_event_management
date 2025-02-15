@@ -1,6 +1,10 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
+import 'package:pcte_event_management/Controllers/signup_controller.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
 
 class EventScreen extends StatefulWidget {
@@ -15,12 +19,12 @@ class _EventScreenState extends State<EventScreen> {
 
   String eventName = '';
   String description = '';
-  String rules = '';
+  List<String> rules = [];
   int maxStudents = 1;
   int minStudents = 1;
   String location = '';
   String convener = '';
-  int points = 0;
+  List<int> points = [];
 
   final FocusNode _eventTypeFocus = FocusNode();
   final FocusNode _participationTypeFocus = FocusNode();
@@ -92,7 +96,7 @@ class _EventScreenState extends State<EventScreen> {
               _buildTextField(
                 label: "Rules",
                 maxLines: 3,
-                onChanged: (value) => rules = value,
+                onChanged: (value) => rules = [value],
               ),
 
               SizedBox(height: screenSize.height * 0.02),
@@ -130,7 +134,7 @@ class _EventScreenState extends State<EventScreen> {
               _buildTextField(
                 label: "Points",
                 keyboardType: TextInputType.number,
-                onChanged: (value) => points = int.tryParse(value) ?? 0,
+                onChanged: (value) => points = [int.tryParse(value) ?? 0],
               ),
 
               SizedBox(height: screenSize.height * 0.04),
@@ -147,12 +151,43 @@ class _EventScreenState extends State<EventScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
+                    final secureStorage = SecureStorage();
+                    final apiCall = ApiCalls();
+                    final signupController = SignupController(apiCall);
+                    String? tkn = await secureStorage.getData('jwtToken');
                     if (_formKey.currentState!.validate()) {
-                      log("Event Saved: $eventName");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Event Saved!")),
-                      );
+                      signupController.createEventInfo(
+                          name: eventName,
+                          type: "Junior",
+                          part_type: "Solo",
+                          description: description,
+                          rules: rules,
+                          maxStudents: maxStudents,
+                          minStudents: minStudents,
+                          location: location,
+                          points: [1, 2, 3]);
+                      apiCall
+                          .createEventCall(
+                              signupController.createEventCred, tkn.toString())
+                          .then((value) => {
+                                if (value)
+                                  {
+                                    log("Event Saved: $eventName"),
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text("Event Saved!")),
+                                    )
+                                  }
+                                else
+                                  {
+                                    log("Unable to Save : "),
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text("Failed!")),
+                                    ),
+                                  }
+                              });
                     }
                   },
                   child: const Text(

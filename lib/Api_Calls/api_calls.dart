@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
+import 'package:pcte_event_management/Models/event_model.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 
 class ApiCalls {
@@ -119,4 +120,36 @@ class ApiCalls {
     }
   }
 
+  Future<bool> createEventCall(EventModel createEventCred,String tkn) async {
+    try {
+      log("Token :: $tkn");
+      dio.options.headers['Authorization'] = 'Bearer $tkn';
+      final response = await dio.post(
+        dotenv.env['CREATE_EVENT_API']!,
+        data: createEventCred.toJson(),
+      );
+
+      String res = response.data.toString();
+      log("Res :::: $res");
+
+      if(response.statusCode == 201)
+      {
+        log("Signup Successfully");
+        log(response.statusMessage.toString());
+        return true;
+      }
+      else if (response.statusCode == 400)
+      {
+        log("Bad Request ");
+        log(response.statusMessage.toString());
+        return false;
+      }
+      else{
+        return false;
+      }
+    } on DioException catch (e) {
+      log("DioException: ${e.toString()}");
+      return false;
+    }
+  }
 }

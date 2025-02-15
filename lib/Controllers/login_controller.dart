@@ -6,9 +6,7 @@ import 'package:provider/provider.dart';
 
 class LoginController {
   final ApiCalls apiCall;
-
   late UserModel loginCred;
-  late UserModel signupCred;
 
   // Constructor that accepts an ApiCalls instance
   LoginController(this.apiCall);
