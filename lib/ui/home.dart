@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
+import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
@@ -25,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = true;
   List<Map<String , dynamic>> filteredEvents = [];
   List<Map<String, dynamic>> verticalEvents = [];
+  bool isEmpty = false;
 
 Future<List<Map<String , dynamic>>> getAllEvents() async{
 
@@ -42,6 +44,7 @@ Future<void> _fetchEvents ()async
   setState(() {
     filteredEvents = List.from(verticalEvents);
     isLoading =false;
+    isEmpty = verticalEvents.isEmpty;
   });
 
 }
@@ -171,53 +174,65 @@ Future<void> _fetchEvents ()async
               ),
               drawer: CustomDrawer(),
 
-
               body: isLoading
                   ?
               Center(child: CircularProgressIndicator(),)
                   :
-              Column(
-                children: [
-                  Padding(padding: EdgeInsets.only(top: 15)),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      itemCount: verticalEvents.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage(
-                              eventName: verticalEvents[index]['name'],
-                              description: verticalEvents[index]['description'],
-                              maxStudents: verticalEvents[index]['maxStudents'],
-                              minStudents: verticalEvents[index]['minStudents'],
-                              location: verticalEvents[index]['location'],
-                              convener: verticalEvents[index]['convenor'],
+                  isEmpty
+                      ?
+                  Center(child: Text('No Events \nTry Again Later',style: TextStyle(fontSize: 18),),)
+                      :
+                  FutureBuilder(
+                    future: secureStorage.getData('user_type'),
+                    builder: (context,snapshot) {
 
-                            )));
-                          },
-                          child: VerticalCard(
-                            onPressed: (){
+                     final userType = snapshot.data;
 
-                              log(verticalEvents[index]['_id']);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => EventResultScreen(eventId: verticalEvents[index]['_id'],
-                                      )
-                                  )
-                              );
-                            },
-                            eventType: verticalEvents[index]['type']!,
-                            eventName: verticalEvents[index]['name']!,
-                            index: index,
+                    return  Column(
+                        children: [
+                          Padding(padding: EdgeInsets.only(top: 15)),
+                          Expanded(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 15),
+                              itemCount: verticalEvents.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage(
+                                      eventName: verticalEvents[index]['name'],
+                                      description: verticalEvents[index]['description'],
+                                      maxStudents: verticalEvents[index]['maxStudents'],
+                                      minStudents: verticalEvents[index]['minStudents'],
+                                      location: verticalEvents[index]['location'],
+                                      convener: verticalEvents[index]['convenor'],
+                                    )
+                                    )
+                                    );
+                                  },
+                                  child: VerticalCard(
+                                    onPressed: (){
+
+                                      log(verticalEvents[index]['_id']);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => EventResultScreen(eventId: verticalEvents[index]['_id'],
+                                              )
+                                          )
+                                      );
+                                    },
+                                    eventType: verticalEvents[index]['type']!,
+                                    eventName: verticalEvents[index]['name']!,
+                                    index: index,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        );
-                      },
-                    ),
+                        ],
+                      );
+                    },
                   ),
-                ],
-              ),
             ),
           ),
         );
@@ -235,6 +250,7 @@ class VerticalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final secureStorage = SecureStorage();
     // Use MediaQuery to make the card size responsive
     double screenWidth = MediaQuery.of(context).size.width;
     double cardWidth = screenWidth * 0.8; // 80% of the screen width
@@ -256,38 +272,58 @@ class VerticalCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Consumer<LoginProvider>(
+        builder: (context,providur, child) {
+          return FutureBuilder(
+            future: secureStorage.getData('user_type'),
+            builder: (context, snapshot) {
+
+              final userType = snapshot.data;
+
+
+              return  Row(
                 children: [
-                  Text(
-                    eventName,  // Display event name
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), // Slightly smaller font
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            eventName,  // Display event name
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), // Slightly smaller font
+                          ),
+                          const SizedBox(height: 5),
+                          Text(eventType),
+                          Row(
+                            children: [
+                              CustomTextButton(
+                                  text: "Show Result",
+                                  onPressed: onPressed
+                              ),
+                              SizedBox(width: screenWidth * .02 ),
+                              if(userType == 'Convenor' || userType == 'Admin')
+                                CustomTextButton(
+                                  text: 'Add Result',
+                                  onPressed: (){}
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 5),
-                  Text(eventType),
-                 Row(
-                   children: [
-                     CustomTextButton(
-                       text: "Show Result",
-                       onPressed: onPressed
-                     ),
-                   ],
-                 ),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Icon(Icons.arrow_forward_ios, color: Colors.blueAccent),
+                  ),
                 ],
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: Icon(Icons.arrow_forward_ios, color: Colors.blueAccent),
-          ),
-        ],
+              );
+            },
+          );
+        },
+
       ),
     );
   }

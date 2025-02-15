@@ -254,58 +254,66 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildLoginButton(Size size) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFF9E2A2F),
-        minimumSize: const Size.fromHeight(50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        elevation: 5,
-      ),
-      onPressed: () async {
-        try {
-          isLoading = true;
-          final apiCalls = ApiCalls();
-          final loginController = LoginController(apiCalls);
-          if (_formKey.currentState?.validate() ?? false) {
-            loginController.logInfo(
-                ctx: context,
-                email: _controllerEmail.text,
-                password: _controllerPassword.text
-            );
-            await apiCalls.loginCall(loginController.loginCred).then((value) async {
-              await secureStorage.saveData("jwtToken",apiCalls.tkn);
-              String? s = await secureStorage.getData('jwtToken');
-              await apiCalls.getUserCall(s!);
-              isLoading = false;
+    return Consumer<LoginProvider>(
+      builder: (context,providur,child) {
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF9E2A2F),
+            minimumSize: const Size.fromHeight(50),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            elevation: 5,
+          ),
+          onPressed: () async {
+            try {
+              final apiCalls = ApiCalls();
+              final loginController = LoginController(apiCalls);
+              if (_formKey.currentState?.validate() ?? false) {
+                providur.checkLoading();
+                loginController.logInfo(
+                    ctx: context,
+                    email: _controllerEmail.text,
+                    password: _controllerPassword.text
+                );
+                await apiCalls.loginCall(loginController.loginCred).then((value) async {
 
-              if(value)
-                {
 
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BottomNavBar() ));
-                }
-              else
-                {
-                  return ScaffoldMessenger.of(context)
-                      .showSnackBar(
+                  if(value)
+                  {
+                    await secureStorage.saveData("jwtToken",apiCalls.tkn);
+                    String? s = await secureStorage.getData('jwtToken');
+                    await apiCalls.getUserCall(s!);
+                    providur.checkLoading();
+
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BottomNavBar() ));
+                  }
+                  else
+                  {
+                    providur.checkLoading();
+                    return ScaffoldMessenger.of(context)
+                        .showSnackBar(
                       SnackBar(
                           content: Text(
-                              'Unexpected Error Occured \n Please Try Again Later...'
+                              'Wrong Credentials '
                           )
                       ),
-                  );
-                }
-            });
+                    );
+                  }
+                });
 
 
-          }
-        } on Exception catch (e) {
-          log('Error in login function : ${e.toString()}');
-        }
+              }
+            } on Exception catch (e) {
+              log('Error in login function : ${e.toString()}');
+            }
+          },
+          child: providur.isLoading
+              ?
+          Center(child: CircularProgressIndicator(strokeWidth: 3,),)
+              :
+          Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+        );
       },
-      child: isLoading ?
-      Center(child: CircularProgressIndicator(strokeWidth: 20,),)
-      :
-      Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+
     );
   }
 

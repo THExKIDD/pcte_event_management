@@ -1,11 +1,8 @@
-import 'dart:convert';
+
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
-import 'login.dart';
 import 'package:animate_do/animate_do.dart';
 
 class EventResultScreen extends StatefulWidget {
@@ -19,6 +16,7 @@ class EventResultScreen extends StatefulWidget {
 class _EventResultScreenState extends State<EventResultScreen> {
   List<Map<String, dynamic>> tableData = [];
   bool isLoading = true;
+  bool noResultsAvailable = false;
 
 
   Future<List<Map<String, dynamic>>> getResult() async
@@ -37,14 +35,11 @@ class _EventResultScreenState extends State<EventResultScreen> {
 
     tableData = await getResult();
     setState(() {
-      log(tableData[1].toString());
       isLoading =false;
+      noResultsAvailable = tableData.isEmpty;
     });
 
   }
-
-
-
 
 
   @override
@@ -52,7 +47,6 @@ class _EventResultScreenState extends State<EventResultScreen> {
     super.initState();
     _fetchResult();
   }
-
 
 
   @override
@@ -76,7 +70,11 @@ class _EventResultScreenState extends State<EventResultScreen> {
       body:  isLoading ?
       Center(child: CircularProgressIndicator(),)
           :
-      Column(
+          noResultsAvailable
+              ?
+          Center(child: Text('Results not Available'),)
+              :
+          Column(
         children: [
           const SizedBox(height: 20),
           const Text("Event Winners ", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
@@ -96,9 +94,9 @@ class _EventResultScreenState extends State<EventResultScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Flexible(child: _buildPodium(Colors.grey, 2, tableData[1]['studentName'])),
-        Flexible(child: _buildPodium(Colors.yellow, 1, tableData[0]['studentName'])),
-        Flexible(child: _buildPodium(Colors.brown, 3, tableData[2]['studentName'])),
+        Flexible(child: _buildPodium(Colors.grey, 2, tableData.length > 1 ?   tableData[1]['studentName'] : "N/A")),
+        Flexible(child: _buildPodium(Colors.yellow, 1, tableData.isNotEmpty ? tableData[0]['studentName'] : "N/A")),
+        Flexible(child: _buildPodium(Colors.brown, 3, tableData.length > 2 ? tableData[2]['studentName'] : "N/A")),
       ],
     );
   }
@@ -149,26 +147,26 @@ class _EventResultScreenState extends State<EventResultScreen> {
                 padding: EdgeInsets.all(8.0),
                 child: Text("Class", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
               ),
-              Padding(
+              /*Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text("Points", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-              ),
+              ),*/
             ],
           ),
           ...tableData.map((data) => TableRow(
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(data["position"]!.toString()),
+                child: Text(tableData.isNotEmpty ? data["position"]!.toString() : "N/A"),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(data["classId"]["name"]!),
+                child: Text(tableData.isNotEmpty ? data["classId"]["name"]! : "N/A"),
               ),
-              Padding(
+              /*Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text('20'),
-              ),
+              ),*/
             ],
           )),
         ],
