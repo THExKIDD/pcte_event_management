@@ -13,6 +13,7 @@ import 'package:pcte_event_management/ui/home.dart';
 import 'package:pcte_event_management/ui/otp.dart';
 
 import 'package:pcte_event_management/ui/splashScreen.dart';
+import 'package:pcte_event_management/ui/student_reg.dart';
 import 'package:provider/provider.dart';
 
 class MainApp extends StatelessWidget {
