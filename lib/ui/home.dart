@@ -199,6 +199,7 @@ Future<void> _fetchEvents ()async
                                 return InkWell(
                                   onTap: (){
                                     Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage(
+                                      eventId: verticalEvents[index]['_id'],
                                       eventName: verticalEvents[index]['name'],
                                       description: verticalEvents[index]['description'],
                                       maxStudents: verticalEvents[index]['maxStudents'],
@@ -220,6 +221,11 @@ Future<void> _fetchEvents ()async
                                               )
                                           )
                                       );
+                                    },
+                                    onPressed2: (){
+
+                                      log(verticalEvents[index]['_id']);
+
                                     },
                                     eventType: verticalEvents[index]['type']!,
                                     eventName: verticalEvents[index]['name']!,
@@ -243,10 +249,11 @@ Future<void> _fetchEvents ()async
 
 class VerticalCard extends StatelessWidget {
   final VoidCallback onPressed;
+  final VoidCallback onPressed2;
   final String eventName;
   final int index;
   final String eventType;
-  const VerticalCard({required this.eventName, required this.index, super.key, required this.eventType, required this.onPressed});
+  const VerticalCard({required this.eventName, required this.index, super.key, required this.eventType, required this.onPressed, required this.onPressed2});
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +313,7 @@ class VerticalCard extends StatelessWidget {
                               if(userType == 'Convenor' || userType == 'Admin')
                                 CustomTextButton(
                                   text: 'Add Result',
-                                  onPressed: (){}
+                                  onPressed: onPressed2
                               ),
                             ],
                           ),

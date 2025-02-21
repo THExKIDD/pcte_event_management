@@ -1,12 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/Registration_api_calls.dart';
 
 class StudentRegistrationScreen extends StatefulWidget {
+  final String eventId;
+  const StudentRegistrationScreen({super.key, required this.eventId});
+
   @override
-  _StudentRegistrationScreenState createState() => _StudentRegistrationScreenState();
+  State<StudentRegistrationScreen> createState()  => _StudentRegistrationScreenState();
 }
 
 class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
   List<TextEditingController> controllers = [TextEditingController()];
+  List<String> studentNames = [];
 
   void addField() {
     setState(() {
@@ -24,8 +31,23 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
 
   void register() {
     for (var controller in controllers) {
-      print("Student Name: ${controller.text}");
+      log("Student Name: ${controller.text}");
+      studentNames.add(controller.text);
+
     }
+
+    log(studentNames.toString());
+    RegistrationApiCalls registrationApiCalls = RegistrationApiCalls();
+    registrationApiCalls.registerStudentApi(studentNames,widget.eventId);
+
+    for (var controller in controllers) {
+      controller.text = '';
+
+    }
+
+    FocusScope.of(context).unfocus();
+
+
     // You can add backend API integration here
   }
 
@@ -47,7 +69,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
           borderSide: const BorderSide(color: Colors.black45),
         ),
         suffixIcon: IconButton(
-          icon: Icon(Icons.delete, color: Colors.red), // Change to dustbin icon
+          icon: Icon(Icons.delete, color: Color(0xFF9E2A2F)), // Change to dustbin icon
           onPressed: () {
             removeField(controllers.indexOf(controller));
           },
@@ -67,6 +89,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
       appBar: AppBar(
         title: Text('Student Registration', style: TextStyle(color: Colors.white)),
         backgroundColor: Color(0xFF9E2A2F),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -96,7 +119,6 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
               margin: EdgeInsets.symmetric(horizontal: 16), // Add horizontal margin
               child: ElevatedButton(
                 onPressed: addField,
-                child: Text("Add More Student", style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue, // Custom background color
                   padding: EdgeInsets.symmetric(vertical: 12), // Adjusted padding
@@ -104,6 +126,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                     borderRadius: BorderRadius.circular(8), // Rounded corners
                   ),
                 ),
+                child: Text("Add More Student", style: TextStyle(color: Colors.white)),
               ),
             ),
             SizedBox(height: 16),
@@ -113,7 +136,6 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
               margin: EdgeInsets.symmetric(horizontal: 16), // Add horizontal margin
               child: ElevatedButton(
                 onPressed: register,
-                child: Text("Register", style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF9E2A2F), // Custom background color
                   padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
@@ -122,6 +144,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                     borderRadius: BorderRadius.circular(8), // Rounded corners
                   ),
                 ),
+                child: Text("Register", style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
