@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Providers/dropdown_provider.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 
@@ -23,6 +24,7 @@ class MainApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => PassProvider(),),
+        ChangeNotifierProvider(create: (context) => DropDownProvider(),),
         ChangeNotifierProvider(create: (context) => LoginProvider(),)
       ],
       child: MaterialApp(

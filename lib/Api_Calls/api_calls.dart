@@ -6,6 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 
+import '../Models/event_model.dart';
+
 class ApiCalls {
   final Dio dio = Dio();
   final secureStorage = SecureStorage();
@@ -60,8 +62,11 @@ class ApiCalls {
         log(response.statusMessage.toString());
         Map<String , dynamic> userDetails = response.data['user'];
         String userTypeGet = response.data['user']['user_type'];
+        String userId = response.data['user']['_id'];
+        log("User ID $userId");
         final data2 = userTypeGet.toString();
         log(data2);
+        secureStorage.saveData('user_id', userId);
         secureStorage.saveData('user_type', data2);
         final data = userDetails.toString();
         secureStorage.saveData('userDetails', data);
@@ -119,6 +124,31 @@ class ApiCalls {
     }
   }
 
+  Future<bool> createEventCall(EventModel createEventCred,String token) async {
+    log("jcbkhdsbkh ${createEventCred.toJson()}");
+    try {
+      dio.options.headers['Authorization'] = 'Bearer $token';
+      final response =await  dio.post(
+          dotenv.env['CREATE_EVENT_API']!,
+          data:createEventCred.toJson()
+      );
+
+      if(response.statusCode == 200)
+      {
+        log('Create Event api called ');
+        return true;
+      }
+      else{
+        throw Exception;
+      }
+    } on Exception catch (e) {
+      log('create event exception : ${e.toString()}');
+      return false;
+    }
+
+
+  }
+
   Future<bool> sendOtp(String email) async {
 
     try{
@@ -160,9 +190,9 @@ class ApiCalls {
     final String? otp = Otp;
     final String? newPass = NewPass;
 
-    
 
-      
+
+
       try {
         final request = UserModel(email: email, otp: otp, password: newPass);
 
@@ -188,9 +218,9 @@ class ApiCalls {
         return false;
       }
 
-      
+
   }
-  
+
   Future<List<Map<String,dynamic>>> getFacultyCall(String tkn) async {
 
 
@@ -226,8 +256,8 @@ class ApiCalls {
 
 
 
-    
-    
+
+
   }
 
 

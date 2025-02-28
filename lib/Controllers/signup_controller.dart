@@ -1,14 +1,16 @@
-import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:pcte_event_management/Api_Calls/api_calls.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Models/event_model.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 
 class SignupController {
   final ApiCalls apiCall;
-
+  final secureStorage = SecureStorage();
   late UserModel signupCred;
   late EventModel createEventCred;
+
+
 
   // Constructor that accepts an ApiCalls instance
   SignupController(this.apiCall);
@@ -39,6 +41,7 @@ class SignupController {
     required int minStudents,
     required String location,
     required List<int> points,
+    // required String? convenor
   })async {
     createEventCred = EventModel(
       name: name,
@@ -49,7 +52,8 @@ class SignupController {
       maxStudents: maxStudents,
       minStudents: minStudents,
       location: location,
-      convenor: '',
+      points: points,
+      // convenor: convenor,
     );
   }
 }
