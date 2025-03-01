@@ -58,5 +58,31 @@ class EventApiCalls{
     
   }
 
-  
+
+  Future<bool> deleteEvent(String tkn) async {
+    try {
+      dio.options.headers ['Authorization'] = 'Bearer $tkn';
+      final response =  await dio.get(dotenv.env['DELETE_EVENT_API']!);
+
+      log(response.statusCode.toString());
+
+      Map<String,dynamic> jsonData = response.data;
+
+      List<Map<String, dynamic>> facultyList = List<Map<String, dynamic>>.from(jsonData['data']);
+
+      log(facultyList.toString());
+
+      if(response.statusCode == 200)
+      {
+          return true;
+      }
+
+    } on Exception catch (e) {
+      log(e.toString());
+      return false;
+    }
+    return false;
+  }
+
+
 }

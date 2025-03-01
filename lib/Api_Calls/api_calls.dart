@@ -222,8 +222,6 @@ class ApiCalls {
   }
 
   Future<List<Map<String,dynamic>>> getFacultyCall(String tkn) async {
-
-
     try {
       dio.options.headers ['Authorization'] = 'Bearer $tkn';
        final response =  await dio.get(dotenv.env['GET_FACULTY_API']!);
@@ -243,23 +241,11 @@ class ApiCalls {
 
       return [];
 
-
-
-
-
-
     } on Exception catch (e) {
       log(e.toString());
       return [];
     }
-
-
-
-
-
-
   }
-
 
   Future<bool> updateFaculty({
     required String name,

@@ -36,7 +36,17 @@ class EventDetailsPage extends StatelessWidget {
             _buildInfoCard(Icons.person, "Convener", convener),
             _buildInfoCard(Icons.star, "Points", "$points Points"),
             SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(onPressed: (){
 
+                }, child: Text('Update ')),
+                ElevatedButton(onPressed: (){
+                  
+                }, child: Text('Delete ')),
+              ],
+            )
           ],
         ),
       ),
