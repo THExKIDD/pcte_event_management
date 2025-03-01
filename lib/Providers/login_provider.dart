@@ -11,6 +11,19 @@ class LoginProvider with ChangeNotifier{
   String? get selectedValue => _selectedValue;
   String? get anotherValue => _anotherValue;
 
+
+  bool isLoading = false;
+
+
+
+
+  void checkLoading()
+  {
+    isLoading = !isLoading;
+    notifyListeners();
+  }
+
+
   void updateSelectedValue(String? newValue)
   {
     _selectedValue = newValue;

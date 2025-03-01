@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
+import 'package:pcte_event_management/ui/student_reg.dart';
 
 class EventDetailsPage extends StatelessWidget {
   final String eventName;
@@ -10,16 +12,41 @@ class EventDetailsPage extends StatelessWidget {
   final String location;
   final String convener;
   final int points = 50;
+  final String eventId;
 
-  const EventDetailsPage({super.key,required this.eventName, required this.description, required this.maxStudents, required this.minStudents, required this.location, required this.convener});
+  const EventDetailsPage({super.key,required this.eventName, required this.description, required this.maxStudents, required this.minStudents, required this.location, required this.convener, required this.eventId});
   @override
   Widget build(BuildContext context) {
+    SecureStorage secureStorage = SecureStorage();
     return Scaffold(
       appBar: AppBar(
         title: Text("Event Details", style: TextStyle(color: Colors.white),),
-        centerTitle: true,
         backgroundColor: Color(0xFF9E2A2F),
         iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      floatingActionButton: FutureBuilder(
+        future: secureStorage.getData('user_type'),
+        builder: (context, snapshot) {
+
+        if(snapshot.hasData && snapshot.data == 'Teacher')
+          {
+            return SizedBox(
+              height: 70,
+              width: 70,
+              child: FloatingActionButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => StudentRegistrationScreen(eventId: eventId,)));
+                },
+                backgroundColor: Color(0xFF9E2A2F),
+                child: Icon(Icons.add,color: Colors.white,),
+              ),
+            );
+          }
+        else{
+          return SizedBox();
+        }
+
+        },
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
