@@ -37,7 +37,7 @@ class MainApp extends StatelessWidget {
           ),
         ),
 
-        home: CreateClassScreen(),
+        home: BottomNavBar(),
       ),
     );
   }
