@@ -22,7 +22,7 @@ class EventModel {
     required this.maxStudents,
     required this.minStudents,
     required this.location,
-    required this.convenor,
+    this.convenor,
     this.points,
     this.isActive = true, // Default to true if not provided
   });

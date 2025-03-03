@@ -1,7 +1,15 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
+import 'package:pcte_event_management/widgets/drop_box.dart';
 import 'package:pcte_event_management/widgets/dropdown.dart';
+import 'package:provider/provider.dart';
+
+import '../Controllers/signup_controller.dart';
+import '../Providers/dropdown_provider.dart';
+import '../Providers/login_provider.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -12,7 +20,7 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  final secureStorage = SecureStorage();
   String eventName = '';
   String description = '';
   int maxStudents = 1;
@@ -69,6 +77,12 @@ class _EventScreenState extends State<EventScreen> {
     }
   }
 
+  // Future<String?> getUser()async{
+  //   final apiCall = ApiCalls();
+  //   await apiCall.getEventUser();
+  //   return await secureStorage.getData('event_user_id');
+  // }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -98,12 +112,28 @@ class _EventScreenState extends State<EventScreen> {
 
               SizedBox(height: screenSize.height * 0.02),
 
-              DropDown.showDropDown("Event Type", const Icon(Icons.event, color: Colors.black), ["Junior", "Senior"], _participationTypeFocus,),
+              // DropDown.showDropDown("Event Type", const Icon(Icons.event, color: Colors.black), ["Junior", "Senior"], _participationTypeFocus,),
+              // SizedBox(height: screenSize.height * 0.02),
+              //
+              // DropDown.showDropDown("Participation Type", const Icon(Icons.group, color: Colors.black), ["Solo", "Group"], _descriptionFocus),
+              // SizedBox(height: screenSize.height * 0.02),
+
+              DropDownBox(
+                items: ["Junior", "Senior"],
+                labelText: "Event Type",
+                icon: const Icon(Icons.event, color: Colors.black),
+                dropdownKey: "eventType", // Unique key
+              ),
               SizedBox(height: screenSize.height * 0.02),
 
-              DropDown.showDropDown("Participation Type", const Icon(Icons.group, color: Colors.black), ["Solo", "Group"], _descriptionFocus),
-              SizedBox(height: screenSize.height * 0.02),
+              DropDownBox(
+                items: ["Solo", "Group"],
+                labelText: "Participation Type",
+                icon: const Icon(Icons.group, color: Colors.black),
+                dropdownKey: "participationType", // Unique key
+              ),
 
+              SizedBox(height: screenSize.height * 0.02),
               _buildTextField(
                 label: "Description",
                 maxLines: 3,
@@ -154,13 +184,68 @@ class _EventScreenState extends State<EventScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        final eventApiCalls = EventApiCalls();
-                        eventApiCalls.createEventCall();
-                      }
-                    },
+                    ),onPressed: () async{
+                    if (_formKey.currentState!.validate()) {
+                      final apiCall = ApiCalls();
+                      SignupController signupController = SignupController(apiCall);
+                      String? token = await secureStorage.getData('jwtToken');
+                      await apiCall.getUserCall(token!);
+                      // String? usr = await secureStorage.getData('user_id');
+                      // log('user  $usr');
+
+                      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+
+                      String type = dropDownProvider.getSelectedValue("eventType") ?? "Junior";
+                      String partType = dropDownProvider.getSelectedValue("participationType") ?? "Solo";
+
+                      print('Event Created with Type: $type and Participation: $partType');
+
+                      // Extracting dynamic fields (Rules & Points)
+                      List<String> rules = _rulesControllers.map((controller) => controller.text).toList();
+                      List<int> points = _pointsControllers
+                          .where((controller) => controller.text.isNotEmpty) // Ensure non-empty values
+                          .map((controller) => int.tryParse(controller.text) ?? 0) // Convert to int safely
+                          .toList();
+                      log("Extracted Points: $points");
+
+                      signupController.createEventInfo(
+                        name: eventName,
+                        type: type,  // Using extracted eventType
+                        part_type: partType, // Using extracted participationType
+                        description: description,
+                        rules: rules,
+                        maxStudents: maxStudents,
+                        minStudents: minStudents,
+                        location: location,
+                        points: points,
+                        // convenor: usr!,
+                      );
+
+                      await apiCall.createEventCall(signupController.createEventCred,token).then((value){
+                          if(value){
+                             ScaffoldMessenger.of(context)
+                                .showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Event is created successfully '
+                                  )
+                              ),
+                            );
+                          }else{
+                             ScaffoldMessenger.of(context)
+                                .showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Unexpected Error Occured \n Please Try Again Later...'
+                                  )
+                              ),
+                            );
+                          }
+                      });
+                      print('Event Created with Type: $type and Participation: $partType');
+                    }
+                  },
+
                     child: const Text("Save Event", style: TextStyle(color: Colors.white)),
                   ),
                 ),
@@ -231,4 +316,5 @@ Widget _buildTextField({
     focusNode: focusNode,
     onChanged: onChanged,
   );
+
 }

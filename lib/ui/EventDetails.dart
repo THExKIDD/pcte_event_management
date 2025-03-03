@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/ui/student_reg.dart';
 
@@ -63,7 +66,41 @@ class EventDetailsPage extends StatelessWidget {
             _buildInfoCard(Icons.person, "Convener", convener),
             _buildInfoCard(Icons.star, "Points", "$points Points"),
             SizedBox(height: 20),
-
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(onPressed: ()async{
+                    
+                }, child: Text('Update ')),
+                ElevatedButton(onPressed: ()async{
+                  final secureStorage = SecureStorage();
+                  final eventApiCalls = EventApiCalls();
+                  final token = await secureStorage.getData('jwtToken');
+                  log("Details :: $token :: $eventId");
+                  await eventApiCalls.deleteEvent(token!, eventId).then((value){
+                    if(value)
+                    {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(
+                        SnackBar(
+                          content: Text("Deleted Successfully"),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }else{
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(
+                        SnackBar(
+                          content: Text("Delete Failed"),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  });
+                  log("Event id $eventId");
+                }, child: Text('Delete ')),
+              ],
+            )
           ],
         ),
       ),
