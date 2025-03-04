@@ -1,4 +1,3 @@
-
 class ClassModel {
   String? name;
   String? incharge;
@@ -19,29 +18,24 @@ class ClassModel {
   // Factory method to create a ClassModel from JSON
   factory ClassModel.fromJson(Map<String, dynamic> json) {
     return ClassModel(
-      name: json['name'],
-      incharge: json['incharge'],
-      type: json['type'],
-      isActive: json['is_active'] ?? false, // Default to true if not provided
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      name: json['name'] as String?,
+      incharge: json['incharge'] as String?,
+      type: json['type'] as String?,
+      isActive: json['is_active'] as bool? ?? true, // Default to true if null
+      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt']) : null,
     );
   }
 
-
-
   // Method to convert ClassModel to JSON
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['name'] = name;
-    data['incharge'] = incharge;
-    data['type'] = type;
-    data['is_active'] = isActive;
-    data['createdAt'] = createdAt!.toIso8601String();
-    data['updatedAt'] = updatedAt!.toIso8601String();
-    return data;
-
-
+    return {
+      'name': name,
+      'incharge': incharge,
+      'type': type,
+      'is_active': isActive,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+    };
   }
-
 }
