@@ -242,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     maxStudents: verticalEvents[index]['maxStudents'],
                                     minStudents: verticalEvents[index]['minStudents'],
                                     location: verticalEvents[index]['location'],
-                                    convener: verticalEvents[index]['convenor'],
+                                    convener: verticalEvents[index]['convenor']['name'],
                                   ),
                                 ),
                               );
