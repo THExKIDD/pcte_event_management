@@ -6,6 +6,7 @@ import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/UserUpdateScreen.dart';
 import 'package:pcte_event_management/ui/get_users.dart';
+import 'package:pcte_event_management/ui/getallclasses.dart';
 import 'package:pcte_event_management/ui/login.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
 import 'package:provider/provider.dart';
@@ -92,6 +93,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               MaterialPageRoute(builder: (_) => EventScreen()));
                         },
                       ),
+
+                    if(userType == "Admin" || userType == "Convenor")
+                      ListTile(
+                        leading: const Icon(Icons.library_add),
+                        title: const Text("Get class"),
+                        onTap: () {
+                          if (mounted) Navigator.pop(context);
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => ClassScreen()));
+                        },
+                      ),
+
+
                     if(userType == null)
                       ListTile(
                         leading: const Icon(Icons.login),
