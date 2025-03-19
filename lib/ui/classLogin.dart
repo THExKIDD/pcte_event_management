@@ -1,8 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/class_api.dart';
+import 'package:pcte_event_management/Models/user_model.dart';
+import 'package:pcte_event_management/ui/bottomNavBar.dart';
 
 class ClassLogin extends StatefulWidget {
+  const ClassLogin({super.key});
+
   @override
-  _ClassLoginState createState() => _ClassLoginState();
+  State<ClassLogin> createState() => _ClassLoginState();
 }
 
 class _ClassLoginState extends State<ClassLogin> with SingleTickerProviderStateMixin {
@@ -10,6 +17,7 @@ class _ClassLoginState extends State<ClassLogin> with SingleTickerProviderStateM
   final TextEditingController passwordController = TextEditingController();
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -119,12 +127,48 @@ class _ClassLoginState extends State<ClassLogin> with SingleTickerProviderStateM
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               elevation: 5,
             ),
-            onPressed: () {
-              String username = usernameController.text;
-              String password = passwordController.text;
-              print('Username: \$username, Password: \$password');
+            onPressed: () async {
+              try {
+                setState(() {
+                  isLoading = true;
+                });
+                String username = usernameController.text;
+                String password = passwordController.text;
+                final classDetails = UserModel(userName: username,password: password);
+                final data = await ApiService.classLogin(classDetails);
+                ScaffoldMessenger
+                    .of(context)
+                    .showSnackBar(
+                    SnackBar(
+                      content: Text(data['message']),
+                      backgroundColor: Colors.green,
+                      duration: Duration(milliseconds: 800),
+                    )
+                );
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> BottomNavBar()));
+              }catch (e) {
+                 log(e.toString());
+                 ScaffoldMessenger
+                     .of(context)
+                     .showSnackBar(
+                     SnackBar(
+                       content: Text(e.toString()),
+                       backgroundColor: Colors.red,
+                       duration: Duration(milliseconds: 700),
+                     )
+                 );
+
+                 setState(() {
+                   isLoading = false;
+                 });
+              }
+
             },
-            child: Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+            child: isLoading
+                ?
+            Center(child: CircularProgressIndicator())
+                :
+            Text("Login", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
           ),
         ],
       ),

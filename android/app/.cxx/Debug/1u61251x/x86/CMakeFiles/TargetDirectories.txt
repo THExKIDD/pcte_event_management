@@ -1,0 +1,2 @@
+D:/internship/college-project/pcte_event_management/android/app/.cxx/Debug/1u61251x/x86/CMakeFiles/edit_cache.dir
+D:/internship/college-project/pcte_event_management/android/app/.cxx/Debug/1u61251x/x86/CMakeFiles/rebuild_cache.dir

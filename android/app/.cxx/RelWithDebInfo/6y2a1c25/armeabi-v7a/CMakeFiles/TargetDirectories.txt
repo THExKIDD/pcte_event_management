@@ -1,0 +1,2 @@
+D:/internship/college-project/pcte_event_management/android/app/.cxx/RelWithDebInfo/6y2a1c25/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/internship/college-project/pcte_event_management/android/app/.cxx/RelWithDebInfo/6y2a1c25/armeabi-v7a/CMakeFiles/rebuild_cache.dir

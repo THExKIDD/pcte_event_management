@@ -29,7 +29,6 @@ class EventApiCalls {
           await dio.get('https://koshish-backend.vercel.app/api/event/');
 
       log(response.statusMessage.toString());
-      log(response.data.toString());
 
       if (response.statusCode != 200) {
         throw Exception;

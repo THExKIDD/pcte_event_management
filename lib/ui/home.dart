@@ -177,40 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   final userType = snapshot.data;
                   return ListView(
                     children: [
-                      // Admin Services Section
-                      Padding(
-                        padding: EdgeInsets.only(left: 15, top: 15, bottom: 10),
-                        child: Text(
-                          "Admin Services",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-
-                      // Admin Service Buttons
-                      Container(
-                        height: 120,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          children: [
-                            _buildServiceButton("Employee\nManagement", Icons.people),
-                            _buildServiceButton("Reports", Icons.description),
-                            _buildServiceButton("Employee\nTree", Icons.account_tree),
-                            _buildServiceButton("Profiles", Icons.person),
-                            _buildServiceButton("Events", Icons.event),
-                            _buildServiceButton("Audit", Icons.assignment),
-                          ],
-                        ),
-                      ),
-
-                      // Employee Services Section
-
-
-                      // Events List Header
                       Padding(
                         padding: EdgeInsets.only(left: 15, top: 20, bottom: 10),
                         child: Text(
