@@ -282,6 +282,9 @@ class ModifiedVerticalCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -327,7 +330,7 @@ class ModifiedVerticalCard extends StatelessWidget {
             padding: const EdgeInsets.only(right: 10),
             child: PopupMenuButton<String>(
               icon: Icon(Icons.more_vert, color: Colors.grey),
-              onSelected: (String value) {
+              onSelected: (String value) async {
                 if (value == 'show_result') {
                   Navigator.push(
                     context,
@@ -337,6 +340,10 @@ class ModifiedVerticalCard extends StatelessWidget {
                   );
                 } else if (value == 'add_result' && (userType == 'Convenor' || userType == 'Admin')) {
                   log(eventId);
+                } else if (value == 'delete_event' && (userType == 'Convenor' || userType == 'Admin')) {
+                  final eventApiCalls = EventApiCalls();
+                  eventApiCalls.deleteEventFunction(context, eventId);
+
                 }
               },
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -349,11 +356,22 @@ class ModifiedVerticalCard extends StatelessWidget {
                     value: 'add_result',
                     child: Text('Add Result'),
                   ),
+                if (userType == 'Convenor' || userType == 'Admin')
+                  const PopupMenuItem<String>(
+                    value: 'delete_event',
+                    child: Text(
+                      'Delete Event',
+                      style: TextStyle(color: Colors.red), // Makes it visually different
+                    ),
+                  ),
               ],
-            ),
+            )
           ),
         ],
       ),
+
     );
+
+
   }
 }

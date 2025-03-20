@@ -2,6 +2,9 @@ import 'dart:core';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/material.dart';
+
+import '../LocalStorage/Secure_Store.dart';
 
 class EventApiCalls {
   final Dio dio = Dio();
@@ -66,4 +69,23 @@ class EventApiCalls {
     }
     return false;
   }
+  void deleteEventFunction(BuildContext context, String eventId) async {
+    final secureStorage = SecureStorage();
+    final token = await secureStorage.getData('jwtToken');
+
+    log("Deleting Event :: $token :: $eventId");
+
+    bool success = await deleteEvent(token!, eventId);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(success ? "Deleted Successfully" : "Delete Failed"),
+        duration: Duration(seconds: 1),
+      ),
+    );
+
+    log("Event deleted: $eventId");
+  }
+
+
 }

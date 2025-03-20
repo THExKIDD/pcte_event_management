@@ -272,7 +272,9 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                   name: _controllerUserName.text,
                   email: _controllerEmail.text,
                   password: _controllerPassword.text,
-                  phn_no: _controllerPhone.text
+                  phn_no: _controllerPhone.text,
+
+
               );
          String? tkn = await secureStorage.getData('jwtToken');
 
