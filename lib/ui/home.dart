@@ -323,6 +323,14 @@ class ModifiedVerticalCard extends StatelessWidget {
               ),
             ),
           ),
+          if(userType == "Class")
+            ElevatedButton(
+                onPressed: (){},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF9E2A2F)
+                ),
+                child: Text('Register',style: TextStyle(color: Colors.white),)
+            ),
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: PopupMenuButton<String>(
