@@ -7,8 +7,10 @@ class ResultApiCalls {
 
   Future<List<Map<String, dynamic>>> getResultById({required String eventId}) async {
     try {
+
+      log(DateTime.now().year.toString());
       final response = await dio.get(
-        'https://koshish-backend.vercel.app/api/result/get/$eventId',
+        'https://koshish-backend.vercel.app/api/result/get/$eventId?year=${DateTime.now().year.toString()}',
       );
 
       log("Status Code: ${response.statusCode}");
@@ -19,6 +21,7 @@ class ResultApiCalls {
         Map<String,dynamic> jsonData = response.data['data'];
         List<Map<String,dynamic>> resultList = List<Map<String,dynamic>>.from(jsonData['result']);
         log(resultList.toString());
+
 
         return resultList;
       }

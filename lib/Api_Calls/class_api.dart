@@ -72,10 +72,12 @@ class ApiService {
 
       if (response.statusCode == 200) {
         log(data.toString());
-        await secureStorage.saveData('jwtToken', data['data']['token']);
+        await secureStorage.saveData('jwtToken', data['token']);
         await secureStorage.saveData('user_type', data['data']['type']);
         await secureStorage.saveData('user_id', data['data']['_id']);
         final String? usertype = await secureStorage.getData('user_type');
+        final String? jwtToken = await secureStorage.getData('jwtToken');
+        log(jwtToken!);
         log(usertype!);
         return data;
 

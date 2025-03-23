@@ -5,20 +5,63 @@ import 'package:pcte_event_management/Api_Calls/Registration_api_calls.dart';
 
 class StudentRegistrationScreen extends StatefulWidget {
   final String eventId;
-  const StudentRegistrationScreen({super.key, required this.eventId});
+  final int minStudents;
+  final int maxStudents;
+  const StudentRegistrationScreen({
+    super.key,
+    required this.eventId,
+    required this.minStudents,
+    required this.maxStudents,
+  });
 
   @override
   State<StudentRegistrationScreen> createState()  => _StudentRegistrationScreenState();
 }
 
 class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
-  List<TextEditingController> controllers = [TextEditingController()];
+  List<TextEditingController> controllers = [];
   List<String> studentNames = [];
 
-  void addField() {
-    setState(() {
+
+  @override
+  void initState() {
+    for(int i = 0; i < widget.minStudents; i++)
+    {
       controllers.add(TextEditingController());
-    });
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    for(var controller in controllers)
+      {
+        controller.dispose();
+      }
+    super.dispose();
+  }
+
+  void addField() {
+
+
+    if(controllers.length < widget.maxStudents)
+      {
+        setState(() {
+          controllers.add(TextEditingController());
+        });
+      }
+    else
+    {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Max limit reached'
+              ),
+            duration: Duration(seconds: 1),
+            backgroundColor: Colors.red,
+          )
+      );
+    }
   }
 
   void removeField(int index) {
@@ -29,7 +72,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
     }
   }
 
-  void register() {
+  Future<void> register() async {
     for (var controller in controllers) {
       log("Student Name: ${controller.text}");
       studentNames.add(controller.text);
@@ -38,7 +81,29 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
 
     log(studentNames.toString());
     RegistrationApiCalls registrationApiCalls = RegistrationApiCalls();
-    registrationApiCalls.registerStudentApi(studentNames,widget.eventId);
+    final val =  await registrationApiCalls.registerStudentApi(studentNames,widget.eventId);
+
+    if(val)
+      {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Registration Successful'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.green,
+          )
+        );
+      }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Registration Failed\nTry Again Later'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          )
+      );
+    }
+
+
 
     for (var controller in controllers) {
       controller.text = '';
@@ -46,6 +111,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
     }
 
     FocusScope.of(context).unfocus();
+    Navigator.pop(context);
 
 
     // You can add backend API integration here

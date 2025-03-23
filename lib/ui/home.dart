@@ -10,6 +10,7 @@ import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/event_result.dart';
 import 'package:pcte_event_management/ui/result.dart';
+import 'package:pcte_event_management/ui/student_reg.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import 'package:pcte_event_management/widgets/textButton.dart';
 import 'package:provider/provider.dart';
@@ -217,6 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               eventName: verticalEvents[index]['name']!,
                               eventType: verticalEvents[index]['type']!,
                               eventId: verticalEvents[index]['_id'],
+                              minStudents: verticalEvents[index]['minStudents'],
+                              maxStudents: verticalEvents[index]['maxStudents'],
                               userType: userType ?? '',
                             ),
                           );
@@ -273,14 +276,18 @@ class ModifiedVerticalCard extends StatelessWidget {
   final String eventType;
   final String eventId;
   final String userType;
+  final int minStudents;
+  final int maxStudents;
 
   const ModifiedVerticalCard({
     required this.eventName,
     required this.eventType,
     required this.eventId,
     required this.userType,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+    required this.minStudents,
+    required this.maxStudents,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -325,7 +332,9 @@ class ModifiedVerticalCard extends StatelessWidget {
           ),
           if(userType == "Class")
             ElevatedButton(
-                onPressed: (){},
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=> StudentRegistrationScreen(eventId: eventId, minStudents: minStudents, maxStudents: maxStudents,)));
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF9E2A2F)
                 ),
@@ -337,6 +346,7 @@ class ModifiedVerticalCard extends StatelessWidget {
               icon: Icon(Icons.more_vert, color: Colors.grey),
               onSelected: (String value) {
                 if (value == 'show_result') {
+                  log(eventId);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

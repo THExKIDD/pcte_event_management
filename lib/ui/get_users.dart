@@ -34,6 +34,7 @@ class _GetAllUsersState extends State<GetAllUsers> {
       ApiCalls apiCalls = ApiCalls();
 
       String? token =  await secureStorage.getData('jwtToken');
+      log(token ?? 'no token');
 
       final items = await apiCalls.getFacultyCall(token!);
       return items;

@@ -20,6 +20,7 @@ class EventDetailsPage extends StatelessWidget {
   const EventDetailsPage({super.key,required this.eventName, required this.description, required this.maxStudents, required this.minStudents, required this.location, required this.convener, required this.eventId});
   @override
   Widget build(BuildContext context) {
+    log(eventId);
     SecureStorage secureStorage = SecureStorage();
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +39,7 @@ class EventDetailsPage extends StatelessWidget {
               width: 70,
               child: FloatingActionButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => StudentRegistrationScreen(eventId: eventId,)));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => StudentRegistrationScreen(eventId: eventId,maxStudents: maxStudents,minStudents: minStudents,)));
                 },
                 backgroundColor: Color(0xFF9E2A2F),
                 child: Icon(Icons.add,color: Colors.white,),
