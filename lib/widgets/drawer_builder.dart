@@ -12,6 +12,8 @@ import 'package:pcte_event_management/ui/login.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
 import 'package:provider/provider.dart';
 
+import '../ui/class_events.dart';
+
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
 
@@ -130,16 +132,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         },
                       ),
 
-                    ListTile(
-                      leading: const Icon(Icons.settings),
-                      title: const Text("Settings"),
-                      onTap: () => Navigator.pop(context),
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.info),
-                      title: const Text("About"),
-                      onTap: () => Navigator.pop(context),
-                    ),
+                    if( userType == 'Class')
+                      ListTile(
+                        leading: const Icon(Icons.event_available_sharp),
+                        title: const Text("Class Events"),
+                        onTap: () async {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => ClassEventsScreen()));
+                        },
+                      ),
+
                     if(userType == 'Admin' || userType == 'Convenor' || userType == 'Class')
                       ListTile(
                       leading: const Icon(Icons.exit_to_app),

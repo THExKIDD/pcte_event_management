@@ -29,8 +29,11 @@ class EventDetailsPage extends StatelessWidget {
     required this.points,
   });
 
+
+
   @override
   Widget build(BuildContext context) {
+    final SecureStorage secureStorage = SecureStorage();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Event Details", style: TextStyle(color: Colors.white)),
@@ -39,47 +42,56 @@ class EventDetailsPage extends StatelessWidget {
         elevation: 0,
       ),
       floatingActionButton: _buildFloatingActionButton(context),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            _buildEventHeader(),
-            const SizedBox(height: 16),
-            _buildExpandableInfoCard(
-              icon: Icons.info_outline,
-              title: "Description",
-              content: description,
+      body: FutureBuilder(
+        future: secureStorage.getData('user_type'),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot)
+        {
+
+          String? userType = snapshot.data;
+
+         return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              children: [
+                _buildEventHeader(),
+                const SizedBox(height: 16),
+                _buildExpandableInfoCard(
+                  icon: Icons.info_outline,
+                  title: "Description",
+                  content: description,
+                ),
+                _buildExpandableInfoCard(
+                  icon: Icons.rule,
+                  title: "Rules",
+                  contentWidget: _buildRulesList(),
+                ),
+                _buildExpandableInfoCard(
+                  icon: Icons.people_outline,
+                  title: "Participants",
+                  content: "Minimum: $minStudents\nMaximum: $maxStudents",
+                ),
+                _buildExpandableInfoCard(
+                  icon: Icons.location_on_outlined,
+                  title: "Location",
+                  content: location,
+                ),
+                _buildExpandableInfoCard(
+                  icon: Icons.person_outline,
+                  title: "Convener",
+                  content: convener,
+                ),
+                _buildExpandableInfoCard(
+                  icon: Icons.star_outline,
+                  title: "Points Distribution",
+                  contentWidget: _buildPointsList(),
+                ),
+                const SizedBox(height: 16),
+                if (userType == 'Admin' || userType == 'Convenor')
+                  _buildAdminControls(context),
+              ],
             ),
-            _buildExpandableInfoCard(
-              icon: Icons.rule,
-              title: "Rules",
-              contentWidget: _buildRulesList(),
-            ),
-            _buildExpandableInfoCard(
-              icon: Icons.people_outline,
-              title: "Participants",
-              content: "Minimum: $minStudents\nMaximum: $maxStudents",
-            ),
-            _buildExpandableInfoCard(
-              icon: Icons.location_on_outlined,
-              title: "Location",
-              content: location,
-            ),
-            _buildExpandableInfoCard(
-              icon: Icons.person_outline,
-              title: "Convener",
-              content: convener,
-            ),
-            _buildExpandableInfoCard(
-              icon: Icons.star_outline,
-              title: "Points Distribution",
-              contentWidget: _buildPointsList(),
-            ),
-            const SizedBox(height: 16),
-            if (_shouldShowAdminControls())
-              _buildAdminControls(context),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -305,7 +317,7 @@ class EventDetailsPage extends StatelessWidget {
   }
 
   bool _shouldShowAdminControls() {
-    // Add your logic to determine if admin controls should be shown
+
     return true; // Replace with actual condition
   }
 

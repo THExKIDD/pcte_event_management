@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/Registration_api_calls.dart';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
@@ -190,6 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           textAlign: TextAlign.left,
                         ),
                       ),
+
 
                       // Events List
                       ListView.builder(

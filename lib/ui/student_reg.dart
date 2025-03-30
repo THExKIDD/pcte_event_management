@@ -21,6 +21,7 @@ class StudentRegistrationScreen extends StatefulWidget {
 class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
   List<TextEditingController> controllers = [];
   List<String> studentNames = [];
+  bool isLoading = false;
 
 
   @override
@@ -81,10 +82,16 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
 
     log(studentNames.toString());
     RegistrationApiCalls registrationApiCalls = RegistrationApiCalls();
+    setState(() {
+      isLoading = true;
+    });
     final val =  await registrationApiCalls.registerStudentApi(studentNames,widget.eventId);
 
     if(val)
       {
+        setState(() {
+          isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Registration Successful'),
@@ -94,6 +101,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
         );
       }
     else{
+      setState(() {
+        isLoading =false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Registration Failed\nTry Again Later'),
@@ -210,7 +220,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                     borderRadius: BorderRadius.circular(8), // Rounded corners
                   ),
                 ),
-                child: Text("Register", style: TextStyle(color: Colors.white)),
+                child: isLoading ?  Center(child: CircularProgressIndicator(),) :Text("Register", style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
