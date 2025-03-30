@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    log(verticalEvents.toString());
     return Consumer<PassProvider>(
       builder: (context, searchProvider, child) {
         return PopScope(
@@ -203,6 +204,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => EventDetailsPage(
+                                    points: verticalEvents[index]['points'],
+                                    rules: verticalEvents[index]['rules'],
                                     eventId: verticalEvents[index]['_id'],
                                     eventName: verticalEvents[index]['name'],
                                     description: verticalEvents[index]['description'],
