@@ -5,12 +5,11 @@ import 'package:flutter/material.dart';
 class ResultApiCalls {
   final dio = Dio();
 
-  Future<List<Map<String, dynamic>>> getResultById({required String eventId}) async {
+  Future<List<Map<String, dynamic>>> getResultById({required String eventId, int? year}) async {
     try {
-
-      log(DateTime.now().year.toString());
+      year ??= DateTime.now().year;
       final response = await dio.get(
-        'https://koshish-backend.vercel.app/api/result/get/$eventId?year=${DateTime.now().year.toString()}',
+        'https://koshish-backend.vercel.app/api/result/get/$eventId?year=${year.toString()}',
       );
 
       log("Status Code: ${response.statusCode}");
