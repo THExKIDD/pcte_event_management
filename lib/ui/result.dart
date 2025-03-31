@@ -119,45 +119,42 @@ class _ResultScreenState extends State<ResultScreen> {
                   child: Text("No data available", style: TextStyle(fontSize: 16)))
                   : SingleChildScrollView(
                 scrollDirection: Axis.vertical, // Enables vertical scrolling
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal, // Prevents horizontal scrolling issues
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
-                    child: DataTable(
-                      columnSpacing: 10,
-                      headingRowColor: MaterialStateColor.resolveWith((states) => Color(0xFF9E2A2F)),
-                      columns: const [
-                        DataColumn(
-                          label: Text("#", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text("Class",
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12),
-                              textAlign: TextAlign.center,
-                            ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+                  child: DataTable(
+                    columnSpacing: 10,
+                    headingRowColor: WidgetStateColor.resolveWith((states) => Color(0xFF9E2A2F)),
+                    columns: const [
+                      DataColumn(
+                        label: Text("#", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
+                      ),
+                      DataColumn(
+                        label: Expanded(
+                          child: Text("Class",
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        DataColumn(
-                          label: Text("Pts", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
-                        ),
-                      ],
-                      rows: tableData.asMap().entries.map((entry) => DataRow(cells: [
-                        DataCell(Text((entry.key + 1).toString(), style: TextStyle(fontSize: 12))),
-                        DataCell(
-                          ConstrainedBox(
-                            constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
-                            child: Text(
-                              entry.value["name"],
-                              style: TextStyle(fontSize: 12),
-                              textAlign: TextAlign.center,
-                              softWrap: true,
-                            ),
+                      ),
+                      DataColumn(
+                        label: Text("Pts", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
+                      ),
+                    ],
+                    rows: tableData.asMap().entries.map((entry) => DataRow(cells: [
+                      DataCell(Text((entry.key + 1).toString(), style: TextStyle(fontSize: 12))),
+                      DataCell(
+                        ConstrainedBox(
+                          constraints: BoxConstraints(minWidth: 100, maxWidth: 150),
+                          child: Text(
+                            entry.value["name"],
+                            style: TextStyle(fontSize: 12),
+                            textAlign: TextAlign.center,
+                            softWrap: true,
                           ),
                         ),
-                        DataCell(Text(entry.value["totalPoints"].toString(), style: TextStyle(fontSize: 12))),
-                      ])).toList(),
-                    ),
+                      ),
+                      DataCell(Text(entry.value["totalPoints"].toString(), style: TextStyle(fontSize: 12))),
+                    ])).toList(),
                   ),
                 ),
               ),

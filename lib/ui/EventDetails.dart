@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/ui/student_reg.dart';
+import 'package:pcte_event_management/ui/update_event.dart';
 
 class EventDetailsPage extends StatelessWidget {
   final String eventName;
@@ -275,7 +276,10 @@ class EventDetailsPage extends StatelessWidget {
       children: [
         Expanded(
           child: OutlinedButton(
-            onPressed: () {}, // Update functionality
+            onPressed: () {
+
+              Navigator.push(context, MaterialPageRoute(builder: (_) => UpdateEventScreen(eventId: eventId)));
+            }, // Update functionality
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 14),
               side: BorderSide(color: const Color(0xFF9E2A2F)),

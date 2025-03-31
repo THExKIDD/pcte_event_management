@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
 import 'package:pcte_event_management/Api_Calls/class_api.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
 import 'package:pcte_event_management/ui/bottomNavBar.dart';
 
@@ -135,7 +137,12 @@ class _ClassLoginState extends State<ClassLogin> with SingleTickerProviderStateM
                 String username = usernameController.text;
                 String password = passwordController.text;
                 final classDetails = UserModel(userName: username,password: password);
+                SecureStorage secureStorage = SecureStorage();
+                ApiCalls apiCalls = ApiCalls();
+                String? s = await secureStorage.getData('jwtToken');
                 final data = await ApiService.classLogin(classDetails);
+
+                await apiCalls.getUserCall(s!);
                 ScaffoldMessenger
                     .of(context)
                     .showSnackBar(

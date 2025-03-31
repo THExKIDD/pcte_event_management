@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return allEvents;
   }
 
+
   Future<void> _fetchEvents() async {
     verticalEvents = await getAllEvents();
     setState(() {
@@ -44,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isEmpty = verticalEvents.isEmpty;
     });
   }
+
 
   late PageController _pageController;
   final SecureStorage secureStorage = SecureStorage();
@@ -62,6 +64,25 @@ class _HomeScreenState extends State<HomeScreen> {
     _searchController.dispose();
     super.dispose();
   }
+
+  void _filterEvents(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        filteredEvents = List.from(verticalEvents);
+      });
+      return;
+    }
+
+    setState(() {
+      filteredEvents = verticalEvents.where((event) {
+        final name = event['name'].toString().toLowerCase();
+        return name.contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: searchProvider.isSearching
                             ? TextField(
                           controller: _searchController,
+                          onChanged: (query) => _filterEvents(query),
                           autofocus: true,
                           decoration: InputDecoration(
                             hintText: "Search events...",
@@ -134,6 +156,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () {
                       searchProvider.searchState();
                       if (!searchProvider.isSearching) _searchController.clear();
+                      setState(() {
+                        filteredEvents = List.from(verticalEvents);
+                      });
                     },
                   ),
                   Padding(
@@ -198,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: verticalEvents.length,
+                        itemCount: filteredEvents.length,  // ✅ Use `filteredEvents`
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
@@ -206,30 +231,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => EventDetailsPage(
-                                    points: verticalEvents[index]['points'],
-                                    rules: verticalEvents[index]['rules'],
-                                    eventId: verticalEvents[index]['_id'],
-                                    eventName: verticalEvents[index]['name'],
-                                    description: verticalEvents[index]['description'],
-                                    maxStudents: verticalEvents[index]['maxStudents'],
-                                    minStudents: verticalEvents[index]['minStudents'],
-                                    location: verticalEvents[index]['location'],
-                                    convener: verticalEvents[index]['convenor']['name'],
+                                    points: filteredEvents[index]['points'],
+                                    rules: filteredEvents[index]['rules'],
+                                    eventId: filteredEvents[index]['_id'],
+                                    eventName: filteredEvents[index]['name'],
+                                    description: filteredEvents[index]['description'],
+                                    maxStudents: filteredEvents[index]['maxStudents'],
+                                    minStudents: filteredEvents[index]['minStudents'],
+                                    location: filteredEvents[index]['location'],
+                                    convener: filteredEvents[index]['convenor']['name'],
                                   ),
                                 ),
                               );
                             },
                             child: ModifiedVerticalCard(
-                              eventName: verticalEvents[index]['name']!,
-                              eventType: verticalEvents[index]['type']!,
-                              eventId: verticalEvents[index]['_id'],
-                              minStudents: verticalEvents[index]['minStudents'],
-                              maxStudents: verticalEvents[index]['maxStudents'],
+                              eventName: filteredEvents[index]['name']!,
+                              eventType: filteredEvents[index]['type']!,
+                              eventId: filteredEvents[index]['_id'],
+                              minStudents: filteredEvents[index]['minStudents'],
+                              maxStudents: filteredEvents[index]['maxStudents'],
                               userType: userType ?? '',
                             ),
                           );
                         },
-                      ),
+                      )
+
                     ],
                   );
                 },

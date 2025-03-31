@@ -77,11 +77,6 @@ class _EventScreenState extends State<EventScreen> {
     }
   }
 
-  // Future<String?> getUser()async{
-  //   final apiCall = ApiCalls();
-  //   await apiCall.getEventUser();
-  //   return await secureStorage.getData('event_user_id');
-  // }
 
   @override
   Widget build(BuildContext context) {

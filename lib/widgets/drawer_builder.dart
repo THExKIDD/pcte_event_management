@@ -36,8 +36,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
               String? userType = snapshot.data;
               log(userType.toString());
-
-
               return Drawer(
                 child: ListView(
                   padding: EdgeInsets.zero,
@@ -84,6 +82,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               MaterialPageRoute(builder: (_) => SignUpScreen()));
                         },
                       ),
+
+                    if(userType == "Admin")
+                      ListTile(
+                        leading: const Icon(Icons.app_registration_sharp),
+                        title: const Text("Get All Registrations"),
+                        onTap: () {
+                          if (mounted) Navigator.pop(context);
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (_) => SignUpScreen()));
+                        },
+                      ),
+
 
 
                     if(userType == "Admin" || userType == "Convenor")

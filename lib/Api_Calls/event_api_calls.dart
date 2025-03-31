@@ -22,8 +22,32 @@ class EventApiCalls {
 
   Future<bool> createEventCall() async {
     try {
+      String? tkn = await tokenFetcher();
+
+      dio.options.headers['Authorization'] = 'Bearer $tkn';
+
       final response = await dio.post(
         dotenv.env['CREATE_EVENT_API']!,
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception;
+      }
+    } on Exception catch (e) {
+      log('create event exception : ${e.toString()}');
+      return false;
+    }
+  }
+
+
+
+  Future<bool> updateEventCall(String eventId) async {
+    try {
+
+      final response = await dio.put(
+        'https://koshish-backend.vercel.app/api/event/update/$eventId',
       );
 
       if (response.statusCode == 200) {

@@ -19,7 +19,7 @@ class RegistrationApiCalls {
     }
   }
 
-  Future<List<dynamic>> getClassRegistrations() async {
+  Future<List<dynamic>> getAllRegistrations() async {
     try {
       String? tkn = await tokenFetcher();
 
