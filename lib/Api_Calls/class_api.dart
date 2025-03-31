@@ -22,7 +22,7 @@ class ApiService {
      // Debugging
 
       final response = await http.get(
-        Uri.parse("$baseUrl/class/"),
+        Uri.parse("$baseUrl/class?page=1&limit=1000"),
         headers: {
           "Authorization": "Bearer $tkn"
         },

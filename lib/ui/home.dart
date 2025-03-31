@@ -217,6 +217,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
 
+                      if(userType == 'Admin')
+                        ElevatedButton(
+                            onPressed: (){
+
+                              final registrationApi = RegistrationApiCalls();
+                              registrationApi.getAllRegistrations();
+
+                            },
+                            child: Text('Demo')
+                        ),
+
 
                       // Events List
                       ListView.builder(
@@ -266,6 +277,9 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+
+
 
   Widget _buildServiceButton(String title, IconData icon) {
     return Container(

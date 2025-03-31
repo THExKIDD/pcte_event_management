@@ -23,6 +23,8 @@ class RegistrationApiCalls {
     try {
       String? tkn = await tokenFetcher();
 
+      log(tkn ?? "null token");
+
       dio.options.headers['Authorization'] = 'Bearer $tkn';
 
       final response = await dio.get(
@@ -96,4 +98,38 @@ class RegistrationApiCalls {
       return false;
     }
   }
+
+
+  Future<List<dynamic>> getEventRegistrations(String eventId) async
+  {
+
+    try {
+      String? tkn = await tokenFetcher();
+
+      log(tkn ?? "null token");
+
+      dio.options.headers['Authorization'] = 'Bearer $tkn';
+
+      final response = await dio.get(
+        'https://koshish-backend.vercel.app/api/registrations/category/$eventId',
+      );
+
+      if (response.statusCode == 200) {
+        log("Registrations fetched successfully");
+
+          return response.data['registrations'];
+        }
+        return [];
+      } on DioException catch (e) {
+      log("DioError: ${e.response?.statusCode} - ${e.response?.statusMessage}");
+      log(e.response?.data.toString() ?? 'No response data');
+      throw Exception('Failed to fetch registrations: ${e.message}');
+    } catch (error) {
+      log("Error fetching registrations: ${error.toString()}");
+      throw Exception('Failed to fetch registrations');
+    }
+
+
+  }
+
 }

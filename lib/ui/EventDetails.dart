@@ -1,12 +1,15 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/Registration_api_calls.dart';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/ui/student_reg.dart';
 import 'package:pcte_event_management/ui/update_event.dart';
 
-class EventDetailsPage extends StatelessWidget {
+import 'event_registrations_screen.dart';
+
+class EventDetailsPage extends StatefulWidget {
   final String eventName;
   final String description;
   final List<dynamic> rules;
@@ -30,10 +33,46 @@ class EventDetailsPage extends StatelessWidget {
     required this.points,
   });
 
+  @override
+  State<EventDetailsPage> createState() => _EventDetailsPageState();
+}
+
+class _EventDetailsPageState extends State<EventDetailsPage> {
+  bool isRegistrationsLoading = true;
+  List<dynamic> eventRegistrations = [];
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getEventRegistrations();
+  }
+
+
+  Future<void> getEventRegistrations() async {
+    try {
+      final registrationApiCalls = RegistrationApiCalls();
+      eventRegistrations = await registrationApiCalls.getEventRegistrations(widget.eventId);
+      log("Event Registrations: ${eventRegistrations.toString()}");
+      setState(() {
+        isRegistrationsLoading = false;
+      }); // Update UI after data is loaded
+    } catch (e) {
+      setState(() {
+        isRegistrationsLoading =false;
+      });
+      log("Error fetching event registrations: $e");
+      eventRegistrations = []; // Initialize to empty list on error
+    }
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
+    log(widget.eventId);
     final SecureStorage secureStorage = SecureStorage();
     return Scaffold(
       appBar: AppBar(
@@ -59,7 +98,7 @@ class EventDetailsPage extends StatelessWidget {
                 _buildExpandableInfoCard(
                   icon: Icons.info_outline,
                   title: "Description",
-                  content: description,
+                  content: widget.description,
                 ),
                 _buildExpandableInfoCard(
                   icon: Icons.rule,
@@ -69,17 +108,17 @@ class EventDetailsPage extends StatelessWidget {
                 _buildExpandableInfoCard(
                   icon: Icons.people_outline,
                   title: "Participants",
-                  content: "Minimum: $minStudents\nMaximum: $maxStudents",
+                  content: "Minimum: ${widget.minStudents}\nMaximum: ${widget.maxStudents}",
                 ),
                 _buildExpandableInfoCard(
                   icon: Icons.location_on_outlined,
                   title: "Location",
-                  content: location,
+                  content: widget.location,
                 ),
                 _buildExpandableInfoCard(
                   icon: Icons.person_outline,
                   title: "Convener",
-                  content: convener,
+                  content: widget.convener,
                 ),
                 _buildExpandableInfoCard(
                   icon: Icons.star_outline,
@@ -107,9 +146,9 @@ class EventDetailsPage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (_) => StudentRegistrationScreen(
-                  eventId: eventId,
-                  maxStudents: maxStudents,
-                  minStudents: minStudents,
+                  eventId: widget.eventId,
+                  maxStudents: widget.maxStudents,
+                  minStudents: widget.minStudents,
                 ),
               ),
             ),
@@ -138,7 +177,7 @@ class EventDetailsPage extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: Text(
-                eventName,
+                widget.eventName,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -190,7 +229,7 @@ class EventDetailsPage extends StatelessWidget {
   Widget _buildRulesList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(rules.length, (index) {
+      children: List.generate(widget.rules.length, (index) {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 6),
           child: Row(
@@ -215,7 +254,7 @@ class EventDetailsPage extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  rules[index].toString(),
+                  widget.rules[index].toString(),
                   style: const TextStyle(fontSize: 15),
                 ),
               ),
@@ -229,7 +268,7 @@ class EventDetailsPage extends StatelessWidget {
   Widget _buildPointsList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(points.length, (index) {
+      children: List.generate(widget.points.length, (index) {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 6),
           child: Row(
@@ -258,7 +297,7 @@ class EventDetailsPage extends StatelessWidget {
               const Spacer(),
               Chip(
                 label: Text(
-                  '${points[index]} Points',
+                  '${widget.points[index]} Points',
                   style: const TextStyle(color: Colors.white),
                 ),
                 backgroundColor: const Color(0xFF9E2A2F),
@@ -271,48 +310,109 @@ class EventDetailsPage extends StatelessWidget {
     );
   }
 
+// Add this button in the _buildAdminControls method in EventDetailsPage
   Widget _buildAdminControls(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () {
-
-              Navigator.push(context, MaterialPageRoute(builder: (_) => UpdateEventScreen(eventId: eventId)));
-            }, // Update functionality
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              side: BorderSide(color: const Color(0xFF9E2A2F)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => UpdateEventScreen(eventId: widget.eventId)));
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: BorderSide(color: const Color(0xFF9E2A2F)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'UPDATE',
+                  style: TextStyle(
+                    color: Color(0xFF9E2A2F),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
-            child: const Text(
-              'UPDATE',
-              style: TextStyle(
-                color: Color(0xFF9E2A2F),
-                fontWeight: FontWeight.w600,
+            const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  showDialog(context: context, builder: (ctx){
+                    return AlertDialog(
+                      title: Text("Confirm Delete"),
+                      content: Text("Do you want to delete this event?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(ctx).pop(); // Close the dialog
+                          },
+                          child: Text("No"),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.of(ctx).pop(); // Close the dialog
+                            await _deleteEvent(context); // Call your delete function here
+                            Navigator.pop(context); // Close the current screen
+                          },
+                          child: Text("Yes"),
+                        ),
+                      ],
+                    );
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF9E2A2F),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'DELETE',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EventRegistrationsScreen(
+                    eventId: widget.eventId,
+                    eventName: widget.eventName,
+                    registrations: eventRegistrations,
+                  ),
+                )
+            );
+          },
+          icon: const Icon(Icons.people, color: Colors.white),
+          label: isRegistrationsLoading
+              ?
+          const CircularProgressIndicator()
+              :
+          Text(
+            'VIEW REGISTRATIONS',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () => _deleteEvent(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF9E2A2F),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: const Text(
-              'DELETE',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF9E2A2F),
+            minimumSize: const Size(double.infinity, 50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
         ),
@@ -320,17 +420,12 @@ class EventDetailsPage extends StatelessWidget {
     );
   }
 
-  bool _shouldShowAdminControls() {
-
-    return true; // Replace with actual condition
-  }
-
   Future<void> _deleteEvent(BuildContext context) async {
     final secureStorage = SecureStorage();
     final eventApiCalls = EventApiCalls();
     final token = await secureStorage.getData('jwtToken');
 
-    await eventApiCalls.deleteEvent(token!, eventId).then((success) {
+    await eventApiCalls.deleteEvent(token!, widget.eventId).then((success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(success ? "Deleted Successfully" : "Delete Failed"),
@@ -344,9 +439,9 @@ class EventDetailsPage extends StatelessWidget {
   String _getOrdinalSuffix(int number) {
     if (number >= 11 && number <= 13) return 'th';
     switch (number % 10) {
-      case 1: return 'st';
-      case 2: return 'nd';
-      case 3: return 'rd';
+      case 1: return '1st';
+      case 2: return '2nd';
+      case 3: return '3rd';
       default: return 'th';
     }
   }
