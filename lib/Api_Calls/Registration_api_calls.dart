@@ -19,7 +19,7 @@ class RegistrationApiCalls {
     }
   }
 
-  Future<List<dynamic>> getAllRegistrations() async {
+  Future<Map<String,dynamic>> getAllRegistrations() async {
     try {
       String? tkn = await tokenFetcher();
 
@@ -43,9 +43,9 @@ class RegistrationApiCalls {
         // }
         if (response.data is Map && response.data['registrations'] != null) {
           log(response.data.toString());
-          return response.data['registrations'];
+          return response.data;
         }
-        return [];
+        return {};
       } else {
         log("Failed to fetch registrations: ${response.statusCode}");
         throw Exception('Failed to fetch registrations: ${response.statusMessage}');

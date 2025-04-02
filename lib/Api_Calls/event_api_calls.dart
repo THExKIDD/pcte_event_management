@@ -26,6 +26,8 @@ class EventApiCalls {
 
       dio.options.headers['Authorization'] = 'Bearer $tkn';
 
+      print("token ${tkn}");
+
       final response = await dio.post(
         dotenv.env['CREATE_EVENT_API']!,
       );

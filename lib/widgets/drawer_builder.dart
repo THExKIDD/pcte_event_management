@@ -6,6 +6,7 @@ import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/UserUpdateScreen.dart';
 import 'package:pcte_event_management/ui/classLogin.dart';
+import 'package:pcte_event_management/ui/get_all_registrations_screen.dart';
 import 'package:pcte_event_management/ui/get_users.dart';
 import 'package:pcte_event_management/ui/getallclasses.dart';
 import 'package:pcte_event_management/ui/login.dart';
@@ -89,8 +90,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         title: const Text("Get All Registrations"),
                         onTap: () {
                           if (mounted) Navigator.pop(context);
-                          Navigator.pushReplacement(context,
-                              MaterialPageRoute(builder: (_) => SignUpScreen()));
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => GetAllRegistrationScreen()));
                         },
                       ),
 
