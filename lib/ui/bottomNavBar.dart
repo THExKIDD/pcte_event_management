@@ -39,7 +39,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           });
         },
         children: [
-         HomeScreen(),
+          HomeScreen(),
           ResultScreen(),
         ],
       ),
