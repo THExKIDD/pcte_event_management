@@ -74,7 +74,7 @@ class _ResultScreenState extends State<ResultScreen> {
                     DropdownButton<int>(
                       value: selectedYear,
                       items: List.generate(
-                          5, (index) => DateTime.now().year - index)
+                              5, (index) => DateTime.now().year - index)
                           .map((int year) {
                         return DropdownMenuItem<int>(
                           value: year,
@@ -117,238 +117,151 @@ class _ResultScreenState extends State<ResultScreen> {
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : tableData.isEmpty
-                  ? const Center(
-                  child: Text("No data available",
-                      style: TextStyle(fontSize: 16)))
-                  :
-              // Center(
-              //     child: Container(
-              //       padding: const EdgeInsets.all(10),
-              //       color: Colors.amber,
-              //       child: BarChart(
-              //         BarChartData(
-              //             barTouchData: BarTouchData(
-              //                 enabled: false,
-              //                 touchTooltipData: BarTouchTooltipData(
-              //                     // tooltipBgColor: Colors.blueGrey,
-              //                     tooltipRoundedRadius: 80,
-              //                     tooltipMargin: 2)),
-              //             groupsSpace: 80,
-              //             rangeAnnotations: RangeAnnotations(
-              //                 horizontalRangeAnnotations: [
-              //                   HorizontalRangeAnnotation(
-              //                       y1: 4,
-              //                       color: const Color.fromARGB(
-              //                           255, 214, 118, 111),
-              //                       y2: 6),
-              //                 ]),
-              //             titlesData: FlTitlesData(
-              //                 bottomTitles: AxisTitles(
-              //                     drawBelowEverything: false,
-              //                     // axisNameSize: 40,
-              //                     sideTitles: SideTitles(
-              //                         reservedSize: 120,
-              //                         showTitles: true)),
-              //                 rightTitles: AxisTitles(
-              //                     sideTitles: SideTitles(
-              //                         getTitlesWidget: (value, meta) {
-              //                           return SideTitleWidget(
-              //                               child: Icon(Icons.cabin),
-              //                               meta: meta);
-              //                         },
-              //                         showTitles: true))
-
-              //                 // show: false,
-              //                 ),
-              //             alignment: BarChartAlignment.center,
-              //             barGroups: [
-              //               BarChartGroupData(
-              //                   x: 0,
-              //                   barsSpace: 20,
-              //                   barRods: [
-              //                     BarChartRodData(toY: 10),
-              //                     BarChartRodData(toY: 5),
-              //                   ]),
-              //               BarChartGroupData(x: 1, barRods: [
-              //                 BarChartRodData(toY: 10),
-              //                 BarChartRodData(toY: 5),
-              //               ]),
-              //               BarChartGroupData(x: 2, barRods: [
-              //                 BarChartRodData(toY: 10),
-              //                 BarChartRodData(toY: 5),
-              //               ])
-              //             ]),
-
-              //         duration:
-              //             Duration(milliseconds: 150), // Optional
-              //         curve: Curves.linear, //
-              //       ),
-              //     ),
-              //   )
-
-              //
-              // Scrollable Bar Chart
-
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Fixed Y-Axis Labels with Title
-                  // SizedBox(
-                  //   width: 40,
-                  //   height: 350,
-                  //   child: Column(
-                  //     children: [
-                  //       Text(
-                  //         'Points',
-                  //         style: TextStyle(
-                  //             fontSize: 12,
-                  //             fontWeight: FontWeight.bold),
-                  //       ),
-                  //       Expanded(
-                  //         child: Column(
-                  //           mainAxisAlignment:
-                  //               MainAxisAlignment.spaceBetween,
-                  //           children: [
-                  //             for (int i =
-                  //                     tableData[0]['totalPoints'];
-                  //                 i >= 0;
-                  //                 i--)
-                  //               Padding(
-                  //                 padding: const EdgeInsets.only(
-                  //                     right: 10),
-                  //                 child: Text(
-                  //                   i.toInt().toString(),
-                  //                   style: TextStyle(
-                  //                       fontSize: 10,
-                  //                       fontWeight: FontWeight.w500),
-                  //                 ),
-                  //               ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-
-                  // Scrollable Bar Chart
-
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        width: 3000,
-                        height: 350,
-                        child: BarChart(
-                          BarChartData(
-                            barTouchData: BarTouchData(
-                                enabled: true,
-                                touchTooltipData: BarTouchTooltipData(
-                                    direction: TooltipDirection.top)),
-
-                            alignment: BarChartAlignment.spaceAround,
-                            // backgroundColor: Colors.yellow,
-                            groupsSpace: 20,
-                            barGroups: tableData
-                                .asMap()
-                                .entries
-                                .map((entry) {
-                              int index = entry.key;
-                              var value = entry.value;
-                              return BarChartGroupData(
-                                x: index,
-                                barRods: [
-                                  BarChartRodData(
-                                    borderRadius:
-                                    BorderRadius.circular(0),
-                                    toY: value['totalPoints']
-                                        .toDouble(),
-                                    color: Colors.blue,
-                                    width: 30,
-                                  ),
-                                ],
-                                showingTooltipIndicators: [0],
-                                barsSpace: 10,
-                              );
-                            }).toList(),
-                            titlesData: FlTitlesData(
-                              bottomTitles: AxisTitles(
-                                axisNameWidget: Text(
-                                  'Classes ',
-                                  style:
-                                  TextStyle(color: Colors.black),
-                                ),
-                                drawBelowEverything: true,
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  getTitlesWidget: (value, meta) {
-                                    if (value.toInt() >= 0 &&
-                                        value.toInt() <
-                                            tableData.length) {
-                                      return SideTitleWidget(
-                                        meta: meta,
-                                        child: Text(
-                                          tableData[value.toInt()]
-                                          ['name'],
-                                          style:
-                                          TextStyle(fontSize: 8),
-                                          maxLines: 1,
-                                          overflow:
-                                          TextOverflow.ellipsis,
-                                        ),
-                                      );
-                                    }
-                                    return const Text('');
-                                  },
-                                ),
-                              ),
-                              leftTitles: AxisTitles(
-                                drawBelowEverything: true,
-                                axisNameSize: tableData[0]
-                                ['totalPoints']
-                                    .toDouble() +
-                                    5,
-                                sideTitles: SideTitles(
-                                  showTitles:
-                                  true, // Disable y-axis labels in the chart
-                                  interval: tableData[0]
-                                  ['totalPoints']
-                                      .toDouble() <
-                                      2
-                                      ? 1
-                                      : tableData[0]['totalPoints']
-                                      .toDouble() /
-                                      5,
-                                  reservedSize:
-                                  40, // No space needed since labels are outside
-                                ),
-                              ),
-                              topTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                      showTitles: false,
-                                      reservedSize: 10)),
-                              rightTitles: AxisTitles(
-                                  sideTitles:
-                                  SideTitles(showTitles: false)),
+                      ? const Center(
+                          child: Text("No data available",
+                              style: TextStyle(fontSize: 16)))
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 8,
                             ),
-                            borderData: FlBorderData(show: false),
-                            gridData: FlGridData(show: false),
-                            // barTouchData: BarTouchData(enabled: true),
-                            maxY: tableData[0]['totalPoints']
-                                .toDouble() +
-                                4, // Keep the maxY setting
-                          ),
+                            Flexible(
+                              flex: 1,
+                              // fit: FlexFit.loose,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: SizedBox(
+                                  width: 3000,
+                                  height: 350,
+                                  child: BarChart(
+                                    BarChartData(
+                                        barTouchData: BarTouchData(
+                                            enabled: true,
+                                            touchTooltipData:
+                                                BarTouchTooltipData(
+                                                    direction:
+                                                        TooltipDirection.top)),
+                                        alignment:
+                                            BarChartAlignment.spaceAround,
+                                        // backgroundColor: Colors.yellow,
+                                        groupsSpace: 20,
+                                        barGroups: tableData
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                          int index = entry.key;
+                                          var value = entry.value;
+                                          return BarChartGroupData(
+                                            x: index,
+                                            barRods: [
+                                              BarChartRodData(
+                                                borderRadius:
+                                                    BorderRadius.circular(0),
+                                                toY: value['totalPoints']
+                                                            .toDouble() ==
+                                                        0
+                                                    ? 0
+                                                    : value['totalPoints']
+                                                        .toDouble(),
+                                                color: Colors.blue,
+                                                width: 30,
+                                              ),
+                                            ],
+                                            showingTooltipIndicators: [0],
+                                            barsSpace: 10,
+                                          );
+                                        }).toList(),
+                                        titlesData: FlTitlesData(
+                                          bottomTitles: AxisTitles(
+                                            drawBelowEverything: true,
+                                            sideTitles: SideTitles(
+                                              showTitles: true,
+                                              getTitlesWidget: (value, meta) {
+                                                if (value.toInt() >= 0 &&
+                                                    value.toInt() <
+                                                        tableData.length) {
+                                                  String name =
+                                                      tableData[value.toInt()]
+                                                          ['name'];
+
+                                                  return SideTitleWidget(
+                                                    meta: meta,
+                                                    child: Text(
+                                                      name.length > 20
+                                                          ? '${name.substring(0, 20)}...'
+                                                          : name,
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 8),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  );
+                                                }
+                                                return const Text('');
+                                              },
+                                            ),
+                                          ),
+                                          leftTitles: AxisTitles(
+                                            drawBelowEverything: true,
+                                            sideTitles: SideTitles(
+                                              showTitles:
+                                                  true, // Disable y-axis labels in the chart
+                                              interval: _calculateInterval(),
+                                              getTitlesWidget: (value, meta) {
+                                                // Only show integer values
+                                                if (value ==
+                                                    value.roundToDouble()) {
+                                                  return SideTitleWidget(
+                                                    meta: meta,
+                                                    child: Text(
+                                                      value.toInt().toString(),
+                                                      style: const TextStyle(
+                                                          fontSize: 10),
+                                                    ),
+                                                  );
+                                                }
+                                                return const SizedBox
+                                                    .shrink(); // Hide non-integer labels
+                                              },
+
+                                              reservedSize:
+                                                  40, // No space needed since labels are outside
+                                            ),
+                                          ),
+                                          topTitles: AxisTitles(
+                                              sideTitles: SideTitles(
+                                                  showTitles: false,
+                                                  reservedSize: 10)),
+                                          rightTitles: AxisTitles(
+                                              sideTitles: SideTitles(
+                                                  showTitles: false)),
+                                        ),
+                                        borderData: FlBorderData(show: false),
+                                        gridData: FlGridData(show: false),
+                                        // barTouchData: BarTouchData(enabled: true),
+                                        maxY:
+                                            _calculateMaxY() // Keep the maxY setting
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            ),
+            SizedBox(
+              height: 5,
             ),
             Expanded(
                 child: ListView.builder(
                     itemCount: tableData.length,
                     itemBuilder: (context, index) {
                       return Card(
+                        elevation: 3,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -369,12 +282,32 @@ class _ResultScreenState extends State<ResultScreen> {
                                 end: Alignment.bottomCenter,
                               )),
                           child: ListTile(
-                            leading: Text('${index + 1}'),
-                            title: Text(tableData[index]['name']),
-                            subtitle: Text(tableData[index]['type'].toString()),
-                            trailing: Text(
-                                tableData[index]['totalPoints'].toString()),
-                          ),
+                              leading: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 8),
+                                  if (index < 3)
+                                    Icon(Icons.emoji_events, size: 16),
+                                  SizedBox(height: 2),
+                                  Text('${index + 1}')
+                                ],
+                              ),
+                              title: Text(tableData[index]['name']),
+                              subtitle:
+                                  Text(tableData[index]['type'].toString()),
+                              trailing: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text('Points'),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text(tableData[index]['totalPoints']
+                                      .toString()),
+                                ],
+                              )),
                         ),
                       );
                     }))
@@ -382,5 +315,18 @@ class _ResultScreenState extends State<ResultScreen> {
         ),
       ),
     );
+  }
+
+  double _calculateMaxY() {
+    if (tableData.isEmpty) return 10.0; // Default maxY when no data
+    double maxPoints = tableData[0]['totalPoints'].toDouble();
+
+    return maxPoints <= 0 ? 8 : maxPoints + 4; // Add padding, ensure non-zero
+  }
+
+  double _calculateInterval() {
+    double maxY = _calculateMaxY();
+    if (maxY <= 5) return 1.0; // Small range, small interval
+    return (maxY / 5).ceilToDouble(); // Divide into 5 steps
   }
 }

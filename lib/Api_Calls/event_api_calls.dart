@@ -43,22 +43,54 @@ class EventApiCalls {
     }
   }
 
+// In api_calls.dart or event_api_calls.dart
 
-
-  Future<bool> updateEventCall(String eventId) async {
+  Future<bool> updateEventCallWithData(
+      String eventId, Map<String, dynamic> eventData) async {
+    //         if (eventData["convenor"] == null) {
+    //   eventData["convenor"] = {
+    //     "name": eventData['name'],
+    //     "email": "default@example.com",
+    //     "phone": "+91 9876543210"
+    //   };
+    // }
     try {
+      final token = await tokenFetcher();
+      // log('toke is there $token');
+
+      log('event data  ${eventData.toString()}');
 
       final response = await dio.put(
         'https://koshish-backend.vercel.app/api/event/update/$eventId',
+        data: eventData,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token', // Ensure 'Bearer ' prefix
+          },
+        ), // Send the event data in the request body
       );
 
       if (response.statusCode == 200) {
         return true;
       } else {
-        throw Exception;
+        log('Update event failed with status: ${response.statusCode}');
+        log('Update event error data: ${response.data}');
+        throw Exception('status code wrong');
       }
-    } on Exception catch (e) {
-      log('create event exception : ${e.toString()}');
+    } on DioException catch (e) {
+      log('Dio error updating event: ${e.toString()}');
+      if (e.response != null) {
+        log('Dio error response data: ${e.response!.data}');
+        log('Dio error response headers: ${e.response!.headers}');
+        log('Dio error response status code: ${e.response!.statusCode}');
+      } else {
+        log('Dio error request options: ${e.requestOptions}');
+        log('Dio error message: ${e.message}');
+      }
+      return false;
+    } catch (e) {
+      log('General error updating event: ${e.toString()}');
       return false;
     }
   }
@@ -85,7 +117,7 @@ class EventApiCalls {
     }
   }
 
-  Future<bool> deleteEvent(String tkn,String id) async {
+  Future<bool> deleteEvent(String tkn, String id) async {
     log(":::: $tkn :: $id");
     try {
       final apiUrl = dotenv.env['DELETE_EVENT_API'];
@@ -97,7 +129,6 @@ class EventApiCalls {
       log(response.data.toString());
 
       if (response.statusCode == 200) {
-
         return true;
       }
     } on Exception catch (e) {
@@ -106,8 +137,6 @@ class EventApiCalls {
     }
     return false;
   }
-
-
 
   Future<List<dynamic>> getAllEventsForClass() async {
     try {
@@ -135,7 +164,8 @@ class EventApiCalls {
         return [];
       } else {
         log("Failed to fetch events for class: ${response.statusCode}");
-        throw Exception('Failed to fetch events for class: ${response.statusMessage}');
+        throw Exception(
+            'Failed to fetch events for class: ${response.statusMessage}');
       }
     } on DioException catch (e) {
       log("DioError: ${e.response?.statusCode} - ${e.response?.statusMessage}");
