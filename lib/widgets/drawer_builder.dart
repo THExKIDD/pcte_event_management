@@ -5,10 +5,12 @@ import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Providers/login_provider.dart';
 import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/UserUpdateScreen.dart';
+import 'package:pcte_event_management/ui/bottomNavBar.dart';
 import 'package:pcte_event_management/ui/classLogin.dart';
 import 'package:pcte_event_management/ui/get_all_registrations_screen.dart';
 import 'package:pcte_event_management/ui/get_users.dart';
 import 'package:pcte_event_management/ui/getallclasses.dart';
+import 'package:pcte_event_management/ui/home.dart';
 import 'package:pcte_event_management/ui/login.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
 import 'package:provider/provider.dart';
@@ -63,6 +65,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       ),
                     ),
 
+
+                      ListTile(
+                        leading: const Icon(Icons.home),
+                        title: const Text("HomePage"),
+                        onTap: () async {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => BottomNavBar()));
+
+                        },
+                      ),
 
                     if(userType == "Admin")
                       ListTile(
@@ -158,6 +169,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       title: const Text("Logout"),
                       onTap: () async {
                         userProvider.onLogOut();
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BottomNavBar()));
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text("User Logged Out")));
                       },
