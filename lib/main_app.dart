@@ -8,6 +8,7 @@ import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/bottomNavBar.dart';
 import 'package:pcte_event_management/ui/classLogin.dart';
 import 'package:pcte_event_management/ui/class_screen.dart';
+import 'package:pcte_event_management/ui/create_result.dart';
 import 'package:pcte_event_management/ui/get_users.dart';
 import 'package:pcte_event_management/ui/getallclasses.dart';
 import 'package:pcte_event_management/ui/result.dart';
