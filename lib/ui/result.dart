@@ -142,10 +142,9 @@ class _ResultScreenState extends State<ResultScreen> {
                                                 BarTouchTooltipData(
                                                     direction:
                                                         TooltipDirection.top)),
-                                        alignment:
-                                            BarChartAlignment.spaceAround,
+                                        alignment: BarChartAlignment.start,
                                         // backgroundColor: Colors.yellow,
-                                        groupsSpace: 20,
+                                        groupsSpace: 30,
                                         barGroups: tableData
                                             .asMap()
                                             .entries
@@ -161,7 +160,7 @@ class _ResultScreenState extends State<ResultScreen> {
                                                 toY: value['totalPoints']
                                                             .toDouble() ==
                                                         0
-                                                    ? 0
+                                                    ? 1
                                                     : value['totalPoints']
                                                         .toDouble(),
                                                 color: Colors.blue,
@@ -169,7 +168,7 @@ class _ResultScreenState extends State<ResultScreen> {
                                               ),
                                             ],
                                             showingTooltipIndicators: [0],
-                                            barsSpace: 10,
+                                            barsSpace: 20,
                                           );
                                         }).toList(),
                                         titlesData: FlTitlesData(
@@ -189,7 +188,7 @@ class _ResultScreenState extends State<ResultScreen> {
                                                     meta: meta,
                                                     child: Text(
                                                       name.length > 20
-                                                          ? '${name.substring(0, 20)}...'
+                                                          ? '${name.substring(0, 10)}...'
                                                           : name,
                                                       style: TextStyle(
                                                           fontWeight:
