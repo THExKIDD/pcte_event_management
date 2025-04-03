@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/student_reg.dart';
+import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import '../LocalStorage/Secure_Store.dart';
 
 class ClassEventsScreen extends StatefulWidget {
@@ -90,6 +91,8 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
           ),
         ],
       ),
+
+      drawer: CustomDrawer(),
       body: isLoading
           ? Center(
         child: CircularProgressIndicator(color: Color(0xFF9E2A2F)),
