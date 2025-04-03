@@ -77,7 +77,7 @@ class ApiCalls {
         return true;
       }
       else{
-        return false;
+        throw Exception('Error status code in get user api');
       }
     } on DioException catch (e) {
       log("DioException: ${e.toString()}");

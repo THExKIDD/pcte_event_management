@@ -1,11 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/ui/class_events.dart';
 import 'package:pcte_event_management/ui/home.dart';
-
-
-
 
 class bottomNavBar extends StatefulWidget {
   const bottomNavBar({super.key});
@@ -16,63 +12,66 @@ class bottomNavBar extends StatefulWidget {
 
 class _bottomNavBarState extends State<bottomNavBar> {
   int _selectedIndex = 0;
-
-  // Create a PageController for the horizontal scroll effect
   final PageController _pageController = PageController();
+  String? _userType;
 
-  // Function to change page based on BottomNavigationBar selection
+  @override
+  void initState() {
+    super.initState();
+    _loadUserType();
+  }
+
+  Future<void> _loadUserType() async {
+    final secureStorage = SecureStorage();
+    final type = await secureStorage.getData('user_type');
+    setState(() {
+      _userType = type;
+    });
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    _pageController.jumpToPage(index); // Navigate to the selected page
+    _pageController.jumpToPage(index);
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final secureStorage = SecureStorage();
     return Scaffold(
-
-      body: FutureBuilder(
-        future: secureStorage.getData('user_type') ,
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-
-          final usertype = snapshot.data;
-
-          return PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            children: [
-              usertype == 'Class' ? ClassEventsScreen() : HomeScreen(),
-              _buildPage('Page 2', Colors.green),
-            ],
-          );
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
         },
+        children: [
+          _userType == 'Class' ? ClassEventsScreen() : HomeScreen(),
+          _buildPage('Page 2', Colors.green),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(
-            icon: _selectedIndex==0?Icon(Icons.home ,  color: Colors.red):Icon(Icons.home ,  color: Colors.black),
+            icon: _selectedIndex == 0
+                ? const Icon(Icons.home, color: Colors.red)
+                : const Icon(Icons.home, color: Colors.black),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: _selectedIndex==1?Icon(Icons.bar_chart ,  color: Colors.red):Icon(Icons.bar_chart ,  color: Colors.black),
+            icon: _selectedIndex == 1
+                ? const Icon(Icons.bar_chart, color: Colors.red)
+                : const Icon(Icons.bar_chart, color: Colors.black),
             label: 'Results',
           ),
-
         ],
       ),
     );
   }
 
-  // Helper function to build pages
   Widget _buildPage(String title, Color color) {
     return Center(
       child: Container(
@@ -80,7 +79,7 @@ class _bottomNavBarState extends State<bottomNavBar> {
         child: Center(
           child: Text(
             title,
-            style: TextStyle(fontSize: 24, color: Colors.white),
+            style: const TextStyle(fontSize: 24, color: Colors.white),
           ),
         ),
       ),
