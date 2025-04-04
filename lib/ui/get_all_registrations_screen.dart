@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/Registration_api_calls.dart';
 
+import '../widgets/drawer_builder.dart';
+
 class GetAllRegistrationScreen extends StatefulWidget {
   const GetAllRegistrationScreen({super.key});
 
@@ -10,6 +12,7 @@ class GetAllRegistrationScreen extends StatefulWidget {
 
 class _GetAllRegistrationScreenState extends State<GetAllRegistrationScreen> {
   List<dynamic> registrations = [];
+  Map<String, List<dynamic>> eventRegistrations = {};
   bool isLoading = true;
   bool isEmpty = false;
   String error = '';
@@ -28,8 +31,20 @@ class _GetAllRegistrationScreenState extends State<GetAllRegistrationScreen> {
       final Map<String, dynamic> apiResponse = await registrationApiCalls.getAllRegistrations();
       final List<dynamic> allRegistrations = apiResponse['registrations'] as List<dynamic>;
 
+      // Group registrations by eventId
+      final Map<String, List<dynamic>> groupedRegistrations = {};
+
+      for (var registration in allRegistrations) {
+        final eventId = registration['eventId']['_id'];
+        if (!groupedRegistrations.containsKey(eventId)) {
+          groupedRegistrations[eventId] = [];
+        }
+        groupedRegistrations[eventId]!.add(registration);
+      }
+
       setState(() {
         registrations = allRegistrations;
+        eventRegistrations = groupedRegistrations;
         isLoading = false;
         isEmpty = registrations.isEmpty;
       });
@@ -85,6 +100,7 @@ class _GetAllRegistrationScreenState extends State<GetAllRegistrationScreen> {
           ),
         ],
       ),
+      drawer: CustomDrawer(),
       body: isLoading
           ? Center(
         child: CircularProgressIndicator(color: Color(0xFF9E2A2F)),
@@ -110,37 +126,23 @@ class _GetAllRegistrationScreenState extends State<GetAllRegistrationScreen> {
               textAlign: TextAlign.left,
             ),
           ),
-          // Registrations List
+          // Unique Events List
           ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: registrations.length,
+            itemCount: eventRegistrations.length,
             itemBuilder: (context, index) {
-              final registration = registrations[index];
-              final event = registration['eventId'];
-              final classData = registration['classId'];
+              final eventId = eventRegistrations.keys.elementAt(index);
+              final registrationsList = eventRegistrations[eventId]!;
+              final eventData = registrationsList.first['eventId'];
 
-              return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => EventDetailsScreen(
-                        eventName: event['name'],
-                        className: classData['name'],
-                        students: registration['students'],
-                      ),
-                    ),
-                  );
-                },
-                child: RegistrationCard(
-                  eventName: event['name'],
-                  eventType: event['type'],
-                  className: classData['name'],
-                  location: event['location'],
-                  studentsCount: (registration['students'] as List).length,
-                ),
+              return EventCard(
+                eventName: eventData['name'],
+                eventType: eventData['type'],
+                location: eventData['location'],
+                registrationsCount: registrationsList.length,
+                registrations: registrationsList,
               );
             },
           ),
@@ -150,131 +152,113 @@ class _GetAllRegistrationScreenState extends State<GetAllRegistrationScreen> {
   }
 }
 
-class RegistrationCard extends StatelessWidget {
+class EventCard extends StatelessWidget {
   final String eventName;
   final String eventType;
-  final String className;
   final String location;
-  final int studentsCount;
+  final int registrationsCount;
+  final List<dynamic> registrations;
 
-  const RegistrationCard({
+  const EventCard({
     required this.eventName,
     required this.eventType,
-    required this.className,
     required this.location,
-    required this.studentsCount,
+    required this.registrationsCount,
+    required this.registrations,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double cardWidth = screenWidth * 0.8;
-    double cardHeight = 160;
-
-    return Container(
-      height: cardHeight,
-      width: cardWidth,
+    return Card(
       margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.1),
-            blurRadius: 5,
-            spreadRadius: 2,
-            offset: const Offset(0, 3),
-          ),
-        ],
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EventRegistrationsScreen(
+                eventName: eventName,
+                registrations: registrations,
+              ),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                eventName,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Row(
                 children: [
-                  Text(
-                    eventName,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 5),
+                  Icon(Icons.event, size: 16, color: Colors.grey[600]),
+                  SizedBox(width: 5),
+                  Text(eventType),
+                  Spacer(),
+                  Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+                  SizedBox(width: 5),
+                  Text(location),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Row(
                     children: [
-                      Icon(Icons.event, size: 16, color: Colors.grey[600]),
+                      Icon(Icons.groups, size: 16, color: Colors.grey[600]),
                       SizedBox(width: 5),
-                      Text(eventType),
+                      Text('$registrationsCount ${registrationsCount == 1 ? 'Class' : 'Classes'} Registered'),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Icon(Icons.school, size: 16, color: Colors.grey[600]),
-                      SizedBox(width: 5),
-                      Text(className),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
-                      SizedBox(width: 5),
-                      Text(location),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.people, size: 16, color: Colors.grey[600]),
-                      SizedBox(width: 5),
-                      Text('$studentsCount ${studentsCount == 1 ? 'Student' : 'Students'} Registered'),
-                    ],
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => EventRegistrationsScreen(
+                            eventName: eventName,
+                            registrations: registrations,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF9E2A2F),
+                      minimumSize: const Size(80, 36),
+                    ),
+                    child: const Text(
+                      'View',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 15),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => EventDetailsScreen(
-                      eventName: eventName,
-                      className: className,
-                      students: [],
-                    ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF9E2A2F),
-                minimumSize: const Size(100, 40),
-              ),
-              child: const Text(
-                'View',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-class EventDetailsScreen extends StatelessWidget {
+class EventRegistrationsScreen extends StatelessWidget {
   final String eventName;
-  final String className;
-  final List<dynamic> students;
+  final List<dynamic> registrations;
 
-  const EventDetailsScreen({
+  const EventRegistrationsScreen({
     Key? key,
     required this.eventName,
-    required this.className,
-    required this.students,
+    required this.registrations,
   }) : super(key: key);
 
   @override
@@ -282,7 +266,7 @@ class EventDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Registration Details",
+          "Event Registrations",
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF9E2A2F),
@@ -333,7 +317,7 @@ class EventDetailsScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                className,
+                                "${registrations.length} Registered Classes",
                                 style: TextStyle(
                                   color: Colors.grey[700],
                                   fontSize: 16,
@@ -350,69 +334,154 @@ class EventDetailsScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Text(
-              "Registered Students",
+              "Registered Classes",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 12),
-            students.isEmpty
-                ? Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.person_off,
-                      size: 60,
-                      color: Colors.grey[400],
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      "No students registered",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-                : Expanded(
+            Expanded(
               child: ListView.builder(
-                itemCount: students.length,
+                itemCount: registrations.length,
                 itemBuilder: (context, index) {
-                  final student = students[index];
-                  return Card(
-                    elevation: 1,
-                    margin: EdgeInsets.symmetric(vertical: 4),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: const Color(0xFF9E2A2F).withOpacity(0.2),
-                        child: Text(
-                          student.toString()[0].toUpperCase(),
-                          style: const TextStyle(
-                            color: Color(0xFF9E2A2F),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        student.toString(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      subtitle: Text("Student #${index + 1}"),
-                    ),
+                  final registration = registrations[index];
+                  final classData = registration['classId'];
+                  final students = registration['students'] as List;
+
+                  return ClassRegistrationCard(
+                    className: classData['name'],
+                    studentsCount: students.length,
+                    students: students,
                   );
                 },
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ClassRegistrationCard extends StatefulWidget {
+  final String className;
+  final int studentsCount;
+  final List<dynamic> students;
+
+  const ClassRegistrationCard({
+    required this.className,
+    required this.studentsCount,
+    required this.students,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ClassRegistrationCard> createState() => _ClassRegistrationCardState();
+}
+
+class _ClassRegistrationCardState extends State<ClassRegistrationCard> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            title: Text(
+              widget.className,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            subtitle: Text(
+              "${widget.studentsCount} ${widget.studentsCount == 1 ? 'Student' : 'Students'}",
+              style: TextStyle(
+                color: Colors.grey[700],
+              ),
+            ),
+            trailing: IconButton(
+              icon: Icon(
+                _expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                color: const Color(0xFF9E2A2F),
+              ),
+              onPressed: () {
+                setState(() {
+                  _expanded = !_expanded;
+                });
+              },
+            ),
+            leading: CircleAvatar(
+              backgroundColor: const Color(0xFF9E2A2F).withOpacity(0.1),
+              foregroundColor: const Color(0xFF9E2A2F),
+              child: Icon(Icons.school),
+            ),
+          ),
+          if (_expanded)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Registered Students",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  widget.students.isEmpty
+                      ? Center(
+                    child: Text(
+                      "No students registered",
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  )
+                      : ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: widget.students.length,
+                    itemBuilder: (context, index) {
+                      final student = widget.students[index];
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                        leading: CircleAvatar(
+                          backgroundColor: const Color(0xFF9E2A2F).withOpacity(0.05),
+                          child: Text(
+                            student.toString()[0].toUpperCase(),
+                            style: const TextStyle(
+                              color: Color(0xFF9E2A2F),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        title: Text(student.toString()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }
