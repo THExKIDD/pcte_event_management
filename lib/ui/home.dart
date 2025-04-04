@@ -31,12 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _timer;
 
   // Map of event types to icons
-  final Map<String, IconData> eventTypeIcons = {
-    'default': Icons.event
-  };
+  final Map<String, IconData> eventTypeIcons = {'default': Icons.event};
 
   // Featured event data for the carousel
-
 
   @override
   void initState() {
@@ -51,8 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _searchController.dispose();
     super.dispose();
   }
-
-
 
   Future<List<Map<String, dynamic>>> getAllEvents() async {
     final eventApi = EventApiCalls();
@@ -86,13 +81,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   IconData getEventIcon(String eventType) {
-    return eventTypeIcons[eventType.toLowerCase()] ?? eventTypeIcons['default']!;
+    return eventTypeIcons[eventType.toLowerCase()] ??
+        eventTypeIcons['default']!;
   }
 
   Color getEventColor(String eventType) {
-    final Map<String, Color> eventColors = {
-      'default': Colors.indigo
-    };
+    final Map<String, Color> eventColors = {'default': Colors.indigo};
 
     return eventColors[eventType.toLowerCase()] ?? eventColors['default']!;
   }
@@ -131,29 +125,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         alignment: Alignment.centerLeft,
                         child: searchProvider.isSearching
                             ? TextField(
-                          controller: _searchController,
-                          onChanged: (query) => _filterEvents(query),
-                          autofocus: true,
-                          decoration: const InputDecoration(
-                            hintText: "Search events...",
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(color: Colors.white60),
-                            prefixIcon: Icon(
-                              Icons.search_rounded,
-                              color: Colors.white70,
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                          cursorColor: Colors.white,
-                        )
+                                controller: _searchController,
+                                onChanged: (query) => _filterEvents(query),
+                                autofocus: true,
+                                decoration: const InputDecoration(
+                                  hintText: "Search events...",
+                                  border: InputBorder.none,
+                                  hintStyle: TextStyle(color: Colors.white60),
+                                  prefixIcon: Icon(
+                                    Icons.search_rounded,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                style: const TextStyle(color: Colors.white),
+                                cursorColor: Colors.white,
+                              )
                             : const Text(
-                          "Koshish Events",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
-                          ),
-                        ),
+                                "Koshish Events",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                ),
+                              ),
                       ),
                     ),
                   ],
@@ -176,7 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onPressed: () {
                       searchProvider.searchState();
-                      if (!searchProvider.isSearching) _searchController.clear();
+                      if (!searchProvider.isSearching)
+                        _searchController.clear();
                       setState(() {
                         filteredEvents = List.from(verticalEvents);
                       });
@@ -196,7 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const CircleAvatar(
                           radius: 18,
                           backgroundColor: Colors.white,
-                          child: Icon(Icons.person, color: Color(0xFF9E2A2F), size: 24),
+                          child: Icon(Icons.person,
+                              color: Color(0xFF9E2A2F), size: 24),
                         ),
                       ),
                     ),
@@ -206,116 +202,128 @@ class _HomeScreenState extends State<HomeScreen> {
               drawer: const CustomDrawer(),
               body: isLoading
                   ? const Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xFF9E2A2F),
-                ),
-              )
-                  : isEmpty
-                  ? EmptyStateWidget(onRefresh: () {
-                setState(() {
-                  isLoading = true;
-                });
-                _fetchEvents();
-              })
-                  : FutureBuilder(
-                future: secureStorage.getData('user_type'),
-                builder: (context, snapshot) {
-                  final userType = snapshot.data;
-                  return RefreshIndicator(
-                    color: const Color(0xFF9E2A2F),
-                    onRefresh: () async {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      await _fetchEvents();
-                    },
-                    child: CustomScrollView(
-                      physics: const BouncingScrollPhysics(
-                        parent: AlwaysScrollableScrollPhysics(),
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF9E2A2F),
                       ),
-                      slivers: [
-                        // Events Section Header
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "All Events",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                    )
+                  : isEmpty
+                      ? EmptyStateWidget(onRefresh: () {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          _fetchEvents();
+                        })
+                      : FutureBuilder(
+                          future: secureStorage.getData('user_type'),
+                          builder: (context, snapshot) {
+                            final userType = snapshot.data;
+                            return RefreshIndicator(
+                              color: const Color(0xFF9E2A2F),
+                              onRefresh: () async {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                await _fetchEvents();
+                              },
+                              child: CustomScrollView(
+                                physics: const BouncingScrollPhysics(
+                                  parent: AlwaysScrollableScrollPhysics(),
                                 ),
-                                if (userType == 'Admin')
-                                  TextButton.icon(
-                                    onPressed: () {
-                                      final registrationApi = RegistrationApiCalls();
-                                      registrationApi.getAllRegistrations();
-                                    },
-                                    icon: const Icon(Icons.admin_panel_settings_rounded),
-                                    label: const Text('Admin'),
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: const Color(0xFF9E2A2F),
+                                slivers: [
+                                  // Events Section Header
+                                  SliverToBoxAdapter(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Text(
+                                            "All Events",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          if (userType == 'Admin')
+                                            TextButton.icon(
+                                              onPressed: () {
+                                                final registrationApi =
+                                                    RegistrationApiCalls();
+                                                registrationApi
+                                                    .getAllRegistrations();
+                                              },
+                                              icon: const Icon(Icons
+                                                  .admin_panel_settings_rounded),
+                                              label: const Text('Admin'),
+                                              style: TextButton.styleFrom(
+                                                foregroundColor:
+                                                    const Color(0xFF9E2A2F),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                              ],
-                            ),
-                          ),
-                        ),
 
-                        // Events Grid List
-                        SliverPadding(
-                          padding: const EdgeInsets.all(16),
-                          sliver: SliverGrid(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.75,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                            ),
-                            delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                final event = filteredEvents[index];
-                                return EventCard(
-                                  eventName: event['name'],
-                                  eventType: event['type'],
-                                  eventId: event['_id'],
-                                  minStudents: event['minStudents'],
-                                  maxStudents: event['maxStudents'],
-                                  userType: userType ?? '',
-                                  icon: getEventIcon(event['type']),
-                                  color: getEventColor(event['type']),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => EventDetailsPage(
-                                          points: event['points'],
-                                          rules: event['rules'],
-                                          eventId: event['_id'],
-                                          eventName: event['name'],
-                                          description: event['description'],
-                                          maxStudents: event['maxStudents'],
-                                          minStudents: event['minStudents'],
-                                          location: event['location'],
-                                          convener: event['convenor']['name'],
-                                        ),
+                                  // Events Grid List
+                                  SliverPadding(
+                                    padding: const EdgeInsets.all(16),
+                                    sliver: SliverGrid(
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 0.75,
+                                        crossAxisSpacing: 16,
+                                        mainAxisSpacing: 16,
                                       ),
-                                    );
-                                  },
-                                );
-                              },
-                              childCount: filteredEvents.length,
-                            ),
-                          ),
+                                      delegate: SliverChildBuilderDelegate(
+                                        (context, index) {
+                                          final event = filteredEvents[index];
+                                          return EventCard(
+                                            eventName: event['name'],
+                                            eventType: event['type'],
+                                            eventId: event['_id'],
+                                            minStudents: event['minStudents'],
+                                            maxStudents: event['maxStudents'],
+                                            userType: userType ?? '',
+                                            icon: getEventIcon(event['type']),
+                                            color: getEventColor(event['type']),
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      EventDetailsPage(
+                                                    points: event['points'],
+                                                    rules: event['rules'],
+                                                    eventId: event['_id'],
+                                                    eventName: event['name'],
+                                                    description:
+                                                        event['description'],
+                                                    maxStudents:
+                                                        event['maxStudents'],
+                                                    minStudents:
+                                                        event['minStudents'],
+                                                    location: event['location'],
+                                                    convener: event['convenor']
+                                                        ['name'],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        childCount: filteredEvents.length,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
             ),
           ),
         );
@@ -420,7 +428,8 @@ class FeaturedEventCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -650,7 +659,8 @@ class EventCard extends StatelessWidget {
                       // Patterned background
                       Positioned.fill(
                         child: CustomPaint(
-                          painter: CirclePatternPainter(color: color.withOpacity(0.1)),
+                          painter: CirclePatternPainter(
+                              color: color.withOpacity(0.1)),
                         ),
                       ),
                       // Icon
@@ -673,7 +683,8 @@ class EventCard extends StatelessWidget {
                         top: 8,
                         left: 8,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: color,
                             borderRadius: BorderRadius.circular(12),
@@ -704,12 +715,14 @@ class EventCard extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => EventResultScreen(eventId: eventId),
+                                    builder: (_) =>
+                                        EventResultScreen(eventId: eventId),
                                   ),
                                 );
                               }
                             },
-                            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<String>>[
                               const PopupMenuItem<String>(
                                 value: 'show_result',
                                 child: Row(
@@ -727,11 +740,15 @@ class EventCard extends StatelessWidget {
                                     onTap: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => CreateResult()), // Navigate to CreateResult screen
+                                        MaterialPageRoute(
+                                            builder: (context) => CreateResult(
+                                                  id: eventId,
+                                                )), // Navigate to CreateResult screen
                                       );
                                     },
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Icon(Icons.add_chart, size: 18),
                                         SizedBox(width: 8),
@@ -743,9 +760,6 @@ class EventCard extends StatelessWidget {
                                     ),
                                   ),
                                 )
-
-
-
                             ],
                           ),
                         ),

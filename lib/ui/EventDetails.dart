@@ -41,8 +41,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   bool isRegistrationsLoading = true;
   List<dynamic> eventRegistrations = [];
 
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -50,33 +48,32 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     getEventRegistrations();
   }
 
-
   Future<void> getEventRegistrations() async {
     try {
       final registrationApiCalls = RegistrationApiCalls();
-      eventRegistrations = await registrationApiCalls.getEventRegistrations(widget.eventId);
+      eventRegistrations =
+          await registrationApiCalls.getEventRegistrations(widget.eventId);
       log("Event Registrations: ${eventRegistrations.toString()}");
       setState(() {
         isRegistrationsLoading = false;
       }); // Update UI after data is loaded
     } catch (e) {
       setState(() {
-        isRegistrationsLoading =false;
+        isRegistrationsLoading = false;
       });
       log("Error fetching event registrations: $e");
       eventRegistrations = []; // Initialize to empty list on error
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    log(widget.eventId);
+    // log('event id is :  ${widget.eventId}');
     final SecureStorage secureStorage = SecureStorage();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Event Details", style: TextStyle(color: Colors.white)),
+        title:
+            const Text("Event Details", style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF9E2A2F),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -84,12 +81,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       floatingActionButton: _buildFloatingActionButton(context),
       body: FutureBuilder(
         future: secureStorage.getData('user_type'),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot)
-        {
-
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           String? userType = snapshot.data;
 
-         return SingleChildScrollView(
+          return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               children: [
@@ -108,7 +103,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 _buildExpandableInfoCard(
                   icon: Icons.people_outline,
                   title: "Participants",
-                  content: "Minimum: ${widget.minStudents}\nMaximum: ${widget.maxStudents}",
+                  content:
+                      "Minimum: ${widget.minStudents}\nMaximum: ${widget.maxStudents}",
                 ),
                 _buildExpandableInfoCard(
                   icon: Icons.location_on_outlined,
@@ -215,10 +211,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: contentWidget ?? Text(
-              content ?? '',
-              style: const TextStyle(fontSize: 15),
-            ),
+            child: contentWidget ??
+                Text(
+                  content ?? '',
+                  style: const TextStyle(fontSize: 15),
+                ),
           ),
         ],
         tilePadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -319,7 +316,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             Expanded(
               child: OutlinedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => UpdateEventScreen(eventId: widget.eventId)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              UpdateEventScreen(eventId: widget.eventId)));
                 },
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -341,28 +342,32 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  showDialog(context: context, builder: (ctx){
-                    return AlertDialog(
-                      title: Text("Confirm Delete"),
-                      content: Text("Do you want to delete this event?"),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(ctx).pop(); // Close the dialog
-                          },
-                          child: Text("No"),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            Navigator.of(ctx).pop(); // Close the dialog
-                            await _deleteEvent(context); // Call your delete function here
-                            Navigator.pop(context); // Close the current screen
-                          },
-                          child: Text("Yes"),
-                        ),
-                      ],
-                    );
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        return AlertDialog(
+                          title: Text("Confirm Delete"),
+                          content: Text("Do you want to delete this event?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop(); // Close the dialog
+                              },
+                              child: Text("No"),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.of(ctx).pop(); // Close the dialog
+                                await _deleteEvent(
+                                    context); // Call your delete function here
+                                Navigator.pop(
+                                    context); // Close the current screen
+                              },
+                              child: Text("Yes"),
+                            ),
+                          ],
+                        );
+                      });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF9E2A2F),
@@ -393,21 +398,18 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     eventName: widget.eventName,
                     registrations: eventRegistrations,
                   ),
-                )
-            );
+                ));
           },
           icon: const Icon(Icons.people, color: Colors.white),
           label: isRegistrationsLoading
-              ?
-          const CircularProgressIndicator()
-              :
-          Text(
-            'VIEW REGISTRATIONS',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+              ? const CircularProgressIndicator()
+              : Text(
+                  'VIEW REGISTRATIONS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF9E2A2F),
             minimumSize: const Size(double.infinity, 50),
@@ -439,10 +441,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   String _getOrdinalSuffix(int number) {
     if (number >= 11 && number <= 13) return 'th';
     switch (number % 10) {
-      case 1: return '1st';
-      case 2: return '2nd';
-      case 3: return '3rd';
-      default: return 'th';
+      case 1:
+        return '1st';
+      case 2:
+        return '2nd';
+      case 3:
+        return '3rd';
+      default:
+        return 'th';
     }
   }
 }
