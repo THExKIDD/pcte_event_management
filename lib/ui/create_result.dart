@@ -43,7 +43,6 @@ class _CreateResultState extends State<CreateResult> {
 
     List<ClassModel> classes = await ApiService.getAllClasses();
 
-  
     setState(() {
       allClasses = classes;
       filteredClasses = classes;
@@ -69,7 +68,6 @@ class _CreateResultState extends State<CreateResult> {
 
   void updateResults() async {
     if (firstPlace == null || secondPlace == null || thirdPlace == null) {
-     
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please select all winners!  $firstPlace'),
@@ -97,18 +95,20 @@ class _CreateResultState extends State<CreateResult> {
         position: 3,
       ),
     ];
-      //  adding the id 
+    //  adding the id
     final resultModel = ResultModel(eventId: widget.id, result: resultEntries);
 
     final resultApi = ApiCalls();
     bool resultRes = await resultApi.createResult(resultModel);
 
-    if (resultRes ) {
+    if (resultRes) {
       developer.log('Result created successfully!');
       ScaffoldMessenger.of(context).showSnackBar(
+   
         SnackBar(
+          duration: Duration(seconds: 1),
           content: Text('Results updated successfully! '),
-          backgroundColor: primaryColor,
+          backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -116,6 +116,7 @@ class _CreateResultState extends State<CreateResult> {
       developer.log('Result creation failed!');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          duration: Duration(seconds: 1),
           content: Text('Failed to update result! '),
           backgroundColor: primaryColor,
           behavior: SnackBarBehavior.floating,

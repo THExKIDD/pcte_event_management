@@ -123,7 +123,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         : SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: SizedBox(
-                              width: tableData.length * 60.0, // Dynamic width
+                              width: tableData.length * 90.0, // Dynamic width
                               child: BarChart(
                                 BarChartData(
                                   barTouchData: BarTouchData(
@@ -141,13 +141,12 @@ class _ResultScreenState extends State<ResultScreen> {
                                             color: Colors.white,
                                             fontSize: 12, // Smaller font size
                                           ),
-                                          // tooltipBgColor: Colors.black.withOpacity(0.7), // Customize background
                                         );
                                       },
                                     ),
                                   ),
-                                  alignment: BarChartAlignment.spaceAround,
-                                  // groupsSpace: 40,
+                                  alignment: BarChartAlignment.start,
+                                  groupsSpace: 80,
                                   barGroups:
                                       tableData.asMap().entries.map((entry) {
                                     int index = entry.key;
@@ -182,32 +181,33 @@ class _ResultScreenState extends State<ResultScreen> {
                                       showingTooltipIndicators: index < 3
                                           ? [0]
                                           : [], // Only for top 3
-                                      barsSpace: 15,
+                                      barsSpace: 50,
                                     );
                                   }).toList(),
                                   titlesData: FlTitlesData(
                                     bottomTitles: AxisTitles(
                                       drawBelowEverything: true,
                                       sideTitles: SideTitles(
+                                        interval: 2,
                                         showTitles: true,
                                         getTitlesWidget: (value, meta) {
+                                          log('message: ${value.toString()}');
                                           if (value.toInt() >= 0 &&
                                               value.toInt() <
                                                   tableData.length) {
                                             String name =
-                                                tableData[value.toInt()]
-                                                    ['name'];
+                                                tableData[value.toInt()]['name']
+                                                    .toString();
 
                                             return SideTitleWidget(
                                               meta: meta,
                                               child: Text(
-                                                name.length > 15
-                                                    ? '${name.substring(0, 15)}...'
+                                                name.length > 16
+                                                    ? '${name.substring(0, 16)}...'
                                                     : name,
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.w400,
+                                                    fontWeight: FontWeight.w500,
                                                     fontSize: 8),
-                                                maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             );
@@ -223,12 +223,13 @@ class _ResultScreenState extends State<ResultScreen> {
                                             true, // Disable y-axis labels in the chart
                                         interval: _calculateInterval(),
                                         getTitlesWidget: (value, meta) {
-                                          // Only show integer values
                                           if (value == value.roundToDouble()) {
                                             return SideTitleWidget(
                                               meta: meta,
                                               child: Text(
                                                 value.toInt().toString(),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
                                                 style: const TextStyle(
                                                     fontSize: 10),
                                               ),
@@ -343,12 +344,12 @@ class _ResultScreenState extends State<ResultScreen> {
       maxPoints = 100 + 13;
     }
 
-    return maxPoints <= 0 ? 6 : maxPoints + 2; // Add padding, ensure non-zero
+    return maxPoints <= 0 ? 6 : maxPoints; // Add padding, ensure non-zero
   }
 
   double _calculateInterval() {
     double maxY = _calculateMaxY();
-    if (maxY <= 5) return 1.0;
+    if (maxY <= 5) return 1;
 
     return (maxY / 5).ceilToDouble();
   }
