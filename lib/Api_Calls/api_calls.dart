@@ -7,6 +7,7 @@ import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/Models/class_model.dart';
 import 'package:pcte_event_management/Models/result_model.dart';
 import 'package:pcte_event_management/Models/user_model.dart';
+import 'package:pcte_event_management/ui/create_result.dart';
 
 import '../Models/event_model.dart';
 
@@ -14,6 +15,17 @@ class ApiCalls {
   final Dio dio = Dio();
   final secureStorage = SecureStorage();
   late String tkn;
+
+  Future<String?> tokenFetcher() async {
+    try {
+      String? tkn = await secureStorage.getData('jwtToken');
+      log(tkn ?? "null token");
+      return tkn;
+    } catch (e) {
+      log(e.toString());
+      throw Exception('Failed to fetch token');
+    }
+  }
 
   Future<bool> loginCall(UserModel loginCred) async {
     try {
@@ -237,6 +249,7 @@ class ApiCalls {
         'eventId': result.eventId,
         'result': result.result.map((entry) => entry.classId).toList(),
       };
+
       if (result.result.length != 3) {
         log("Result must contain exactly 3 entries.");
         return false; // or
@@ -262,5 +275,60 @@ class ApiCalls {
       log('Result Creation Exception : ${e.toString()}');
       return false;
     }
+  }
+
+  Future<bool> updateResult(String resultId, ResultModel result) async {
+    try {
+      final token = await tokenFetcher();
+
+      if (resultId.isEmpty) {
+        log("Result ID is null or empty");
+        return false;
+      }
+
+      final List<Map<String, dynamic>> resultList = result.result
+          .map((e) => {
+                "_id": e.classId,
+                "studentName": e.studentName,
+                "position": e.position,
+              })
+          .toList();
+
+      final payload = {
+        'result': resultList,
+        'year': result.year, // send as integer
+      };
+
+      log('Result ID : ${payload['result']}');
+
+      if (result.result.length != 3) {
+        log("Result must contain exactly 3 entries.");
+        return false; // or
+      }
+      final response = await dio.put(
+        'https://koshish-backend.vercel.app/api/result/update/$resultId',
+        data: payload,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      log(response.statusCode.toString());
+      log(response.statusMessage.toString());
+      if (response.statusCode == 200) {
+        log('Result Updated successfully');
+        return true;
+      } else {
+        log('Result Update failed');
+        return false;
+      }
+    } catch (e) {
+      log('Result Update Exception : ${e.toString()}');
+      return false;
+    }
+
+    // return true;
   }
 }

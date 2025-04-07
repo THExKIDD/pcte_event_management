@@ -99,19 +99,20 @@ class _CreateResultState extends State<CreateResult> {
     final resultModel = ResultModel(eventId: widget.id, result: resultEntries);
 
     final resultApi = ApiCalls();
+    developer.log('Result Model: ${resultModel.toJson()}');
     bool resultRes = await resultApi.createResult(resultModel);
 
     if (resultRes) {
       developer.log('Result created successfully!');
       ScaffoldMessenger.of(context).showSnackBar(
-   
         SnackBar(
-          duration: Duration(seconds: 1),
+          duration: Duration(milliseconds: 1500),
           content: Text('Results updated successfully! '),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
       );
+      Navigator.of(context).pop();
     } else {
       developer.log('Result creation failed!');
       ScaffoldMessenger.of(context).showSnackBar(
