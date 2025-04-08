@@ -836,7 +836,7 @@ class EventCard extends StatelessWidget {
                         const Spacer(),
 
                         // Register button (only for Class user type)
-                        if (userType == "Class")
+                       /* if (userType == "Class")
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -863,7 +863,7 @@ class EventCard extends StatelessWidget {
                               ),
                               child: const Text('Register'),
                             ),
-                          ),
+                          ),*/
                       ],
                     ),
                   ),

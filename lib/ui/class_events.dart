@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:developer';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/student_reg.dart';
@@ -16,10 +14,12 @@ class ClassEventsScreen extends StatefulWidget {
 }
 
 class _ClassEventsScreenState extends State<ClassEventsScreen> {
-  List<dynamic> events = [];
+  List<Map<String, dynamic>> events = [];
   bool isLoading = true;
   bool isEmpty = false;
-  String error = '';
+  final SecureStorage secureStorage = SecureStorage();
+  final Map<String, IconData> eventTypeIcons = {'default': Icons.event};
+  final Map<String, Color> eventColors = {'default': Colors.indigo};
 
   @override
   void initState() {
@@ -32,17 +32,13 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
       EventApiCalls eventApiCalls = EventApiCalls();
       final result = await eventApiCalls.getAllEventsForClass();
 
-      log('class events : $result');
-
       setState(() {
-        events = result;
+        events = List<Map<String, dynamic>>.from(result);
         isLoading = false;
-        isEmpty = result.isEmpty;
+        isEmpty = events.isEmpty;
       });
-
     } catch (e) {
       setState(() {
-        error = e.toString();
         events = [];
         isLoading = false;
         isEmpty = true;
@@ -50,23 +46,34 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
     }
   }
 
+  IconData getEventIcon(String eventType) {
+    return eventTypeIcons[eventType.toLowerCase()] ?? eventTypeIcons['default']!;
+  }
+
+  Color getEventColor(String eventType) {
+    return eventColors[eventType.toLowerCase()] ?? eventColors['default']!;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF9E2A2F),
+        scrolledUnderElevation: 0,
+        backgroundColor: const Color(0xFF9E2A2F),
+        elevation: 0,
         centerTitle: false,
-        title: Text(
+        title: const Text(
           "Koshish Events",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 22,
           ),
         ),
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
+            icon: const Icon(Icons.menu_rounded, color: Colors.white),
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
@@ -75,99 +82,182 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.white,
-              child: ClipOval(
-                child: Image.asset(
-                  "assets/img/logo1.png",
-                  fit: BoxFit.cover,
-                  width: 36,
-                  height: 36,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.person, color: Colors.black, size: 24);
-                  },
+            child: GestureDetector(
+              onTap: () {
+                // Navigate to Profile
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: const CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, color: Color(0xFF9E2A2F), size: 24),
                 ),
               ),
             ),
           ),
         ],
       ),
-
-      drawer: CustomDrawer(),
+      drawer: const CustomDrawer(),
       body: isLoading
-          ? Center(
-        child: CircularProgressIndicator(color: Color(0xFF9E2A2F)),
+          ? const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFF9E2A2F),
+        ),
       )
           : isEmpty
           ? Center(
-        child: Text(
-          'No Events\nTry Again Later',
-          style: TextStyle(fontSize: 18),
-          textAlign: TextAlign.center,
-        ),
-      )
-          : ListView(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 15, top: 20, bottom: 10),
-            child: Text(
-              "Class Events",
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.event_busy,
+                size: 64,
+                color: Colors.grey.shade400,
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'No Events Available',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
-              textAlign: TextAlign.left,
             ),
-          ),
-          // Events List
-          ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              final event = events[index];
-              return InkWell(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailsPage(
-                      eventName: event['name'] ?? 'Unnamed Event',
-                      description: event['description'],
-                      maxStudents: event['maxStudents'],
-                      minStudents: event['minStudents'],
-                      location: event['location'],
-                      convener: event['convenor'],
-                      eventId: event['_id'],
-                      rules: event['rules'],
-                      points: event['points']
-                  ),
-                  )
-                  );
-                },
-                child: EventCard(
-                  eventName: event['name'] ?? 'Unnamed Event',
-                  eventType: event['type'] ?? 'N/A',
-                  eventId: event['_id'] ?? '',
-                  minStudents: event['minStudents'] ?? 0,
-                  maxStudents: event['maxStudents'] ?? 0,
-                  onRegisterPressed: ()  async {
-                    final bool result = await Navigator.push(context, MaterialPageRoute(builder: (_)=> StudentRegistrationScreen(eventId: event['_id'], minStudents:event['minStudents'], maxStudents: event['maxStudents'],)));
-
-
-                    if(result)
-                    {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      getClassEvents();
-                    }
-                  },
-                  isRegistered: event['register'] != null ? true : false,
+            const SizedBox(height: 8),
+            const Text(
+              'Stay tuned for upcoming events',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: getClassEvents,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Refresh'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF9E2A2F),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
                 ),
-              );
-            },
+              ),
+            ),
+          ],
+        ),
+      )
+          : RefreshIndicator(
+        color: const Color(0xFF9E2A2F),
+        onRefresh: () async {
+          setState(() {
+            isLoading = true;
+          });
+          await getClassEvents();
+        },
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
           ),
-        ],
+          slivers: [
+            // Events Section Header
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text(
+                      "Class Events",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Events Grid List
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                    final event = events[index];
+                    return EventCard(
+                      eventName: event['name'],
+                      eventType: event['type'],
+                      eventId: event['_id'],
+                      minStudents: event['minStudents'],
+                      maxStudents: event['maxStudents'],
+                      icon: getEventIcon(event['type']),
+                      color: getEventColor(event['type']),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EventDetailsPage(
+                              points: event['points'],
+                              rules: event['rules'],
+                              eventId: event['_id'],
+                              eventName: event['name'],
+                              description: event['description'],
+                              maxStudents: event['maxStudents'],
+                              minStudents: event['minStudents'],
+                              location: event['location'],
+                              convener: event['convenor']['name'],
+                            ),
+                          ),
+                        );
+                      },
+                      onRegisterPressed: () async {
+                        final bool result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => StudentRegistrationScreen(
+                              eventId: event['_id'],
+                              minStudents: event['minStudents'],
+                              maxStudents: event['maxStudents'],
+                            ),
+                          ),
+                        );
+
+                        if (result) {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          getClassEvents();
+                        }
+                      },
+                      isRegistered: event['register'] != null,
+                    );
+                  },
+                  childCount: events.length,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -179,82 +269,212 @@ class EventCard extends StatelessWidget {
   final String eventId;
   final int minStudents;
   final int maxStudents;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
   final VoidCallback onRegisterPressed;
   final bool isRegistered;
 
   const EventCard({
+    super.key,
     required this.eventName,
     required this.eventType,
     required this.eventId,
     required this.minStudents,
     required this.maxStudents,
-    super.key,
+    required this.icon,
+    required this.color,
+    required this.onTap,
     required this.onRegisterPressed,
     required this.isRegistered,
-
   });
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double cardWidth = screenWidth * 0.8;
-    double cardHeight = 140;
-
-    return Container(
-      height: cardHeight,
-      width: cardWidth,
-      margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.1),
-            blurRadius: 5,
-            spreadRadius: 2,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    eventName,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: 100,
+          maxHeight: 280,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Material(
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Event Icon Header
+                Container(
+                  height: 120,
+                  width: double.infinity,
+                  color: color.withOpacity(0.2),
+                  child: Stack(
+                    children: [
+                      // Patterned background
+                      Positioned.fill(
+                        child: CustomPaint(
+                          painter: CirclePatternPainter(color: color.withOpacity(0.1)),
+                        ),
+                      ),
+                      // Icon
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            icon,
+                            size: 40,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      // Event Type Badge
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            eventType,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 5),
-                  Text(eventType),
-                  Text('Students: $minStudents-$maxStudents'),
-                ],
-              ),
+                ),
+
+                // Event Details - Flexible content section
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Event name with limited lines
+                        SizedBox(
+                          height: 40,
+                          child: Text(
+                            eventName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Members count
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.people,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '$minStudents-$maxStudents members',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Spacer to push button to bottom
+                        const Spacer(),
+
+                        // Register button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: onRegisterPressed,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: color,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(isRegistered ? 'Update' : 'Register'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 15),
-            child: ElevatedButton(
-              onPressed: onRegisterPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF9E2A2F),
-                minimumSize: const Size(100, 40),
-              ),
-              child: Text(
-                isRegistered ?
-                'Update'
-                    :
-                'Register',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
+}
+
+// Circle Pattern Painter for Event Card Background
+class CirclePatternPainter extends CustomPainter {
+  final Color color;
+
+  CirclePatternPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(
+      Offset(size.width * 0.8, size.height * 0.2),
+      size.width * 0.15,
+      paint,
+    );
+
+    canvas.drawCircle(
+      Offset(size.width * 0.1, size.height * 0.8),
+      size.width * 0.12,
+      paint,
+    );
+
+    canvas.drawCircle(
+      Offset(size.width * 0.6, size.height * 0.9),
+      size.width * 0.08,
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

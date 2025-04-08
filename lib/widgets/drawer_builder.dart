@@ -10,6 +10,7 @@ import 'package:pcte_event_management/ui/classLogin.dart';
 import 'package:pcte_event_management/ui/get_all_registrations_screen.dart';
 import 'package:pcte_event_management/ui/get_users.dart';
 import 'package:pcte_event_management/ui/getallclasses.dart';
+import 'package:pcte_event_management/ui/home.dart';
 import 'package:pcte_event_management/ui/login.dart';
 import 'package:pcte_event_management/ui/user_signup.dart';
 import 'package:provider/provider.dart';
@@ -147,9 +148,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     if( userType == 'Class')
                       ListTile(
                         leading: const Icon(Icons.event_available_sharp),
-                        title: const Text("Class Events"),
+                        title: const Text("All Events"),
                         onTap: () async {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => ClassEventsScreen()));
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
                         },
                       ),
 
