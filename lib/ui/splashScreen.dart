@@ -5,6 +5,7 @@ import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/bottomNavBar.dart';
 import 'package:pcte_event_management/ui/home.dart';
 import 'package:pcte_event_management/ui/login.dart';
+import 'package:pcte_event_management/widgets/bottomNavBar.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

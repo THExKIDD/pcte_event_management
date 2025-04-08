@@ -66,7 +66,7 @@ class EventApiCalls {
         options: Options(
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token', // Ensure 'Bearer ' prefix
+            'Authorization': 'Bearer $token', 
           },
         ), // Send the event data in the request body
       );

@@ -1,7 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
-import 'package:pcte_event_management/ui/class_events.dart';
 import 'package:pcte_event_management/ui/home.dart';
 import 'package:pcte_event_management/ui/result.dart';
 
@@ -31,29 +29,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    SecureStorage secureStorage = SecureStorage();
-
     return Scaffold(
 
-      body: FutureBuilder(
-        future: secureStorage.getData('user_type'),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
-
-          String userType = snapshot.data ?? 'empty userType';
-
-         return PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            children: [
-              userType.toLowerCase() == "class" ? ClassEventsScreen() : HomeScreen(),
-              ResultScreen(),
-            ],
-          );
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
         },
+        children: [
+         HomeScreen(),
+          ResultScreen(),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

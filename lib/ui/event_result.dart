@@ -34,16 +34,23 @@ class _EventResultScreenState extends State<EventResultScreen> {
 
     try {
       ResultApiCalls resultApiCalls = ResultApiCalls();
-      List<Map<String, dynamic>> results = await resultApiCalls.getResultById(
+      Map<String, dynamic> results = await resultApiCalls.getResultById(
         eventId: widget.eventId,
         year: year,
       );
 
+      log('table data result : $results');
+
+      List<Map<String, dynamic>> resultList =
+          List<Map<String, dynamic>>.from(results['result']);
+
       setState(() {
-        tableData = results;
+        tableData = resultList;
         isLoading = false;
         noResultsAvailable = tableData.isEmpty;
       });
+
+      // log("Results  : $tableData");
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -57,7 +64,8 @@ class _EventResultScreenState extends State<EventResultScreen> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 360;
-    final podiumWidth = isSmallScreen ? screenSize.width * 0.22 : screenSize.width * 0.2;
+    final podiumWidth =
+        isSmallScreen ? screenSize.width * 0.22 : screenSize.width * 0.2;
     final podiumSpacing = isSmallScreen ? 2.0 : 8.0;
 
     return Scaffold(
@@ -111,12 +119,13 @@ class _EventResultScreenState extends State<EventResultScreen> {
                               style: TextStyle(color: Colors.grey[700])),
                           items: List<int>.generate(
                             currentYear - 2024 + 1,
-                                (index) => 2024 + index,
+                            (index) => 2024 + index,
                           ).reversed.map((year) {
                             return DropdownMenuItem<int>(
                               value: year,
                               child: Text(year.toString(),
-                                  style: const TextStyle(fontWeight: FontWeight.w500)),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500)),
                             );
                           }).toList(),
                           onChanged: (int? newValue) {
@@ -137,7 +146,8 @@ class _EventResultScreenState extends State<EventResultScreen> {
                       height: constraints.maxHeight * 0.6,
                       alignment: Alignment.center,
                       child: CircularProgressIndicator(
-                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF9E2A2F)),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                            Color(0xFF9E2A2F)),
                       ),
                     )
                   else if (noResultsAvailable)
@@ -165,7 +175,8 @@ class _EventResultScreenState extends State<EventResultScreen> {
                       children: [
                         // Winners Section
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenSize.width * 0.04),
                           child: Card(
                             elevation: 2,
                             shape: RoundedRectangleBorder(
@@ -193,22 +204,27 @@ class _EventResultScreenState extends State<EventResultScreen> {
                                           width: double.infinity,
                                           decoration: BoxDecoration(
                                             color: Colors.grey[300],
-                                            borderRadius: const BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topLeft: Radius.circular(12),
                                               topRight: Radius.circular(12),
                                             ),
                                           ),
                                         ),
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
                                           children: [
                                             _buildPodiumStand(
                                               position: 2,
                                               height: screenSize.height * 0.15,
                                               width: podiumWidth,
                                               color: Colors.grey[400]!,
-                                              name: tableData.length > 1 ? tableData[1]['name'] : "N/A",
+                                              name: tableData.length > 1
+                                                  ? tableData[1]['name']
+                                                  : "N/A",
                                               screenWidth: screenSize.width,
                                               spacing: podiumSpacing,
                                             ),
@@ -217,7 +233,9 @@ class _EventResultScreenState extends State<EventResultScreen> {
                                               height: screenSize.height * 0.2,
                                               width: podiumWidth,
                                               color: const Color(0xFFFFD700),
-                                              name: tableData.isNotEmpty ? tableData[0]['name'] : "N/A",
+                                              name: tableData.isNotEmpty
+                                                  ? tableData[0]['name']
+                                                  : "N/A",
                                               screenWidth: screenSize.width,
                                               spacing: podiumSpacing,
                                             ),
@@ -226,7 +244,9 @@ class _EventResultScreenState extends State<EventResultScreen> {
                                               height: screenSize.height * 0.1,
                                               width: podiumWidth,
                                               color: const Color(0xFFCD7F32),
-                                              name: tableData.length > 2 ? tableData[2]['name'] : "N/A",
+                                              name: tableData.length > 2
+                                                  ? tableData[2]['name']
+                                                  : "N/A",
                                               screenWidth: screenSize.width,
                                               spacing: podiumSpacing,
                                             ),
@@ -245,7 +265,8 @@ class _EventResultScreenState extends State<EventResultScreen> {
 
                         // Leaderboard Section
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.04),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenSize.width * 0.04),
                           child: Card(
                             elevation: 2,
                             shape: RoundedRectangleBorder(
@@ -323,7 +344,8 @@ class _EventResultScreenState extends State<EventResultScreen> {
                   ),
                 ),
                 if (position == 1)
-                  Icon(Icons.star, color: Colors.white, size: screenWidth * 0.07),
+                  Icon(Icons.star,
+                      color: Colors.white, size: screenWidth * 0.07),
               ],
             ),
           ),
@@ -333,8 +355,7 @@ class _EventResultScreenState extends State<EventResultScreen> {
               maxWidth: width * 1.25,
             ),
             padding: EdgeInsets.symmetric(
-                vertical: screenWidth * 0.015,
-                horizontal: screenWidth * 0.01),
+                vertical: screenWidth * 0.015, horizontal: screenWidth * 0.01),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
@@ -425,7 +446,9 @@ class _EventResultScreenState extends State<EventResultScreen> {
                         '${index + 1}',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: index < 3 ? const Color(0xFF9E2A2F) : Colors.black,
+                          color: index < 3
+                              ? const Color(0xFF9E2A2F)
+                              : Colors.black,
                         ),
                       ),
                     ),
