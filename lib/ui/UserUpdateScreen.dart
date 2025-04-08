@@ -26,7 +26,7 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
 
-  final dropDownList = ['Teacher','Convenor'];
+  final dropDownList = ['Convenor'];
 
   @override
   void initState() {
@@ -239,7 +239,7 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
 
         String? tkn = await secureStorage.getData('jwtToken');
 
-        await apiCalls.updateFaculty(
+         await apiCalls.updateFaculty(
           userid: widget.userId,
             name: _controllerUserName.text,
             email: _controllerEmail.text,
@@ -248,7 +248,7 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
           isActive: isChecked,
         ).then((value){
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Details Updated')));
-          Navigator.pop(context);
+          Navigator.pop(context,true);
         });
 
 

@@ -70,7 +70,7 @@ class _CreateResultState extends State<CreateResult> {
     if (firstPlace == null || secondPlace == null || thirdPlace == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please select all winners!  $firstPlace'),
+          content: Text('Please select all winners!'),
           backgroundColor: primaryColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -78,25 +78,17 @@ class _CreateResultState extends State<CreateResult> {
       return;
     }
 
-    List<ResultEntry> resultEntries = [
-      ResultEntry(
-        classId: firstPlace!.id!,
-        studentName: firstPlace!.name!,
-        position: 1,
-      ),
-      ResultEntry(
-        classId: secondPlace!.id!,
-        studentName: secondPlace!.name!,
-        position: 2,
-      ),
-      ResultEntry(
-        classId: thirdPlace!.id!,
-        studentName: thirdPlace!.name!,
-        position: 3,
-      ),
+    // Create a list of class IDs in order (1st, 2nd, 3rd)
+    List<String> classIds = [
+      firstPlace!.id!,
+      secondPlace!.id!,
+      thirdPlace!.id!,
     ];
-    //  adding the id
-    final resultModel = ResultModel(eventId: widget.id, result: resultEntries);
+
+    final resultModel = ResultModel(
+      eventId: widget.id,
+      classIds: classIds,
+    );
 
     final resultApi = ApiCalls();
     developer.log('Result Model: ${resultModel.toJson()}');
@@ -107,7 +99,7 @@ class _CreateResultState extends State<CreateResult> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(milliseconds: 1500),
-          content: Text('Results updated successfully! '),
+          content: Text('Results created successfully!'),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
@@ -118,7 +110,7 @@ class _CreateResultState extends State<CreateResult> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 1),
-          content: Text('Failed to update result! '),
+          content: Text('Failed to create result!'),
           backgroundColor: primaryColor,
           behavior: SnackBarBehavior.floating,
         ),

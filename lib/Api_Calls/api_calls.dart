@@ -14,7 +14,6 @@ import '../Models/event_model.dart';
 class ApiCalls {
   final Dio dio = Dio();
   final secureStorage = SecureStorage();
-  late String tkn;
 
   Future<String?> tokenFetcher() async {
     try {
@@ -35,9 +34,12 @@ class ApiCalls {
       );
 
       log(response.data.toString());
-
-      tkn = response.data['token'].toString();
+      String tkn;
       if (response.statusCode == 200) {
+        tkn = response.data['token'].toString();
+        secureStorage.clearAllData();
+        secureStorage.saveData('jwtToken', tkn);
+
         log("Logged in Successfully");
         log(response.statusMessage.toString());
         return true;
@@ -59,6 +61,9 @@ class ApiCalls {
       );
 
       if (response.statusCode == 200) {
+        await secureStorage.deleteData('user_id');
+       await  secureStorage.deleteData('user_type');
+       await  secureStorage.deleteData('userDetails');
         log("Got THE USER");
         log(response.statusMessage.toString());
         Map<String, dynamic> userDetails = response.data['user'];
@@ -67,10 +72,10 @@ class ApiCalls {
         log("User ID $userId");
         final data2 = userTypeGet.toString();
         log(data2);
-        secureStorage.saveData('user_id', userId);
-        secureStorage.saveData('user_type', data2);
+       await secureStorage.saveData('user_id', userId);
+       await secureStorage.saveData('user_type', data2);
         final data = userDetails.toString();
-        secureStorage.saveData('userDetails', data);
+       await secureStorage.saveData('userDetails', data);
         final msg = await secureStorage.getData('userDetails');
         log(msg!);
 
@@ -220,7 +225,7 @@ class ApiCalls {
           phoneNumber: phoneNumber,
           isActive: isActive,
           userType: userType);
-      log(userid);
+      log(name);
 
       dio.options.headers['Authorization'] = 'Bearer $token';
 
@@ -247,10 +252,10 @@ class ApiCalls {
     try {
       final payload = {
         'eventId': result.eventId,
-        'result': result.result.map((entry) => entry.classId).toList(),
+        'result': result.classIds,
       };
 
-      if (result.result.length != 3) {
+      if (result.classIds.length != 3) {
         log("Result must contain exactly 3 entries.");
         return false; // or
       }
@@ -286,28 +291,18 @@ class ApiCalls {
         return false;
       }
 
-      final List<Map<String, dynamic>> resultList = result.result
-          .map((e) => {
-                "_id": e.classId,
-                "studentName": e.studentName,
-                "position": e.position,
-              })
-          .toList();
+      final List<String> resultList = result.classIds;
 
-      final payload = {
-        'result': resultList,
-        'year': result.year, // send as integer
-      };
 
-      log('Result ID : ${payload['result']}');
+      log(resultList.toString());
 
-      if (result.result.length != 3) {
+      if (result.classIds.length != 3) {
         log("Result must contain exactly 3 entries.");
         return false; // or
       }
       final response = await dio.put(
         'https://koshish-backend.vercel.app/api/result/update/$resultId',
-        data: payload,
+        data: resultList,
         options: Options(
           headers: {
             'Content-Type': 'application/json',

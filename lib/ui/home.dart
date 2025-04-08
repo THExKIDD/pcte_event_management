@@ -357,13 +357,13 @@ class FeaturedEventCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withOpacity(0.8),
-            color.withOpacity(0.6),
+            color.withValues(alpha: 0.8),
+            color.withValues(alpha: 0.6),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.4),
+            color: color.withValues(alpha: 0.4),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -376,7 +376,7 @@ class FeaturedEventCard extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: CustomPaint(
-                painter: PatternPainter(color: Colors.white.withOpacity(0.1)),
+                painter: PatternPainter(color: Colors.white.withValues(alpha: 0.1)),
               ),
             ),
           ),
@@ -601,7 +601,6 @@ class EmptyStateWidget extends StatelessWidget {
   }
 }
 
-// Event Card Widget
 class EventCard extends StatelessWidget {
   final String eventName;
   final String eventType;
@@ -631,11 +630,15 @@ class EventCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        constraints: BoxConstraints(
+          minHeight: 100,
+          maxHeight: 280, // Adjust as needed
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               spreadRadius: 2,
               blurRadius: 8,
               offset: const Offset(0, 4),
@@ -648,6 +651,7 @@ class EventCard extends StatelessWidget {
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // Event Icon Header
                 Container(
@@ -710,21 +714,18 @@ class EventCard extends StatelessWidget {
                               Icons.more_vert,
                               color: color,
                             ),
-                            onSelected: (String value) {
-                              if (value == 'show_result') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        EventResultScreen(eventId: eventId),
-                                  ),
-                                );
-                              }
-                            },
                             itemBuilder: (BuildContext context) =>
-                                <PopupMenuEntry<String>>[
-                              const PopupMenuItem<String>(
-                                value: 'show_result',
+                            <PopupMenuEntry<String>>[
+                              PopupMenuItem<String>(
+                                value: 'Results',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            EventResultScreen(eventId: eventId)),
+                                  );
+                                },
                                 child: Row(
                                   children: [
                                     Icon(Icons.emoji_events, size: 18),
@@ -735,29 +736,25 @@ class EventCard extends StatelessWidget {
                               ),
                               if (userType == 'Convenor' || userType == 'Admin')
                                 PopupMenuItem<String>(
-                                  value: 'add_result',
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
+                                  value: 'Add Result',
+                                  onTap: () {
+                                    Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => CreateResult(
-                                                  id: eventId,
-                                                )), // Navigate to CreateResult screen
-                                      );
-                                    },
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Icon(Icons.add_chart, size: 18),
-                                        SizedBox(width: 8),
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 2),
-                                          child: Text('Add Result'),
-                                        ),
-                                      ],
-                                    ),
+                                            builder: (_) =>
+                                                CreateResult(id: eventId)));
+                                  },
+                                  child: Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.add_chart, size: 18),
+                                      SizedBox(width: 8),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 2),
+                                        child: Text('Add Result'),
+                                      ),
+                                    ],
                                   ),
                                 )
                             ],
@@ -767,69 +764,83 @@ class EventCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Event Details
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        eventName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.people,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '$minStudents-$maxStudents members',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      if (userType == "Class")
+
+                // Event Details - Flexible content section
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Event name with limited lines
                         SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => StudentRegistrationScreen(
-                                    eventId: eventId,
-                                    minStudents: minStudents,
-                                    maxStudents: maxStudents,
-                                  ),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: color,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                          height: 40, // Fixed height for title
+                          child: Text(
+                            eventName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Members count
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.people,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '$minStudents-$maxStudents members',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
                               ),
                             ),
-                            child: const Text('Register'),
-                          ),
+                          ],
                         ),
-                    ],
+
+                        // Spacer to push button to bottom
+                        const Spacer(),
+
+                        // Register button (only for Class user type)
+                        if (userType == "Class")
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => StudentRegistrationScreen(
+                                      eventId: eventId,
+                                      minStudents: minStudents,
+                                      maxStudents: maxStudents,
+                                    ),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: color,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text('Register'),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -853,7 +864,6 @@ class CirclePatternPainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.fill;
 
-    // Draw some circles for a nice pattern
     canvas.drawCircle(
       Offset(size.width * 0.8, size.height * 0.2),
       size.width * 0.15,

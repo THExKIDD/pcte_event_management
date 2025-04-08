@@ -72,6 +72,7 @@ class ApiService {
 
       if (response.statusCode == 200) {
         log(data.toString());
+        await secureStorage.clearAllData();
         await secureStorage.saveData('jwtToken', data['token']);
         await secureStorage.saveData('user_type', data['data']['type']);
         await secureStorage.saveData('user_id', data['data']['_id']);

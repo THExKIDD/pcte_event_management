@@ -36,7 +36,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   late Animation<double> _bubbleAnimation;
   final storage = FlutterSecureStorage();
   final SecureStorage secureStorage = SecureStorage();
-  final dropDownList = ['Admin','Teacher','Convenor'];
+  final dropDownList = ['Admin','Convenor'];
 
 
   @override
@@ -190,7 +190,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                           password: _controllerPassword.text
                       );
                       await apiCalls.loginCall(loginController.loginCred).then((value) async {
-                        await secureStorage.saveData("jwtToken",apiCalls.tkn);
                         String? s = await secureStorage.getData("jwtToken");
                         log("Testing ::: $s");
                         if(value)
@@ -279,7 +278,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
                   if(value)
                   {
-                    await secureStorage.saveData("jwtToken",apiCalls.tkn);
+
+
                     String? s = await secureStorage.getData('jwtToken');
                     await apiCalls.getUserCall(s!);
                     providur.checkLoading();

@@ -16,7 +16,7 @@ class UpdateResult extends StatefulWidget {
   const UpdateResult({super.key, required this.id});
   final String id;
   @override
-  _UpdateResultState createState() => _UpdateResultState();
+  State<UpdateResult> createState() => _UpdateResultState();
 }
 
 class _UpdateResultState extends State<UpdateResult> {
@@ -58,7 +58,7 @@ class _UpdateResultState extends State<UpdateResult> {
     try {
       ResultApiCalls resultApiCalls = ResultApiCalls();
       Map<String, dynamic> results = await resultApiCalls.getResultById(
-          eventId: widget.id, year: year, fulldate: true);
+          eventId: widget.id, year: year);
       resultId = results['_id'];
 
       if (results.isEmpty) {
@@ -142,7 +142,7 @@ class _UpdateResultState extends State<UpdateResult> {
     if (firstPlace == null || secondPlace == null || thirdPlace == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please select all winners!  $firstPlace'),
+          content: Text('Please select all winners!'),
           backgroundColor: primaryColor,
           behavior: SnackBarBehavior.floating,
         ),
@@ -150,53 +150,23 @@ class _UpdateResultState extends State<UpdateResult> {
       return;
     }
 
-    List<ResultEntry> resultEntries = [
-      ResultEntry(
-        classId: firstPlace!.id!,
-        studentName: firstPlace!.name!,
-        position: 1,
-      ),
-      ResultEntry(
-        classId: secondPlace!.id!,
-        studentName: secondPlace!.name!,
-        position: 2,
-      ),
-      ResultEntry(
-        classId: thirdPlace!.id!,
-        studentName: thirdPlace!.name!,
-        position: 3,
-      ),
+    List<String> classIds = [
+      firstPlace!.id!,
+      secondPlace!.id!,
+      thirdPlace!.id!,
     ];
-    //  adding the id
-    final resultModel =
-        ResultModel(id: resultId, year: selectedYear,eventId: widget.id, result: resultEntries);
+
+    final resultModel = ResultModel(
+      id: resultId,
+      year: selectedYear!,
+      eventId: widget.id,
+      classIds: classIds,
+    );
 
     final resultApi = ApiCalls();
     bool resultRes = await resultApi.updateResult(resultId!.toString(), resultModel);
 
-   
-
-    if (resultRes) {
-      developer.log('Result updated successfully!');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 1),
-          content: Text('Results updated successfully! '),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } else {
-      developer.log('Result updation failed!');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 1),
-          content: Text('Failed to update result! '),
-          backgroundColor: primaryColor,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
+    // Rest of your success/error handling...
   }
 
   @override

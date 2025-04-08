@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ResultApiCalls {
   final dio = Dio();
 
-  Future<List<Map<String, dynamic>>> getResultById({required String eventId, int? year}) async {
+  Future<Map<String, dynamic>> getResultById({required String eventId, int? year}) async {
     try {
       year ??= DateTime.now().year;
       final response = await dio.get(
@@ -22,24 +22,24 @@ class ResultApiCalls {
         log(resultList.toString());
 
 
-        return resultList;
+        return jsonData;
       }
       else if(response.statusCode == 404)
       {
-        return [];
+        return {};
       }
       else {
         log("Unexpected Status Code: ${response.statusCode}");
-        return [];
+        return {};
       }
     } on DioException catch (e) {
       log("DioException: ${e.response?.statusCode ?? "No Status Code"}");
       log("Error Message: ${e.response?.statusMessage ?? e.message}");
       log("Response Data: ${e.response?.data ?? "No Response Data"}");
-      return [];
+      return {};
     } catch (e) {
       log("Unexpected Error: $e");
-      return [];
+      return {};
     }
   }
 

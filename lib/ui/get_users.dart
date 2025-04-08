@@ -125,12 +125,23 @@ class _GetAllUsersState extends State<GetAllUsers> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               final userId = filteredItems[index]['_id'].toString();
                               log(userId);
                               bool isActive = filteredItems[index]['is_active'];
 
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => UserUpdateScreen(userId: userId,isActive: isActive)));
+                            final bool result =  await Navigator.push(
+                                 context,
+                                 MaterialPageRoute(
+                                     builder: (_) => UserUpdateScreen(userId: userId,isActive: isActive)
+                                 )
+                             );
+                             log(result.toString());
+
+                             if(result)
+                               {
+                                 _fetchItems();
+                               }
 
                             },
                             style: ElevatedButton.styleFrom(
