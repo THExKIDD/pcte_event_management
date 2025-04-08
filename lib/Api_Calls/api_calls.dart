@@ -248,7 +248,7 @@ class ApiCalls {
     }
   }
 
-  Future<bool> createResult(ResultModel result) async {
+  Future<String?> createResult(ResultModel result) async {
     try {
       final payload = {
         'eventId': result.eventId,
@@ -257,7 +257,7 @@ class ApiCalls {
 
       if (result.classIds.length != 3) {
         log("Result must contain exactly 3 entries.");
-        return false; // or
+        throw Exception('Result must contain exactly 3 entries.');
       }
 
       final response =
@@ -269,16 +269,16 @@ class ApiCalls {
           response.statusCode == 201 ||
           response.statusMessage == 'OK') {
         log('Result Created');
-        return true;
+        return response.statusMessage;
       } else {
         log('Result Created failed');
 
-        return false;
+        throw Exception('Result Creation failed');
       }
     } on DioException catch (e) {
       // result false;
       log('Result Creation Exception : ${e.toString()}');
-      return false;
+      rethrow;
     }
   }
 

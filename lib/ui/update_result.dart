@@ -164,9 +164,26 @@ class _UpdateResultState extends State<UpdateResult> {
     );
 
     final resultApi = ApiCalls();
-    bool resultRes = await resultApi.updateResult(resultId!.toString(), resultModel);
+    String? resultRes = await resultApi.createResult(resultModel);
 
-    // Rest of your success/error handling...
+
+    if (resultRes != null && resultRes.contains('success'.toLowerCase())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Results updated successfully!'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update results!'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        )
+      );
+    }
   }
 
   @override
@@ -174,13 +191,68 @@ class _UpdateResultState extends State<UpdateResult> {
     developer.log("Event id : ${widget.id}");
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           "Update Result",
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         backgroundColor: primaryColor,
         elevation: 0,
+        actions: [
+          if(!isLoading && !noResult)
+          IconButton(
+              onPressed: ()async{
+
+                showDialog(
+                    context: context,
+                    builder: (_){
+                      return AlertDialog(
+                        title: Text("Delete Result"),
+                        content: Text("Are you sure you want to delete this result?"),
+                        actions: [
+                          TextButton(
+                              onPressed: (){
+                                Navigator.pop(context);
+                              },
+                              child: Text("Cancel")
+                          ),
+                          TextButton(
+                              onPressed: ()async{
+                                final resultApi = ResultApiCalls();
+                                final result = await resultApi.deleteResult(resultId!);
+                                if(result)
+                                {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Result deleted successfully!'),
+                                      backgroundColor: Colors.green,
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                }
+                                else
+                                  {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Failed to delete result!'),
+                                        backgroundColor: Colors.red,
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  }
+                              },
+                              child: Text("Delete")
+                          )
+                        ],
+                      );
+                    }
+                );
+
+
+              },
+              icon: Icon(Icons.delete)
+          )
+        ],
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator(color: primaryColor))

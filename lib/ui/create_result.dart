@@ -92,14 +92,14 @@ class _CreateResultState extends State<CreateResult> {
 
     final resultApi = ApiCalls();
     developer.log('Result Model: ${resultModel.toJson()}');
-    bool resultRes = await resultApi.createResult(resultModel);
+    String? resultRes = await resultApi.createResult(resultModel);
 
-    if (resultRes) {
+    if (resultRes != null && resultRes.isNotEmpty) {
       developer.log('Result created successfully!');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(milliseconds: 1500),
-          content: Text('Results created successfully!'),
+          content: Text(resultRes),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
