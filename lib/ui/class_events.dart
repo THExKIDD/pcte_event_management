@@ -32,6 +32,8 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
       EventApiCalls eventApiCalls = EventApiCalls();
       final result = await eventApiCalls.getAllEventsForClass();
 
+      log('class events : $result');
+
       setState(() {
         events = result;
         isLoading = false;
@@ -148,6 +150,19 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
                   eventId: event['_id'] ?? '',
                   minStudents: event['minStudents'] ?? 0,
                   maxStudents: event['maxStudents'] ?? 0,
+                  onRegisterPressed: ()  async {
+                    final bool result = await Navigator.push(context, MaterialPageRoute(builder: (_)=> StudentRegistrationScreen(eventId: event['_id'], minStudents:event['minStudents'], maxStudents: event['maxStudents'],)));
+
+
+                    if(result)
+                    {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      getClassEvents();
+                    }
+                  },
+                  isRegistered: event['register'] != null ? true : false,
                 ),
               );
             },
@@ -164,6 +179,8 @@ class EventCard extends StatelessWidget {
   final String eventId;
   final int minStudents;
   final int maxStudents;
+  final VoidCallback onRegisterPressed;
+  final bool isRegistered;
 
   const EventCard({
     required this.eventName,
@@ -171,8 +188,11 @@ class EventCard extends StatelessWidget {
     required this.eventId,
     required this.minStudents,
     required this.maxStudents,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+    required this.onRegisterPressed,
+    required this.isRegistered,
+
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -219,14 +239,15 @@ class EventCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 15),
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_)=> StudentRegistrationScreen(eventId: eventId, minStudents: minStudents, maxStudents: maxStudents,)));
-              },
+              onPressed: onRegisterPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF9E2A2F),
                 minimumSize: const Size(100, 40),
               ),
-              child: const Text(
+              child: Text(
+                isRegistered ?
+                'Update'
+                    :
                 'Register',
                 style: TextStyle(color: Colors.white),
               ),

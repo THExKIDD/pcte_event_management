@@ -121,7 +121,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
     }
 
     FocusScope.of(context).unfocus();
-    Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context,true);
+    }
 
 
     // You can add backend API integration here

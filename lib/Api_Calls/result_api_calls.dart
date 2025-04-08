@@ -1,9 +1,22 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 
 class ResultApiCalls {
   final dio = Dio();
+  SecureStorage secureStorage = SecureStorage();
+
+  Future<String?> tokenFetcher() async {
+    try {
+      String? tkn = await secureStorage.getData('jwtToken');
+      log(tkn ?? "null token");
+      return tkn;
+    } catch (e) {
+      log(e.toString());
+      throw Exception('Failed to fetch token');
+    }
+  }
 
   Future<Map<String, dynamic>> getResultById({required String eventId, int? year}) async {
     try {
@@ -73,6 +86,35 @@ class ResultApiCalls {
     } catch (e) {
       log("Unexpected Error: $e");
       return [];
+    }
+  }
+
+  Future<bool> deleteResult(String resultId) async {
+    try {
+      final token = await tokenFetcher();
+
+      final response = await dio.delete(
+        'https://koshish-backend.vercel.app/api/result/delete/$resultId',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusMessage == 'OK') {
+        log('Result Deleted successfully');
+        return true;
+      } else {
+        log('Result Deletion failed');
+        return false;
+      }
+    } catch (e) {
+      log('Result Deletion Exception : ${e.toString()}');
+      return false;
     }
   }
 

@@ -139,8 +139,9 @@ class _ClassLoginState extends State<ClassLogin> with SingleTickerProviderStateM
                 final classDetails = UserModel(userName: username,password: password);
                 SecureStorage secureStorage = SecureStorage();
                 ApiCalls apiCalls = ApiCalls();
-                String? s = await secureStorage.getData('jwtToken');
                 final data = await ApiService.classLogin(classDetails);
+
+                String? s = await secureStorage.getData('jwtToken');
 
                 await apiCalls.getUserCall(s!);
                 ScaffoldMessenger

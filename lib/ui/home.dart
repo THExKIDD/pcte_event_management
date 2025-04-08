@@ -8,6 +8,7 @@ import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/create_result.dart';
 import 'package:pcte_event_management/ui/event_result.dart';
 import 'package:pcte_event_management/ui/student_reg.dart';
+import 'package:pcte_event_management/ui/update_result.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import 'package:provider/provider.dart';
 import '../LocalStorage/Secure_Store.dart';
@@ -734,6 +735,30 @@ class EventCard extends StatelessWidget {
                                   ],
                                 ),
                               ),
+                              if (userType == 'Convenor' || userType == 'Admin')
+                                PopupMenuItem<String>(
+                                  value: 'Update Result',
+                                  onTap: (){
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => UpdateResult(id: eventId)
+                                        )
+                                    );
+                                  },
+                                  child: Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.add_chart, size: 18),
+                                      SizedBox(width: 8),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 2),
+                                        child: Text('Update Result'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               if (userType == 'Convenor' || userType == 'Admin')
                                 PopupMenuItem<String>(
                                   value: 'Add Result',
