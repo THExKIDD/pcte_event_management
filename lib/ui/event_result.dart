@@ -1,5 +1,9 @@
 import 'dart:developer';
+import 'package:provider/provider.dart';
+import '../LocalStorage/Secure_Store.dart';
 import 'package:flutter/material.dart';
+import 'package:pcte_event_management/Api_Calls/api_calls.dart';
+
 import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import 'package:animate_do/animate_do.dart';
@@ -14,10 +18,13 @@ class EventResultScreen extends StatefulWidget {
 
 class _EventResultScreenState extends State<EventResultScreen> {
   List<Map<String, dynamic>> tableData = [];
+  bool isDeleting = false;
+  String? resultId;
   bool isLoading = true;
   bool noResultsAvailable = false;
   final currentYear = DateTime.now().year;
   int? selectedYear;
+  final Color primaryColor = Color(0xFF9E2A2F);
 
   @override
   void initState() {
@@ -39,12 +46,12 @@ class _EventResultScreenState extends State<EventResultScreen> {
         year: year,
       );
 
-      log('table data result : $results');
-
       List<Map<String, dynamic>> resultList =
           List<Map<String, dynamic>>.from(results['result']);
 
       setState(() {
+        resultId = results['_id'];
+
         tableData = resultList;
         isLoading = false;
         noResultsAvailable = tableData.isEmpty;
@@ -82,6 +89,19 @@ class _EventResultScreenState extends State<EventResultScreen> {
             color: Colors.white,
           ),
         ),
+        actions: [
+      
+          IconButton(
+              onPressed: () async {
+                log('button ke ander');
+                log('result id is $resultId');
+                _deleteResult(context, resultId!);
+              },
+              icon: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ))
+        ],
       ),
       drawer: const CustomDrawer(),
       body: LayoutBuilder(
@@ -381,6 +401,79 @@ class _EventResultScreenState extends State<EventResultScreen> {
         ],
       ),
     );
+  }
+
+  void _deleteResult(context, String resultId) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Delete Result'),
+              content:
+                  const Text('Are you sure you want to delete this result?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                    onPressed: () async {
+                      setState(() {
+                        log('set state ke nder gya');
+                        isDeleting = true;
+                      });
+
+                    
+
+                      log('inside delete : $resultId');
+                      final resultApi = ApiCalls();
+                      final response = await resultApi.deleteResult(resultId);
+
+                      if (response) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 2),
+                            content: Text('Results Deleted successfully! '),
+                            backgroundColor: Colors.green,
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                        Navigator.of(context).pop();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 1),
+                            content: Text('Failed to Delete result! '),
+                            backgroundColor: primaryColor,
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                      setState(() {
+                        isDeleting = false;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    child: isDeleting
+                        ? Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              constraints: BoxConstraints(
+                                minWidth: 20,
+                                minHeight: 20,
+                              ),
+                              color: primaryColor,
+                            ),
+                          )
+                        : Text('Delete')),
+              ],
+            );
+          });
+        });
   }
 
   Widget _buildLeaderboardTable(double screenWidth) {

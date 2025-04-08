@@ -1,11 +1,13 @@
 class ResultModel {
   String? id;
+  int? year;
   String eventId;
   List<ResultEntry> result;
   bool isActive;
 
   ResultModel({
     this.id,
+    this.year,
     required this.eventId,
     required this.result,
     this.isActive = true,
@@ -15,10 +17,10 @@ class ResultModel {
   factory ResultModel.fromJson(Map<String, dynamic> json) {
     return ResultModel(
       id: json['_id'],
+      year: json['year'],
       eventId: json['eventId'],
-      result: (json['result'] as List)
-          .map((e) => ResultEntry.fromJson(e))
-          .toList(),
+      result:
+          (json['result'] as List).map((e) => ResultEntry.fromJson(e)).toList(),
       isActive: json['is_active'] ?? true,
     );
   }
@@ -27,6 +29,7 @@ class ResultModel {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
+      'year': year,
       'eventId': eventId,
       'result': result.map((e) => e.toJson()).toList(),
       'is_active': isActive,

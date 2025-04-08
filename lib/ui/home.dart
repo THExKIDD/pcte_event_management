@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/Registration_api_calls.dart';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
+import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
 import 'package:pcte_event_management/Providers/pass_provider.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
 import 'package:pcte_event_management/ui/create_result.dart';
 import 'package:pcte_event_management/ui/event_result.dart';
 import 'package:pcte_event_management/ui/student_reg.dart';
+import 'package:pcte_event_management/ui/update_result.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import 'package:provider/provider.dart';
 import '../LocalStorage/Secure_Store.dart';
@@ -745,6 +748,7 @@ class EventCard extends StatelessWidget {
                                                   id: eventId,
                                                 )), // Navigate to CreateResult screen
                                       );
+                                      FocusScope.of(context).unfocus();
                                     },
                                     child: Row(
                                       crossAxisAlignment:
@@ -759,7 +763,36 @@ class EventCard extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                )
+                                ),
+                              if (userType == 'Convenor' || userType == 'Admin')
+                                PopupMenuItem<String>(
+                                  value: 'update_result',
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => UpdateResult(
+                                                  id: eventId,
+                                                )), // Navigate to CreateResult screen
+                                      );
+                                      FocusScope.of(context).unfocus();
+                                    },
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(Icons.add_chart, size: 18),
+                                        SizedBox(width: 8),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 2),
+                                          child: Text('Update Result'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                             
                             ],
                           ),
                         ),
@@ -839,6 +872,7 @@ class EventCard extends StatelessWidget {
       ),
     );
   }
+
 }
 
 // Circle Pattern Painter for Event Card Background

@@ -58,7 +58,9 @@ class _UpdateResultState extends State<UpdateResult> {
     try {
       ResultApiCalls resultApiCalls = ResultApiCalls();
       Map<String, dynamic> results = await resultApiCalls.getResultById(
-          eventId: widget.id, year: year, fulldate: true);
+        eventId: widget.id,
+        year: year,
+      );
       resultId = results['_id'];
 
       if (results.isEmpty) {
@@ -168,13 +170,15 @@ class _UpdateResultState extends State<UpdateResult> {
       ),
     ];
     //  adding the id
-    final resultModel =
-        ResultModel(id: resultId, year: selectedYear,eventId: widget.id, result: resultEntries);
+    final resultModel = ResultModel(
+        id: resultId,
+        year: selectedYear,
+        eventId: widget.id,
+        result: resultEntries);
 
     final resultApi = ApiCalls();
-    bool resultRes = await resultApi.updateResult(resultId!.toString(), resultModel);
-
-   
+    bool resultRes =
+        await resultApi.updateResult(resultId!.toString(), resultModel);
 
     if (resultRes) {
       developer.log('Result updated successfully!');
@@ -201,6 +205,7 @@ class _UpdateResultState extends State<UpdateResult> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     developer.log("Event id : ${widget.id}");
     return Scaffold(
       appBar: AppBar(
@@ -216,13 +221,20 @@ class _UpdateResultState extends State<UpdateResult> {
           ? Center(child: CircularProgressIndicator(color: primaryColor))
           : noResult
               ? Center(
-                  child: Text(
-                    "No results found for the event",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade600,
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.emoji_events_outlined,
+                          size: screenSize.width * 0.15,
+                          color: Colors.grey[400]),
+                      SizedBox(height: screenSize.height * 0.02),
+                      Text('No Results Available for selected year',
+                          style: TextStyle(
+                            fontSize: screenSize.width * 0.045,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          )),
+                    ],
                   ),
                 )
               : Container(

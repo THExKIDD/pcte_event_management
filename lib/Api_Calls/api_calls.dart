@@ -331,4 +331,33 @@ class ApiCalls {
 
     // return true;
   }
+
+  Future<bool> deleteResult(String resultId) async {
+    try {
+      final token = await tokenFetcher();
+
+      final response = await dio.delete(
+        'https://koshish-backend.vercel.app/api/result/delete/$resultId',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusMessage == 'OK') {
+        log('Result Deleted successfully');
+        return true;
+      } else {
+        log('Result Deletion failed');
+        return false;
+      }
+    } catch (e) {
+      log('Result Deletion Exception : ${e.toString()}');
+      return false;
+    }
+  }
 }
