@@ -7,6 +7,8 @@ import 'package:pcte_event_management/ui/Event.dart';
 import 'package:pcte_event_management/ui/UserUpdateScreen.dart';
 import 'package:pcte_event_management/ui/bottomNavBar.dart';
 import 'package:pcte_event_management/ui/classLogin.dart';
+
+
 import 'package:pcte_event_management/ui/get_all_registrations_screen.dart';
 import 'package:pcte_event_management/ui/get_users.dart';
 import 'package:pcte_event_management/ui/getallclasses.dart';
@@ -99,6 +101,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
 
 
+
                     if(userType == "Admin" || userType == "Convenor")
                       ListTile(
                         leading: const Icon(Icons.library_add),
@@ -156,16 +159,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                     if(userType == 'Admin' || userType == 'Convenor' || userType == 'Class')
                       ListTile(
-                      leading: const Icon(Icons.exit_to_app),
-                      title: const Text("Logout"),
-                      onTap: () async {
-                        userProvider.onLogOut();
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("User Logged Out")));
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (_) => BottomNavBar()));
-                      },
-                    ),
+                        leading: const Icon(Icons.exit_to_app),
+                        title: const Text("Logout"),
+                        onTap: () async {
+                          userProvider.onLogOut();
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("User Logged Out")));
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (_) => BottomNavBar()));
+                        },
+                      ),
                   ],
                 ),
               );

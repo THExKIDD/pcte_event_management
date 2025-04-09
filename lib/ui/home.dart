@@ -126,29 +126,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         alignment: Alignment.centerLeft,
                         child: searchProvider.isSearching
                             ? TextField(
-                                controller: _searchController,
-                                onChanged: (query) => _filterEvents(query),
-                                autofocus: true,
-                                decoration: const InputDecoration(
-                                  hintText: "Search events...",
-                                  border: InputBorder.none,
-                                  hintStyle: TextStyle(color: Colors.white60),
-                                  prefixIcon: Icon(
-                                    Icons.search_rounded,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                                style: const TextStyle(color: Colors.white),
-                                cursorColor: Colors.white,
-                              )
+                          controller: _searchController,
+                          onChanged: (query) => _filterEvents(query),
+                          autofocus: true,
+                          decoration: const InputDecoration(
+                            hintText: "Search events...",
+                            border: InputBorder.none,
+                            hintStyle: TextStyle(color: Colors.white60),
+                            prefixIcon: Icon(
+                              Icons.search_rounded,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          style: const TextStyle(color: Colors.white),
+                          cursorColor: Colors.white,
+                        )
                             : const Text(
-                                "Koshish Events",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 22,
-                                ),
-                              ),
+                          "Koshish Events",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -203,128 +203,128 @@ class _HomeScreenState extends State<HomeScreen> {
               drawer: const CustomDrawer(),
               body: isLoading
                   ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF9E2A2F),
-                      ),
-                    )
+                child: CircularProgressIndicator(
+                  color: Color(0xFF9E2A2F),
+                ),
+              )
                   : isEmpty
-                      ? EmptyStateWidget(onRefresh: () {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          _fetchEvents();
-                        })
-                      : FutureBuilder(
-                          future: secureStorage.getData('user_type'),
-                          builder: (context, snapshot) {
-                            final userType = snapshot.data;
-                            return RefreshIndicator(
-                              color: const Color(0xFF9E2A2F),
-                              onRefresh: () async {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                await _fetchEvents();
-                              },
-                              child: CustomScrollView(
-                                physics: const BouncingScrollPhysics(
-                                  parent: AlwaysScrollableScrollPhysics(),
+                  ? EmptyStateWidget(onRefresh: () {
+                setState(() {
+                  isLoading = true;
+                });
+                _fetchEvents();
+              })
+                  : FutureBuilder(
+                future: secureStorage.getData('user_type'),
+                builder: (context, snapshot) {
+                  final userType = snapshot.data;
+                  return RefreshIndicator(
+                    color: const Color(0xFF9E2A2F),
+                    onRefresh: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      await _fetchEvents();
+                    },
+                    child: CustomScrollView(
+                      physics: const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      slivers: [
+                        // Events Section Header
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "All Events",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                slivers: [
-                                  // Events Section Header
-                                  SliverToBoxAdapter(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            "All Events",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          if (userType == 'Admin')
-                                            TextButton.icon(
-                                              onPressed: () {
-                                                final registrationApi =
-                                                    RegistrationApiCalls();
-                                                registrationApi
-                                                    .getAllRegistrations();
-                                              },
-                                              icon: const Icon(Icons
-                                                  .admin_panel_settings_rounded),
-                                              label: const Text('Admin'),
-                                              style: TextButton.styleFrom(
-                                                foregroundColor:
-                                                    const Color(0xFF9E2A2F),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
+                                if (userType == 'Admin')
+                                  TextButton.icon(
+                                    onPressed: () {
+                                      final registrationApi =
+                                      RegistrationApiCalls();
+                                      registrationApi
+                                          .getAllRegistrations();
+                                    },
+                                    icon: const Icon(Icons
+                                        .admin_panel_settings_rounded),
+                                    label: const Text('Admin'),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor:
+                                      const Color(0xFF9E2A2F),
                                     ),
                                   ),
-
-                                  // Events Grid List
-                                  SliverPadding(
-                                    padding: const EdgeInsets.all(16),
-                                    sliver: SliverGrid(
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        childAspectRatio: 0.75,
-                                        crossAxisSpacing: 16,
-                                        mainAxisSpacing: 16,
-                                      ),
-                                      delegate: SliverChildBuilderDelegate(
-                                        (context, index) {
-                                          final event = filteredEvents[index];
-                                          return EventCard(
-                                            eventName: event['name'],
-                                            eventType: event['type'],
-                                            eventId: event['_id'],
-                                            minStudents: event['minStudents'],
-                                            maxStudents: event['maxStudents'],
-                                            userType: userType ?? '',
-                                            icon: getEventIcon(event['type']),
-                                            color: getEventColor(event['type']),
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      EventDetailsPage(
-                                                    points: event['points'],
-                                                    rules: event['rules'],
-                                                    eventId: event['_id'],
-                                                    eventName: event['name'],
-                                                    description:
-                                                        event['description'],
-                                                    maxStudents:
-                                                        event['maxStudents'],
-                                                    minStudents:
-                                                        event['minStudents'],
-                                                    location: event['location'],
-                                                    convener: event['convenor']
-                                                        ['name'],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        childCount: filteredEvents.length,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
+                              ],
+                            ),
+                          ),
                         ),
+
+                        // Events Grid List
+                        SliverPadding(
+                          padding: const EdgeInsets.all(16),
+                          sliver: SliverGrid(
+                            gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.75,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                final event = filteredEvents[index];
+                                return EventCard(
+                                  eventName: event['name'],
+                                  eventType: event['type'],
+                                  eventId: event['_id'],
+                                  minStudents: event['minStudents'],
+                                  maxStudents: event['maxStudents'],
+                                  userType: userType ?? '',
+                                  icon: getEventIcon(event['type']),
+                                  color: getEventColor(event['type']),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            EventDetailsPage(
+                                              points: event['points'],
+                                              rules: event['rules'],
+                                              eventId: event['_id'],
+                                              eventName: event['name'],
+                                              description:
+                                              event['description'],
+                                              maxStudents:
+                                              event['maxStudents'],
+                                              minStudents:
+                                              event['minStudents'],
+                                              location: event['location'],
+                                              convener: event['convenor']
+                                              ['name'],
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              childCount: filteredEvents.length,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -430,7 +430,7 @@ class FeaturedEventCard extends StatelessWidget {
                 const Spacer(),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -631,10 +631,6 @@ class EventCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        constraints: BoxConstraints(
-          minHeight: 100,
-          maxHeight: 280, // Adjust as needed
-        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -652,11 +648,10 @@ class EventCard extends StatelessWidget {
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 // Event Icon Header
                 Container(
-                  height: 120,
+                  height: 110, // Reduced height slightly
                   width: double.infinity,
                   color: color.withOpacity(0.2),
                   child: Stack(
@@ -782,8 +777,6 @@ class EventCard extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-
-
                             ],
                           ),
                         ),
@@ -797,12 +790,10 @@ class EventCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Event name with limited lines
-                        SizedBox(
-                          height: 40, // Fixed height for title
+                        // Event name with limited lines - removed fixed height
+                        Flexible(
                           child: Text(
                             eventName,
                             style: const TextStyle(
@@ -834,38 +825,7 @@ class EventCard extends StatelessWidget {
                           ],
                         ),
 
-                        // Spacer to push button to bottom
-                        const Spacer(),
-
-                        // Register button (only for Class user type)
-                       /* if (userType == "Class")
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => StudentRegistrationScreen(
-                                      eventId: eventId,
-                                      minStudents: minStudents,
-                                      maxStudents: maxStudents,
-                                    ),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: color,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Text('Register'),
-                            ),
-                          ),*/
+                        // Removed Spacer and any other non-essential elements
                       ],
                     ),
                   ),

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/class_api.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
-import 'package:pcte_event_management/ui/class_screen.dart';
+import 'package:pcte_event_management/ui/create_class.dart';
 
 import '../Models/class_model.dart';
 
@@ -179,7 +179,7 @@ class _ClassScreenState extends State<ClassScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Add action to create a new class
+          Navigator.push(context, MaterialPageRoute(builder: (_) => CreateClassScreen()));
         },
         tooltip: "Add New Class",
         backgroundColor: Color(0xFF9E2A2F),

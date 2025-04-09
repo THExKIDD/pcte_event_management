@@ -294,15 +294,11 @@ class EventCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        constraints: BoxConstraints(
-          minHeight: 100,
-          maxHeight: 280,
-        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               spreadRadius: 2,
               blurRadius: 8,
               offset: const Offset(0, 4),
@@ -315,33 +311,32 @@ class EventCard extends StatelessWidget {
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
-                // Event Icon Header
+                // Event Icon Header - Reduced height from 120 to 100
                 Container(
-                  height: 120,
+                  height: 100,
                   width: double.infinity,
-                  color: color.withOpacity(0.2),
+                  color: color.withOpacity(0.2),  // Removed withOpacity
                   child: Stack(
                     children: [
                       // Patterned background
                       Positioned.fill(
                         child: CustomPaint(
-                          painter: CirclePatternPainter(color: color.withOpacity(0.1)),
+                          painter: CirclePatternPainter( color: color.withOpacity(0.1)),
                         ),
                       ),
                       // Icon
                       Center(
                         child: Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(12),  // Reduced padding
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.9),
+                            color: Colors.white,  // White background
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             icon,
-                            size: 40,
-                            color: Colors.white,
+                            size: 32,  // Reduced size
+                            color: color,  // Color to match the type
                           ),
                         ),
                       ),
@@ -352,13 +347,13 @@ class EventCard extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: color,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             eventType,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: color,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
@@ -369,42 +364,39 @@ class EventCard extends StatelessWidget {
                   ),
                 ),
 
-                // Event Details - Flexible content section
+                // Event Details - Using Expanded to ensure it fits in available space
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Reduced padding
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Event name with limited lines
-                        SizedBox(
-                          height: 40,
-                          child: Text(
-                            eventName,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                        // Event name with reduced height
+                        Text(
+                          eventName,
+                          style: const TextStyle(
+                            fontSize: 14, // Reduced font size
+                            fontWeight: FontWeight.bold,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6), // Reduced spacing
 
                         // Members count
                         Row(
                           children: [
                             const Icon(
                               Icons.people,
-                              size: 16,
+                              size: 14, // Reduced size
                               color: Colors.grey,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               '$minStudents-$maxStudents members',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 11, // Reduced font size
                                 color: Colors.grey[600],
                               ),
                             ),
@@ -417,18 +409,22 @@ class EventCard extends StatelessWidget {
                         // Register button
                         SizedBox(
                           width: double.infinity,
+                          height: 30, // Fixed height for button
                           child: ElevatedButton(
                             onPressed: onRegisterPressed,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: color,
                               foregroundColor: Colors.white,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.symmetric(vertical: 0), // Reduced padding
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: Text(isRegistered ? 'Update' : 'Register'),
+                            child: Text(
+                              isRegistered ? 'Update' : 'Register',
+                              style: const TextStyle(fontSize: 12), // Reduced font size
+                            ),
                           ),
                         ),
                       ],
