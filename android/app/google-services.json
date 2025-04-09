@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "219091590767",
+    "project_id": "koshish-app-73c59",
+    "storage_bucket": "koshish-app-73c59.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219091590767:android:8c9b9976c553b63f4bb79a",
+        "android_client_info": {
+          "package_name": "com.PCTE.pcte_event_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhkxtkpQlthj0lumpUx76DSwruUHSGPCU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
