@@ -631,10 +631,6 @@ class EventCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        constraints: BoxConstraints(
-          minHeight: 100,
-          maxHeight: 280, // Adjust as needed
-        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
@@ -652,11 +648,10 @@ class EventCard extends StatelessWidget {
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 // Event Icon Header
                 Container(
-                  height: 120,
+                  height: 110, // Reduced height slightly
                   width: double.infinity,
                   color: color.withOpacity(0.2),
                   child: Stack(
@@ -782,8 +777,6 @@ class EventCard extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-
-
                             ],
                           ),
                         ),
@@ -797,12 +790,10 @@ class EventCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Event name with limited lines
-                        SizedBox(
-                          height: 40, // Fixed height for title
+                        // Event name with limited lines - removed fixed height
+                        Flexible(
                           child: Text(
                             eventName,
                             style: const TextStyle(
@@ -834,38 +825,7 @@ class EventCard extends StatelessWidget {
                           ],
                         ),
 
-                        // Spacer to push button to bottom
-                        const Spacer(),
-
-                        // Register button (only for Class user type)
-                       /* if (userType == "Class")
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => StudentRegistrationScreen(
-                                      eventId: eventId,
-                                      minStudents: minStudents,
-                                      maxStudents: maxStudents,
-                                    ),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: color,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Text('Register'),
-                            ),
-                          ),*/
+                        // Removed Spacer and any other non-essential elements
                       ],
                     ),
                   ),

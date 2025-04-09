@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CreateClassScreen extends StatefulWidget {
+class CreateClassScreen1 extends StatefulWidget {
   @override
   _CreateClassScreenState createState() => _CreateClassScreenState();
 }
 
-class _CreateClassScreenState extends State<CreateClassScreen>
+class _CreateClassScreenState extends State<CreateClassScreen1>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   String _className = '';
