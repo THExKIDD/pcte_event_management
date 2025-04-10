@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -25,7 +26,8 @@ class _ClassScreenState extends State<ClassScreen> {
   void initState() {
     super.initState();
     _classesFuture = ApiService.getAllClasses();
-    log(_classesFuture.toString());
+ 
+    log('  checking the data :  ${_classesFuture.toString()}');
   }
 
   Future<void> token() async {
@@ -43,7 +45,10 @@ class _ClassScreenState extends State<ClassScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Classes",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 22)),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 22)),
         elevation: 0,
         backgroundColor: Color(0xFF9E2A2F),
         actions: [
@@ -75,11 +80,8 @@ class _ClassScreenState extends State<ClassScreen> {
             // Search and filter container with stylized design
             Container(
               padding: EdgeInsets.fromLTRB(
-                  20,
-                  16,
-                  20,
-                  isSmallScreen ? 16 : 20 // Responsive padding
-              ),
+                  20, 16, 20, isSmallScreen ? 16 : 20 // Responsive padding
+                  ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: const BorderRadius.only(
@@ -108,19 +110,22 @@ class _ClassScreenState extends State<ClassScreen> {
                       controller: searchController,
                       decoration: InputDecoration(
                         hintText: 'Search classes by name...',
-                        hintStyle: TextStyle(color: Colors.grey[500], fontSize: 15),
-                        prefixIcon: Icon(Icons.search, color: Colors.indigo[400], size: 22),
+                        hintStyle:
+                            TextStyle(color: Colors.grey[500], fontSize: 15),
+                        prefixIcon: Icon(Icons.search,
+                            color: Colors.indigo[400], size: 22),
                         suffixIcon: ValueListenableBuilder<String>(
                           valueListenable: searchQuery,
                           builder: (context, query, _) {
                             return query.isNotEmpty
                                 ? IconButton(
-                              icon: Icon(Icons.clear, color: Colors.grey[600], size: 20),
-                              onPressed: () {
-                                searchController.clear();
-                                searchQuery.value = '';
-                              },
-                            )
+                                    icon: Icon(Icons.clear,
+                                        color: Colors.grey[600], size: 20),
+                                    onPressed: () {
+                                      searchController.clear();
+                                      searchQuery.value = '';
+                                    },
+                                  )
                                 : const SizedBox.shrink();
                           },
                         ),
@@ -130,7 +135,8 @@ class _ClassScreenState extends State<ClassScreen> {
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 8),
                       ),
                       onChanged: (value) {
                         searchQuery.value = value;
@@ -179,7 +185,8 @@ class _ClassScreenState extends State<ClassScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => CreateClassScreen()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => CreateClassScreen()));
         },
         tooltip: "Add New Class",
         backgroundColor: Color(0xFF9E2A2F),
@@ -203,10 +210,12 @@ class _ClassScreenState extends State<ClassScreen> {
         });
       },
       backgroundColor: Colors.grey[200],
-      selectedColor: Color(0xFF9E2A2F).withAlpha(51), // Replaced withOpacity(0.2)
+      selectedColor:
+          Color(0xFF9E2A2F).withAlpha(51), // Replaced withOpacity(0.2)
       labelStyle: TextStyle(
         color: _classTypeFilter == value ? Color(0xFF9E2A2F) : Colors.grey[800],
-        fontWeight: _classTypeFilter == value ? FontWeight.bold : FontWeight.normal,
+        fontWeight:
+            _classTypeFilter == value ? FontWeight.bold : FontWeight.normal,
       ),
       checkmarkColor: Color(0xFF9E2A2F),
     );
@@ -259,9 +268,9 @@ class _ClassScreenState extends State<ClassScreen> {
             Text(
               "Oops! Something went wrong",
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.red[700],
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red[700],
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
@@ -282,7 +291,8 @@ class _ClassScreenState extends State<ClassScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.indigo,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -320,9 +330,9 @@ class _ClassScreenState extends State<ClassScreen> {
             Text(
               "No Classes Yet",
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.indigo[700],
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.indigo[700],
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
@@ -344,7 +354,8 @@ class _ClassScreenState extends State<ClassScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF9E2A2F),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -374,7 +385,8 @@ class _ClassScreenState extends State<ClassScreen> {
               // Status filter
               if (status != 'all') {
                 final bool isActive = classItem.isActive == true;
-                statusMatch = (status == 'active' && isActive) || (status == 'inactive' && !isActive);
+                statusMatch = (status == 'active' && isActive) ||
+                    (status == 'inactive' && !isActive);
               }
 
               // Class type filter
@@ -385,7 +397,10 @@ class _ClassScreenState extends State<ClassScreen> {
 
               // Search query filter
               if (query.isNotEmpty) {
-                searchMatch = classItem.name?.toLowerCase().contains(query.toLowerCase()) ?? false;
+                searchMatch = classItem.name
+                        ?.toLowerCase()
+                        .contains(query.toLowerCase()) ??
+                    false;
               }
 
               return statusMatch && typeMatch && searchMatch;
@@ -403,10 +418,13 @@ class _ClassScreenState extends State<ClassScreen> {
                   child: GridView.builder(
                     padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // Always show 2 columns regardless of screen size
+                      crossAxisCount:
+                          2, // Always show 2 columns regardless of screen size
                       crossAxisSpacing: 12, // Reduced spacing
                       mainAxisSpacing: 12, // Reduced spacing
-                      childAspectRatio: isSmallScreen ? 1.1 : 1.0, // Adjusted ratio for smaller cards
+                      childAspectRatio: isSmallScreen
+                          ? 1.1
+                          : 1.0, // Adjusted ratio for smaller cards
                     ),
                     itemCount: filteredClasses.length,
                     itemBuilder: (context, index) {
@@ -437,7 +455,6 @@ class _ClassScreenState extends State<ClassScreen> {
               color: Colors.grey[800],
             ),
           ),
-
         ],
       ),
     );
@@ -469,9 +486,9 @@ class _ClassScreenState extends State<ClassScreen> {
             Text(
               "No Matching Classes",
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
@@ -498,7 +515,8 @@ class _ClassScreenState extends State<ClassScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.indigo,
                 side: const BorderSide(color: Colors.indigo),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -565,14 +583,13 @@ class _ClassScreenState extends State<ClassScreen> {
                   ),
                   // Status badge with flexible width
                   Container(
-                    constraints: const BoxConstraints(minWidth: 60), // Smaller badge
+                    constraints:
+                        const BoxConstraints(minWidth: 60), // Smaller badge
                     height: 24, // Smaller badge height
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isActive
-                          ? Colors.green[600]
-                          : Colors.red[400],
+                      color: isActive ? Colors.green[600] : Colors.red[400],
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -592,7 +609,8 @@ class _ClassScreenState extends State<ClassScreen> {
             // Content with improved layout
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 6), // Reduced padding
+                padding:
+                    const EdgeInsets.fromLTRB(12, 8, 12, 6), // Reduced padding
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -675,7 +693,8 @@ class _ClassScreenState extends State<ClassScreen> {
                           ),
                           color: Colors.grey[700],
                           padding: EdgeInsets.zero, // Remove padding
-                          constraints: const BoxConstraints(), // Remove constraints
+                          constraints:
+                              const BoxConstraints(), // Remove constraints
                           onPressed: () {
                             _showClassOptions(context, classItem, isActive);
                           },
@@ -693,7 +712,8 @@ class _ClassScreenState extends State<ClassScreen> {
   }
 
   // Show class options bottom sheet
-  void _showClassOptions(BuildContext context, ClassModel classItem, bool isActive) {
+  void _showClassOptions(
+      BuildContext context, ClassModel classItem, bool isActive) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -733,7 +753,7 @@ class _ClassScreenState extends State<ClassScreen> {
                 Icons.delete,
                 color: Colors.red[600],
               ),
-              title: const Text("Delete Class"),
+              title: const Text("Delete Class"),;
               onTap: () {
                 Navigator.pop(context);
                 // Delete class with confirmation
@@ -843,4 +863,9 @@ class _ClassScreenState extends State<ClassScreen> {
 
     return TextSpan(children: spans);
   }
+
+
+
+
+  
 }

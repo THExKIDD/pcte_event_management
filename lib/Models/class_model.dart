@@ -1,6 +1,9 @@
 class ClassModel {
   String? id; // Optional ID field, can be null
   String? name;
+  String? email;
+  String? username;
+  String? password;
   String? incharge;
   String? type;
   bool? isActive;
@@ -10,7 +13,10 @@ class ClassModel {
   ClassModel({
     this.id,
     required this.name,
-    required this.incharge,
+    required this.email,
+    required this.username,
+    required this.password,
+     this.incharge,
     required this.type,
     this.isActive = true,
     required this.createdAt,
@@ -22,6 +28,9 @@ class ClassModel {
     return ClassModel(
       id: json['_id'] as String?,
       name: json['name'] as String?,
+      username: json['username'] as String?,
+      email: json['email'] as String?,
+      password: json['password'] as String?,
       incharge: json['incharge'] as String?,
       type: json['type'] as String?,
       isActive: json['is_active'] as bool? ?? true, // Default to true if null
@@ -39,6 +48,9 @@ class ClassModel {
     return {
       'id': id,
       'name': name,
+      'username': username,
+      'email': email,
+      'password': password,
       'incharge': incharge,
       'type': type,
       'is_active': isActive,

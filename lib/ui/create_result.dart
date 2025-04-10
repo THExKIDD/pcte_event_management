@@ -78,7 +78,6 @@ class _CreateResultState extends State<CreateResult> {
       return;
     }
 
-    // Create a list of class IDs in order (1st, 2nd, 3rd)
     List<String> classIds = [
       firstPlace!.id!,
       secondPlace!.id!,
