@@ -133,4 +133,32 @@ class ApiService {
       return 'Unexpected Error';
     }
   }
+
+  static Future<bool> deleteclass(String classId) async {
+    try {
+      SecureStorage secureStorage = SecureStorage();
+      final String? token = await secureStorage.getData('jwtToken');
+
+      if (token == null || token.isEmpty) {
+        throw Exception("Token is null or empty");
+      }
+      log(token);
+      final response = await http.delete(
+        Uri.parse('https://koshish-backend.vercel.app/api/class/$classId'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization":
+              "Bearer $token", // assuming you are using JWT token for req.user
+        },
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 }

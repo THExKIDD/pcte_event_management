@@ -77,6 +77,7 @@ class _CreateClassScreenState extends State<CreateClassScreen>
         _scaffoldMessanger(
             'class creation failed : Unexpected Error ', Colors.red);
       }
+      Navigator.of(context).pop();
     }
   }
 

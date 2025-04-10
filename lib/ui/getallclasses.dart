@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:pcte_event_management/Api_Calls/class_api.dart';
+import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/ui/create_class.dart';
 
@@ -26,7 +27,7 @@ class _ClassScreenState extends State<ClassScreen> {
   void initState() {
     super.initState();
     _classesFuture = ApiService.getAllClasses();
- 
+
     log('  checking the data :  ${_classesFuture.toString()}');
   }
 
@@ -696,7 +697,11 @@ class _ClassScreenState extends State<ClassScreen> {
                           constraints:
                               const BoxConstraints(), // Remove constraints
                           onPressed: () {
-                            _showClassOptions(context, classItem, isActive);
+                            _showClassOptions(
+                              context,
+                              classItem,
+                              isActive,
+                            );
                           },
                         ),
                       ],
@@ -721,47 +726,52 @@ class _ClassScreenState extends State<ClassScreen> {
           top: Radius.circular(20),
         ),
       ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(
-                Icons.edit,
-                color: Colors.indigo[600],
+      builder: (context) => Builder(builder: (context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(
+                  Icons.edit,
+                  color: Colors.indigo[600],
+                ),
+                title: const Text("Edit Class"),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navigate to edit class
+                },
               ),
-              title: const Text("Edit Class"),
-              onTap: () {
-                Navigator.pop(context);
-                // Navigate to edit class
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                isActive ? Icons.pause_circle : Icons.play_circle,
-                color: isActive ? Colors.orange[700] : Colors.green[600],
+              ListTile(
+                leading: Icon(
+                  isActive ? Icons.pause_circle : Icons.play_circle,
+                  color: isActive ? Colors.orange[700] : Colors.green[600],
+                ),
+                title: Text(isActive ? "Deactivate Class" : "Activate Class"),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Toggle active status
+                },
               ),
-              title: Text(isActive ? "Deactivate Class" : "Activate Class"),
-              onTap: () {
-                Navigator.pop(context);
-                // Toggle active status
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.delete,
-                color: Colors.red[600],
+              ListTile(
+                leading: Icon(
+                  Icons.delete,
+                  color: Colors.red[600],
+                ),
+                title: const Text("Delete Class"),
+                onTap: () async {
+                  Navigator.pop(context);
+
+                  // Navigator.pop(context);
+                  _showdDeleteialog(classItem);
+                  // Delete class with confirmation
+                },
               ),
-              title: const Text("Delete Class"),;
-              onTap: () {
-                Navigator.pop(context);
-                // Delete class with confirmation
-              },
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -864,8 +874,67 @@ class _ClassScreenState extends State<ClassScreen> {
     return TextSpan(children: spans);
   }
 
+  void _showdDeleteialog(ClassModel className) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Confirm Delete',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Colors.red[700], // Eye-catching color
+              ),
+            ),
+            content: RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 16.0, color: Colors.black87),
+                children: <TextSpan>[
+                  TextSpan(text: 'Are you sure you want to delete \n\n'),
+                  TextSpan(
+                    text: '${className.name}',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red[700]), // Highlight the ID
+                  ),
+                  // TextSpan(text: '\nThis action cannot be undone.'),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                  onPressed: () async {
+                    final response =
+                        await ApiService.deleteclass(className.id!);
 
-
-
-  
+                    if (response) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Results updated successfully!'),
+                          backgroundColor: Colors.green,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Failed to update results!'),
+                        backgroundColor: Colors.red,
+                        behavior: SnackBarBehavior.floating,
+                      ));
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: Text('delete')),
+            ],
+          );
+        });
+  }
 }
