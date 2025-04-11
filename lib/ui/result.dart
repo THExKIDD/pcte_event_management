@@ -112,7 +112,7 @@ class _ResultScreenState extends State<ResultScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 0),
               Expanded(
                 child: isLoading
                     ? const Center(child: CircularProgressIndicator())
@@ -120,146 +120,156 @@ class _ResultScreenState extends State<ResultScreen> {
                         ? const Center(
                             child: Text("No data available",
                                 style: TextStyle(fontSize: 16)))
-                        : SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: SizedBox(
-                              width: tableData.length * 90.0, // Dynamic width
-                              child: BarChart(
-                                BarChartData(
-                                  barTouchData: BarTouchData(
-                                    enabled: true,
-                                    touchTooltipData: BarTouchTooltipData(
-                                      direction: TooltipDirection.top,
-                                      tooltipPadding: const EdgeInsets.all(5),
-                                      maxContentWidth: 50,
-                                      tooltipMargin: 6,
-                                      getTooltipItem:
-                                          (group, groupIndex, rod, rodIndex) {
-                                        return BarTooltipItem(
-                                          rod.toY.toString(),
-                                          const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12, // Smaller font size
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  alignment: BarChartAlignment.start,
-                                  groupsSpace: 80,
-                                  barGroups:
-                                      tableData.asMap().entries.map((entry) {
-                                    int index = entry.key;
-                                    var value = entry.value;
-                                    return BarChartGroupData(
-                                      x: index,
-                                      barRods: [
-                                        BarChartRodData(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(5),
-                                              topRight: Radius.circular(5)),
-                                          toY: value['totalPoints']
-                                                      .toDouble() ==
-                                                  0
-                                              ? 0
-                                              : (value['totalPoints'] as num)
-                                                  .toDouble(),
-                                          // color: Colors.blue,
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              const Color.fromARGB(
-                                                  255, 81, 168, 239),
-                                              const Color.fromARGB(
-                                                  214, 8, 30, 131),
-                                            ],
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                          ),
-                                          width: 35,
-                                        ),
-                                      ],
-                                      showingTooltipIndicators: index < 3
-                                          ? [0]
-                                          : [], // Only for top 3
-                                      barsSpace: 50,
-                                    );
-                                  }).toList(),
-                                  titlesData: FlTitlesData(
-                                    bottomTitles: AxisTitles(
-                                      drawBelowEverything: true,
-                                      sideTitles: SideTitles(
-                                        interval: 2,
-                                        showTitles: true,
-                                        getTitlesWidget: (value, meta) {
-                                          log('message: ${value.toString()}');
-                                          if (value.toInt() >= 0 &&
-                                              value.toInt() <
-                                                  tableData.length) {
-                                            String name =
-                                                tableData[value.toInt()]['name']
-                                                    .toString();
-
-                                            return SideTitleWidget(
-                                              meta: meta,
-                                              child: Text(
-                                                name.length > 16
-                                                    ? '${name.substring(0, 16)}...'
-                                                    : name,
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 8),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            );
-                                          }
-                                          return const Text('');
+                        : Card(
+                            shadowColor: Colors.black,
+                            elevation: 10,
+                            child: SingleChildScrollView(
+                              physics: ScrollPhysics(
+                                  parent: BouncingScrollPhysics()),
+                              scrollDirection: Axis.horizontal,
+                              child: SizedBox(
+                                width: tableData.length * 90.0, // Dynamic width
+                                child: BarChart(
+                                  BarChartData(
+                                    barTouchData: BarTouchData(
+                                      enabled: true,
+                                      touchTooltipData: BarTouchTooltipData(
+                                        direction: TooltipDirection.top,
+                                        tooltipPadding: const EdgeInsets.all(5),
+                                        maxContentWidth: 50,
+                                        tooltipMargin: 6,
+                                        getTooltipItem:
+                                            (group, groupIndex, rod, rodIndex) {
+                                          return BarTooltipItem(
+                                            rod.toY.toString(),
+                                            const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12, // Smaller font size
+                                            ),
+                                          );
                                         },
                                       ),
                                     ),
-                                    leftTitles: AxisTitles(
-                                      drawBelowEverything: true,
-                                      sideTitles: SideTitles(
-                                        showTitles:
-                                            true, // Disable y-axis labels in the chart
-                                        interval: _calculateInterval(),
-                                        getTitlesWidget: (value, meta) {
-                                          if (value == value.roundToDouble()) {
-                                            return SideTitleWidget(
-                                              meta: meta,
-                                              child: Text(
-                                                value.toInt().toString(),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                                style: const TextStyle(
-                                                    fontSize: 10),
-                                              ),
-                                            );
-                                          }
-                                          return const SizedBox
-                                              .shrink(); // Hide non-integer labels
-                                        },
-
-                                        reservedSize:
-                                            40, // No space needed since labels are outside
-                                      ),
-                                    ),
-                                    topTitles: AxisTitles(
+                                    alignment: BarChartAlignment.start,
+                                    groupsSpace: 80,
+                                    barGroups:
+                                        tableData.asMap().entries.map((entry) {
+                                      int index = entry.key;
+                                      var value = entry.value;
+                                      return BarChartGroupData(
+                                        x: index,
+                                        barRods: [
+                                          BarChartRodData(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(5),
+                                                topRight: Radius.circular(5)),
+                                            toY: value['totalPoints']
+                                                        .toDouble() ==
+                                                    0
+                                                ? 0
+                                                : (value['totalPoints'] as num)
+                                                    .toDouble(),
+                                            // color: Colors.blue,
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                const Color.fromARGB(
+                                                    255, 81, 168, 239),
+                                                const Color.fromARGB(
+                                                    214, 8, 30, 131),
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                            ),
+                                            width: 35,
+                                          ),
+                                        ],
+                                        showingTooltipIndicators: index < 3
+                                            ? [0]
+                                            : [], // Only for top 3
+                                        barsSpace: 50,
+                                      );
+                                    }).toList(),
+                                    titlesData: FlTitlesData(
+                                      bottomTitles: AxisTitles(
+                                        drawBelowEverything: true,
                                         sideTitles: SideTitles(
-                                            showTitles: false,
-                                            reservedSize: 10)),
-                                    rightTitles: AxisTitles(
-                                        sideTitles:
-                                            SideTitles(showTitles: false)),
+                                          interval: 2,
+                                          showTitles: true,
+                                          getTitlesWidget: (value, meta) {
+                                            log('message: ${value.toString()}');
+                                            if (value.toInt() >= 0 &&
+                                                value.toInt() <
+                                                    tableData.length) {
+                                              String name =
+                                                  tableData[value.toInt()]
+                                                          ['name']
+                                                      .toString();
+
+                                              return SideTitleWidget(
+                                                meta: meta,
+                                                child: Text(
+                                                  name.length > 16
+                                                      ? '${name.substring(0, 16)}...'
+                                                      : name,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 8),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              );
+                                            }
+                                            return const Text('');
+                                          },
+                                        ),
+                                      ),
+                                      leftTitles: AxisTitles(
+                                        drawBelowEverything: true,
+                                        sideTitles: SideTitles(
+                                          showTitles:
+                                              true, // Disable y-axis labels in the chart
+                                          interval: _calculateInterval(),
+                                          getTitlesWidget: (value, meta) {
+                                            if (value ==
+                                                value.roundToDouble()) {
+                                              return SideTitleWidget(
+                                                meta: meta,
+                                                child: Text(
+                                                  value.toInt().toString(),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                      fontSize: 10),
+                                                ),
+                                              );
+                                            }
+                                            return const SizedBox
+                                                .shrink(); // Hide non-integer labels
+                                          },
+
+                                          reservedSize:
+                                              40, // No space needed since labels are outside
+                                        ),
+                                      ),
+                                      topTitles: AxisTitles(
+                                          sideTitles: SideTitles(
+                                              showTitles: false,
+                                              reservedSize: 10)),
+                                      rightTitles: AxisTitles(
+                                          sideTitles:
+                                              SideTitles(showTitles: false)),
+                                    ),
+                                    borderData: FlBorderData(show: false),
+                                    gridData: FlGridData(show: false),
+                                    maxY: _calculateMaxY(),
                                   ),
-                                  borderData: FlBorderData(show: false),
-                                  gridData: FlGridData(show: false),
-                                  maxY: _calculateMaxY(),
                                 ),
                               ),
                             ),
                           ),
               ),
-              const SizedBox(height: 15),
               Expanded(
                 child: ListView.builder(
                   itemCount: tableData.length,
@@ -274,13 +284,13 @@ class _ResultScreenState extends State<ResultScreen> {
                           borderRadius: BorderRadius.circular(10),
                           gradient: LinearGradient(
                             colors: [
-                              const Color.fromARGB(180, 248, 247, 247)
+                              const Color.fromARGB(180, 107, 203, 227)
                                   .withValues(alpha: 0.5),
-                              const Color.fromARGB(255, 194, 161, 161)
+                              const Color.fromARGB(255, 48, 94, 247)
                                   .withValues(alpha: 0.5),
                             ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
                         ),
                         child: ListTile(
@@ -321,7 +331,7 @@ class _ResultScreenState extends State<ResultScreen> {
     double maxPoints = tableData[0]['totalPoints'].toDouble();
     if (maxPoints <= 6) {
     } else if (maxPoints <= 10) {
-      maxPoints = 10;
+      maxPoints = 10 + 2;
     } else if (maxPoints > 10 && maxPoints <= 15) {
       maxPoints = 15 + 4;
     } else if (maxPoints <= 20) {

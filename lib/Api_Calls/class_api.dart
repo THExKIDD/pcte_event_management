@@ -134,6 +134,56 @@ class ApiService {
     }
   }
 
+  static Future<String> updateClass(
+      ClassModel classData, String classId) async {
+    try {
+      SecureStorage secureStorage = SecureStorage();
+      final String? token = await secureStorage.getData('jwtToken');
+
+      if (token == null || token.isEmpty) {
+        throw Exception("Token is null or empty");
+      }
+      log(token);
+      log('id :  $classId  \n');
+
+      log(' data is here --->  ${jsonEncode(classData)}');
+
+      final response = await http.put(
+        Uri.parse(
+            "https://koshish-backend.vercel.app/api/class/$classId"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(classData.toJson()),
+      );
+
+      log("📡 Status Code: ${response.statusCode}");
+      log("📨 Response Body: ${response.body}");
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return 'Successfull';
+      } else {
+        return 'Failure';
+      }
+    } on SocketException catch (e) {
+      log('🚫 No Internet: $e');
+      return 'No Internet';
+    } on HttpException catch (e) {
+      log('🌐 HTTP error: $e');
+      return 'HTTP Error';
+    } on FormatException catch (e) {
+      log('📄 Invalid format: $e');
+      return 'Invalid Format';
+    } on TimeoutException catch (e) {
+      log('⏱ Timeout: $e');
+      return 'Timeout';
+    } catch (e) {
+      log('🔥 Unexpected error: $e');
+      return 'Unexpected Error';
+    }
+  }
+
   static Future<bool> deleteclass(String classId) async {
     try {
       SecureStorage secureStorage = SecureStorage();

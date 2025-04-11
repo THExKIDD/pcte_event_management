@@ -6,6 +6,7 @@ import 'package:pcte_event_management/Api_Calls/class_api.dart';
 import 'package:pcte_event_management/Api_Calls/result_api_calls.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 import 'package:pcte_event_management/ui/create_class.dart';
+import 'package:pcte_event_management/ui/update_class.dart';
 
 import '../Models/class_model.dart';
 
@@ -621,7 +622,7 @@ class _ClassScreenState extends State<ClassScreen> {
                         classItem.name ?? "Untitled Class",
                         query,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
 
@@ -733,16 +734,24 @@ class _ClassScreenState extends State<ClassScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(
-                  Icons.edit,
-                  color: Colors.indigo[600],
-                ),
-                title: const Text("Edit Class"),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Navigate to edit class
-                },
-              ),
+                  leading: Icon(
+                    Icons.edit,
+                    color: Colors.indigo[600],
+                  ),
+                  title: const Text("Edit Class"),
+                  onTap: () async {
+                    Navigator.pop(context);
+
+                    final bool result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                UpdateClasscreen(classData: classItem)));
+
+                    if (result) {
+                      _classesFuture = ApiService.getAllClasses();
+                    }
+                  }),
               ListTile(
                 leading: Icon(
                   isActive ? Icons.pause_circle : Icons.play_circle,
@@ -918,14 +927,14 @@ class _ClassScreenState extends State<ClassScreen> {
                     if (response) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Results updated successfully!'),
+                          content: Text('class deleted  successfully!'),
                           backgroundColor: Colors.green,
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Failed to update results!'),
+                        content: Text('Failed to Delete Class!'),
                         backgroundColor: Colors.red,
                         behavior: SnackBarBehavior.floating,
                       ));

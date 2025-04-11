@@ -19,7 +19,7 @@ class ClassModel {
      this.incharge,
     required this.type,
     this.isActive = true,
-    required this.createdAt,
+     this.createdAt,
     required this.updatedAt,
   });
 
