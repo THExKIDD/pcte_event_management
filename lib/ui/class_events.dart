@@ -32,6 +32,7 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
       EventApiCalls eventApiCalls = EventApiCalls();
       final result = await eventApiCalls.getAllEventsForClass();
 
+    
       setState(() {
         events = List<Map<String, dynamic>>.from(result);
         isLoading = false;
@@ -47,7 +48,8 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
   }
 
   IconData getEventIcon(String eventType) {
-    return eventTypeIcons[eventType.toLowerCase()] ?? eventTypeIcons['default']!;
+    return eventTypeIcons[eventType.toLowerCase()] ??
+        eventTypeIcons['default']!;
   }
 
   Color getEventColor(String eventType) {
@@ -104,161 +106,164 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
       drawer: const CustomDrawer(),
       body: isLoading
           ? const Center(
-        child: CircularProgressIndicator(
-          color: Color(0xFF9E2A2F),
-        ),
-      )
+              child: CircularProgressIndicator(
+                color: Color(0xFF9E2A2F),
+              ),
+            )
           : isEmpty
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.event_busy,
-                size: 64,
-                color: Colors.grey.shade400,
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'No Events Available',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Stay tuned for upcoming events',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: getClassEvents,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Refresh'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF9E2A2F),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ),
-          ],
-        ),
-      )
-          : RefreshIndicator(
-        color: const Color(0xFF9E2A2F),
-        onRefresh: () async {
-          setState(() {
-            isLoading = true;
-          });
-          await getClassEvents();
-        },
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
-            // Events Section Header
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      "Class Events",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.event_busy,
+                          size: 64,
+                          color: Colors.grey.shade400,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Events Grid List
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final event = events[index];
-                    return EventCard(
-                      eventName: event['name'],
-                      eventType: event['type'],
-                      eventId: event['_id'],
-                      minStudents: event['minStudents'],
-                      maxStudents: event['maxStudents'],
-                      icon: getEventIcon(event['type']),
-                      color: getEventColor(event['type']),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EventDetailsPage(
-                              points: event['points'],
-                              rules: event['rules'],
-                              eventId: event['_id'],
-                              eventName: event['name'],
-                              description: event['description'],
-                              maxStudents: event['maxStudents'],
-                              minStudents: event['minStudents'],
-                              location: event['location'],
-                              convener: event['convenor']['name'],
-                            ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'No Events Available',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Stay tuned for upcoming events',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        onPressed: getClassEvents,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Refresh'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF9E2A2F),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                        );
-                      },
-                      onRegisterPressed: () async {
-                        final bool result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => StudentRegistrationScreen(
-                              eventId: event['_id'],
-                              minStudents: event['minStudents'],
-                              maxStudents: event['maxStudents'],
-                            ),
-                          ),
-                        );
-
-                        if (result) {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          getClassEvents();
-                        }
-                      },
-                      isRegistered: event['register'] != null,
-                    );
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : RefreshIndicator(
+                  color: const Color(0xFF9E2A2F),
+                  onRefresh: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await getClassEvents();
                   },
-                  childCount: events.length,
+                  child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
+                    slivers: [
+                      // Events Section Header
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: const [
+                              Text(
+                                "Class Events",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Events Grid List
+                      SliverPadding(
+                        padding: const EdgeInsets.all(16),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.75,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                          ),
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              final event = events[index];
+                              return EventCard(
+                                eventName: event['name'],
+                                eventType: event['type'],
+                                eventId: event['_id'],
+                                minStudents: event['minStudents'],
+                                maxStudents: event['maxStudents'],
+                                icon: getEventIcon(event['type']),
+                                color: getEventColor(event['type']),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => EventDetailsPage(
+                                        points: event['points'],
+                                        rules: event['rules'],
+                                        eventId: event['_id'],
+                                        eventName: event['name'],
+                                        description: event['description'],
+                                        maxStudents: event['maxStudents'],
+                                        minStudents: event['minStudents'],
+                                        location: event['location'],
+                                        convener: event['convenor']['name'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                onRegisterPressed: () async {
+                                  final bool result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => StudentRegistrationScreen(
+                                        eventId: event['_id'],
+                                        minStudents: event['minStudents'],
+                                        maxStudents: event['maxStudents'],
+                                      ),
+                                    ),
+                                  );
+
+                                  if (result) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    getClassEvents();
+                                  }
+                                },
+                                isRegistered: event['register'] != null,
+                              );
+                            },
+                            childCount: events.length,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -316,27 +321,28 @@ class EventCard extends StatelessWidget {
                 Container(
                   height: 100,
                   width: double.infinity,
-                  color: color.withOpacity(0.2),  // Removed withOpacity
+                  color: color.withOpacity(0.2), // Removed withOpacity
                   child: Stack(
                     children: [
                       // Patterned background
                       Positioned.fill(
                         child: CustomPaint(
-                          painter: CirclePatternPainter( color: color.withOpacity(0.1)),
+                          painter: CirclePatternPainter(
+                              color: color.withOpacity(0.1)),
                         ),
                       ),
                       // Icon
                       Center(
                         child: Container(
-                          padding: const EdgeInsets.all(12),  // Reduced padding
+                          padding: const EdgeInsets.all(12), // Reduced padding
                           decoration: BoxDecoration(
-                            color: Colors.white,  // White background
+                            color: Colors.white, // White background
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             icon,
-                            size: 32,  // Reduced size
-                            color: color,  // Color to match the type
+                            size: 32, // Reduced size
+                            color: color, // Color to match the type
                           ),
                         ),
                       ),
@@ -345,7 +351,8 @@ class EventCard extends StatelessWidget {
                         top: 8,
                         left: 8,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -367,7 +374,8 @@ class EventCard extends StatelessWidget {
                 // Event Details - Using Expanded to ensure it fits in available space
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Reduced padding
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 8), // Reduced padding
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,14 +424,16 @@ class EventCard extends StatelessWidget {
                               backgroundColor: color,
                               foregroundColor: Colors.white,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 0), // Reduced padding
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 0), // Reduced padding
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
                             child: Text(
                               isRegistered ? 'Update' : 'Register',
-                              style: const TextStyle(fontSize: 12), // Reduced font size
+                              style: const TextStyle(
+                                  fontSize: 12), // Reduced font size
                             ),
                           ),
                         ),

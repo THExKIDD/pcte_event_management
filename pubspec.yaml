@@ -44,6 +44,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   animate_do: ^4.0.0
   fl_chart: ^0.70.2
+  dropdown_button2: ^2.3.9
 
 
 dev_dependencies:
