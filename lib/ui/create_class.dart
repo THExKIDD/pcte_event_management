@@ -62,8 +62,6 @@ class _CreateClassScreenState extends State<CreateClassScreen>
           createdAt: DateTime.now(),
           updatedAt: DateTime.now());
 
-     
-
       final response = await ApiService.createClass(sendData);
 
       log('response of class : $response');
@@ -80,7 +78,7 @@ class _CreateClassScreenState extends State<CreateClassScreen>
         _scaffoldMessanger(
             'class creation failed : Unexpected Error ', Colors.red);
       }
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     }
   }
 

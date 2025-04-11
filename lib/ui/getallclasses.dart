@@ -186,9 +186,15 @@ class _ClassScreenState extends State<ClassScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push(
               context, MaterialPageRoute(builder: (_) => CreateClassScreen()));
+
+          if (result) {
+            setState(() {
+              _classesFuture = ApiService.getAllClasses();
+            });
+          }
         },
         tooltip: "Add New Class",
         backgroundColor: Color(0xFF9E2A2F),
@@ -749,7 +755,9 @@ class _ClassScreenState extends State<ClassScreen> {
                                 UpdateClasscreen(classData: classItem)));
 
                     if (result) {
-                      _classesFuture = ApiService.getAllClasses();
+                      setState(() {
+                        _classesFuture = ApiService.getAllClasses();
+                      });
                     }
                   }),
               ListTile(
