@@ -208,7 +208,10 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
                           ),
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
+
                               final event = events[index];
+
+                              bool isRegistered = event['register'] != null;
                               return EventCard(
                                 eventName: event['name'],
                                 eventType: event['type'],
@@ -235,8 +238,29 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
                                     ),
                                   );
                                 },
-                                onRegisterPressed: () async {
-                                  final bool result = await Navigator.push(
+                                onRegisterPressed: isRegistered ?
+                                    () async {
+                                  final bool? result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => StudentRegistrationScreen(
+                                              eventId: event['_id'],
+                                              minStudents: event['minStudents'],
+                                              maxStudents: event['maxStudents'],
+                                            registeredStudentNames: event['register']['students'],
+                                          )
+                                      )
+                                  );
+                                  if (result ?? false) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    getClassEvents();
+                                  }
+                                }
+                                    :
+                                    () async {
+                                  final bool? result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => StudentRegistrationScreen(
@@ -247,14 +271,14 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
                                     ),
                                   );
 
-                                  if (result) {
+                                  if (result ?? false) {
                                     setState(() {
                                       isLoading = true;
                                     });
                                     getClassEvents();
                                   }
                                 },
-                                isRegistered: event['register'] != null,
+                                isRegistered: isRegistered,
                               );
                             },
                             childCount: events.length,

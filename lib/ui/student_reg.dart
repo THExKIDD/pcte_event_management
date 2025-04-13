@@ -7,11 +7,13 @@ class StudentRegistrationScreen extends StatefulWidget {
   final String eventId;
   final int minStudents;
   final int maxStudents;
+  final List<dynamic>? registeredStudentNames;
   const StudentRegistrationScreen({
     super.key,
     required this.eventId,
     required this.minStudents,
     required this.maxStudents,
+    this.registeredStudentNames
   });
 
   @override
@@ -26,10 +28,19 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
 
   @override
   void initState() {
-    for(int i = 0; i < widget.minStudents; i++)
-    {
-      controllers.add(TextEditingController());
+    // Initialize controllers based on registeredStudentNames if available
+    if (widget.registeredStudentNames != null && widget.registeredStudentNames!.isNotEmpty) {
+      for (String name in widget.registeredStudentNames!) {
+        controllers.add(TextEditingController(text: name));
+      }
+    } else {
+      // Otherwise initialize with minStudents count
+      for (int i = 0; i < widget.minStudents; i++) {
+        controllers.add(TextEditingController());
+      }
     }
+
+    log(widget.registeredStudentNames.toString());
     super.initState();
   }
 
@@ -66,10 +77,18 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
   }
 
   void removeField(int index) {
-    if (controllers.length > 1) {
+    if (controllers.length > widget.minStudents) {
       setState(() {
-        controllers.removeAt(index); // Remove the specific field
+        controllers.removeAt(index);
       });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Minimum ${widget.minStudents} students required'),
+            duration: Duration(seconds: 1),
+            backgroundColor: Colors.red,
+          )
+      );
     }
   }
 
@@ -97,6 +116,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
             content: Text('Registration Successful'),
             duration: Duration(seconds: 2),
             backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
           )
         );
       }
@@ -109,6 +129,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
             content: Text('Registration Failed\nTry Again Later'),
             duration: Duration(seconds: 2),
             backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
           )
       );
     }
@@ -126,7 +147,6 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
     }
 
 
-    // You can add backend API integration here
   }
 
   Widget _buildTextField({
@@ -138,6 +158,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
     FocusNode? focusNode,
     required Function(String) onChanged,
   }) {
+    bool canDelete = controllers.length > widget.minStudents;  // Only show delete button if we have more than minStudents
+
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -146,12 +168,14 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.black45),
         ),
-        suffixIcon: IconButton(
-          icon: Icon(Icons.delete, color: Color(0xFF9E2A2F)), // Change to dustbin icon
+        suffixIcon: canDelete
+            ? IconButton(
+          icon: Icon(Icons.delete, color: Color(0xFF9E2A2F)),
           onPressed: () {
             removeField(controllers.indexOf(controller));
           },
-        ),
+        )
+            : null,  // Hide delete button if we can't delete
       ),
       maxLines: maxLines,
       keyboardType: keyboardType,
