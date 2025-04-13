@@ -675,6 +675,8 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
+
+
   double _calculateMaxY() {
     if (tableData.isEmpty) return 10.0;
 
