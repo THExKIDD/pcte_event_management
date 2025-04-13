@@ -933,6 +933,9 @@ class _ClassScreenState extends State<ClassScreen> {
                         await ApiService.deleteclass(className.id!);
 
                     if (response) {
+                      setState(() {
+                        _classesFuture = ApiService.getAllClasses();
+                      });
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('class deleted  successfully!'),

@@ -376,25 +376,29 @@ class ResultItem extends StatelessWidget {
             style: TextStyle(fontSize: 22),
           ),
           SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                position,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  position,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
-              ),
-              Text(
-                name ?? "Not Selected",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: name != null ? Colors.black87 : Colors.grey.shade500,
+                Text(
+                  name ?? "Not Selected",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: name != null ? Colors.black87 : Colors.grey.shade500,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

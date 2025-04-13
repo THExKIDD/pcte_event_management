@@ -57,8 +57,8 @@ class _UpdateResultState extends State<UpdateResult> {
 
     try {
       ResultApiCalls resultApiCalls = ResultApiCalls();
-      Map<String, dynamic> results = await resultApiCalls.getResultById(
-          eventId: widget.id, year: year);
+      Map<String, dynamic> results =
+          await resultApiCalls.getResultById(eventId: widget.id, year: year);
       resultId = results['_id'];
 
       if (results.isEmpty) {
@@ -166,7 +166,6 @@ class _UpdateResultState extends State<UpdateResult> {
     final resultApi = ApiCalls();
     String? resultRes = await resultApi.createResult(resultModel);
 
-
     if (resultRes != null && resultRes.contains('success'.toLowerCase())) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -176,13 +175,11 @@ class _UpdateResultState extends State<UpdateResult> {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to update results!'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        )
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to update results!'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ));
     }
   }
 
@@ -198,60 +195,57 @@ class _UpdateResultState extends State<UpdateResult> {
         backgroundColor: primaryColor,
         elevation: 0,
         actions: [
-          if(!isLoading && !noResult)
-          IconButton(
-              onPressed: ()async{
-
-                showDialog(
-                    context: context,
-                    builder: (_){
-                      return AlertDialog(
-                        title: Text("Delete Result"),
-                        content: Text("Are you sure you want to delete this result?"),
-                        actions: [
-                          TextButton(
-                              onPressed: (){
-                                Navigator.pop(context);
-                              },
-                              child: Text("Cancel")
-                          ),
-                          TextButton(
-                              onPressed: ()async{
-                                final resultApi = ResultApiCalls();
-                                final result = await resultApi.deleteResult(resultId!);
-                                if(result)
-                                {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Result deleted successfully!'),
-                                      backgroundColor: Colors.green,
-                                      behavior: SnackBarBehavior.floating,
-                                    ),
-                                  );
+          if (!isLoading && !noResult)
+            IconButton(
+                onPressed: () async {
+                  showDialog(
+                      context: context,
+                      builder: (_) {
+                        return AlertDialog(
+                          title: Text("Delete Result"),
+                          content: Text(
+                              "Are you sure you want to delete this result?"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
                                   Navigator.pop(context);
-                                }
-                                else
-                                  {
+                                },
+                                child: Text("Cancel")),
+                            TextButton(
+                                onPressed: () async {
+                                  final resultApi = ResultApiCalls();
+                                  final result =
+                                      await resultApi.deleteResult(resultId!);
+                                  if (result) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Failed to delete result!'),
+                                        content: Text(
+                                            'Result deleted successfully!'),
+                                        backgroundColor: Colors.green,
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                    Navigator.pop(context);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text('Failed to delete result!'),
                                         backgroundColor: Colors.red,
                                         behavior: SnackBarBehavior.floating,
                                       ),
                                     );
                                   }
-                              },
-                              child: Text("Delete")
-                          )
-                        ],
-                      );
-                    }
-                );
-
-
-              },
-              icon: Icon(Icons.delete)
-          )
+                                },
+                                child: Text("Delete"))
+                          ],
+                        );
+                      });
+                },
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ))
         ],
       ),
       body: isLoading
@@ -494,6 +488,7 @@ class ResultItem extends StatelessWidget {
   final Color color;
 
   const ResultItem({
+    super.key,
     required this.position,
     required this.emoji,
     required this.name,
@@ -520,25 +515,29 @@ class ResultItem extends StatelessWidget {
             style: TextStyle(fontSize: 22),
           ),
           SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                position,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  position,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
-              ),
-              Text(
-                name ?? "Not Selected",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: name != null ? Colors.black87 : Colors.grey.shade500,
+                Text(
+                  name ?? "Not Selected",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: name != null ? Colors.black87 : Colors.grey.shade500,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
