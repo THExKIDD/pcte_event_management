@@ -248,6 +248,9 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
                                               minStudents: event['minStudents'],
                                               maxStudents: event['maxStudents'],
                                             registeredStudentNames: event['register']['students'],
+                                            registrationId: event['register']['_id'],
+                                            classId: event['register']['classId'],
+
                                           )
                                       )
                                   );

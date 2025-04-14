@@ -8,12 +8,16 @@ class StudentRegistrationScreen extends StatefulWidget {
   final int minStudents;
   final int maxStudents;
   final List<dynamic>? registeredStudentNames;
+  final String? registrationId;
+  final String? classId;
   const StudentRegistrationScreen({
     super.key,
     required this.eventId,
     required this.minStudents,
     required this.maxStudents,
-    this.registeredStudentNames
+    this.registeredStudentNames,
+    this.registrationId,
+    this.classId
   });
 
   @override
@@ -92,6 +96,65 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
     }
   }
 
+
+  Future<void> updateRegistration() async {
+    for (var controller in controllers) {
+      log("Student Name: ${controller.text}");
+      studentNames.add(controller.text);
+
+    }
+
+    log(studentNames.toString());
+    RegistrationApiCalls registrationApiCalls = RegistrationApiCalls();
+    setState(() {
+      isLoading = true;
+    });
+    final val =  await registrationApiCalls.updateRegistrationApi(studentNames: studentNames, eventId: widget.eventId, registrationId: widget.registrationId!, classId: widget.classId);
+
+    if(val.isNotEmpty)
+    {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Registration Successful'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          )
+      );
+    }
+    else{
+      setState(() {
+        isLoading =false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Registration Failed\nTry Again Later'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          )
+      );
+    }
+
+
+
+    for (var controller in controllers) {
+      controller.text = '';
+
+    }
+
+    FocusScope.of(context).unfocus();
+    if (mounted) {
+      Navigator.pop(context,true);
+    }
+
+
+  }
+
+
   Future<void> register() async {
     for (var controller in controllers) {
       log("Student Name: ${controller.text}");
@@ -106,7 +169,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
     });
     final val =  await registrationApiCalls.registerStudentApi(studentNames,widget.eventId);
 
-    if(val)
+    if(val.isNotEmpty)
       {
         setState(() {
           isLoading = false;
@@ -187,6 +250,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isRegistered = widget.registeredStudentNames != null && widget.registeredStudentNames!.isNotEmpty;
     return Scaffold(
       appBar: AppBar(
         title: Text('Student Registration', style: TextStyle(color: Colors.white)),
@@ -237,7 +301,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
               width: double.infinity, // Make the button take full width
               margin: EdgeInsets.symmetric(horizontal: 16), // Add horizontal margin
               child: ElevatedButton(
-                onPressed: register,
+                onPressed: isRegistered ? updateRegistration : register,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF9E2A2F), // Custom background color
                   padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
