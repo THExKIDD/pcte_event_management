@@ -30,6 +30,8 @@ class _ClassLoginState extends State<ClassLogin> with SingleTickerProviderStateM
 
   @override
   void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -134,7 +136,8 @@ class _ClassLoginState extends State<ClassLogin> with SingleTickerProviderStateM
                 setState(() {
                   isLoading = true;
                 });
-                String username = usernameController.text;
+                String username = usernameController.text.trim().toLowerCase().split(' ').join('');
+                log(username);
                 String password = passwordController.text;
                 final classDetails = UserModel(userName: username,password: password);
                 SecureStorage secureStorage = SecureStorage();

@@ -18,6 +18,8 @@ class _EventResultScreenState extends State<EventResultScreen> {
   bool noResultsAvailable = false;
   final currentYear = DateTime.now().year;
   int? selectedYear;
+  String? _touchedName; // Track the name to display
+  int? _touchedPosition; // Track which podium is touched
 
   @override
   void initState() {
@@ -86,6 +88,9 @@ class _EventResultScreenState extends State<EventResultScreen> {
       drawer: const CustomDrawer(),
       body: LayoutBuilder(
         builder: (context, constraints) {
+          final cardPadding = screenSize.width * 0.04;
+          final availableWidth = constraints.maxWidth - (2 * cardPadding);
+
           return SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
@@ -183,7 +188,11 @@ class _EventResultScreenState extends State<EventResultScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(screenSize.width * 0.04),
+                              padding: EdgeInsets.only(
+                                  bottom: screenSize.width * 0.04,
+                                  right: screenSize.width * 0.04,
+                                  left: screenSize.width * 0.04,
+                                  top: screenSize.width * 0.02),
                               child: Column(
                                 children: [
                                   Text("Event Winners",
@@ -194,7 +203,7 @@ class _EventResultScreenState extends State<EventResultScreen> {
                                       )),
                                   SizedBox(height: screenSize.height * 0.02),
                                   SizedBox(
-                                    height: screenSize.height * 0.25,
+                                    height: screenSize.height * 0.27,
                                     child: Stack(
                                       alignment: Alignment.bottomCenter,
                                       children: [
@@ -252,6 +261,51 @@ class _EventResultScreenState extends State<EventResultScreen> {
                                             ),
                                           ],
                                         ),
+                                        if (_touchedName != null &&
+                                            _touchedPosition != null)
+                                          Positioned(
+                                            top: _touchedPosition == 1
+                                                ? screenSize.height * 0.0
+                                                : _touchedPosition == 2
+                                                    ? screenSize.height * 0.02
+                                                    : screenSize.height * 0.07,
+                                            left: _touchedPosition == 2
+                                                ? availableWidth * 0.05
+                                                : _touchedPosition == 1
+                                                    ? availableWidth * 0.35
+                                                    : availableWidth * 0.575,
+                                            child: Container(
+                                              width: podiumWidth * 1.2,
+                                              padding: EdgeInsets.symmetric(
+                                                vertical:
+                                                    screenSize.width * 0.01,
+                                                horizontal:
+                                                    screenSize.width * 0.02,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black87,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                boxShadow: const [
+                                                  BoxShadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 4,
+                                                    offset: Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Text(
+                                                _touchedName!,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize:
+                                                      screenSize.width * 0.035,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),
@@ -261,7 +315,7 @@ class _EventResultScreenState extends State<EventResultScreen> {
                           ),
                         ),
 
-                        SizedBox(height: screenSize.height * 0.03),
+                        SizedBox(height: screenSize.height * 0.01),
 
                         // Leaderboard Section
                         Padding(
@@ -273,7 +327,11 @@ class _EventResultScreenState extends State<EventResultScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(screenSize.width * 0.04),
+                              padding: EdgeInsets.only(
+                                  bottom: screenSize.width * 0.04,
+                                  right: screenSize.width * 0.04,
+                                  left: screenSize.width * 0.04,
+                                  top: screenSize.width * 0.02),
                               child: Column(
                                 children: [
                                   Text("Leaderboard",
@@ -310,75 +368,106 @@ class _EventResultScreenState extends State<EventResultScreen> {
     required double screenWidth,
     required double spacing,
   }) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: spacing),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            width: width,
-            height: height,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
+    final fontSize =
+        screenWidth < 360 ? screenWidth * 0.03 : screenWidth * 0.035;
+    final iconSize =
+        screenWidth < 360 ? screenWidth * 0.06 : screenWidth * 0.07;
+
+    return GestureDetector(
+      onTapDown: (_) {
+        setState(() {
+          _touchedName = name == "N/A" ? null : name;
+          _touchedPosition = position;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          _touchedName = null;
+          _touchedPosition = null;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          _touchedName = null;
+          _touchedPosition = null;
+        });
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: spacing),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
                 ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "$position",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.06,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
                   ),
-                ),
-                if (position == 1)
-                  Icon(Icons.star,
-                      color: Colors.white, size: screenWidth * 0.07),
-              ],
-            ),
-          ),
-          SizedBox(height: screenWidth * 0.02),
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: width * 1.25,
-            ),
-            padding: EdgeInsets.symmetric(
-                vertical: screenWidth * 0.015, horizontal: screenWidth * 0.01),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 2,
-                  offset: Offset(0, 1),
-                ),
-              ],
-            ),
-            child: Text(
-              name,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: screenWidth * 0.032,
-                fontWeight: FontWeight.w600,
+                ],
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "$position",
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.05, // Slightly reduced
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  if (position == 1)
+                    Icon(
+                      Icons.star,
+                      color: Colors.white,
+                      size: iconSize,
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: screenWidth * 0.015),
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: width, // Reduced to match podium width
+                minWidth: width * 0.8,
+              ),
+              padding: EdgeInsets.symmetric(
+                vertical: screenWidth * 0.01,
+                horizontal: screenWidth * 0.015,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 2,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
