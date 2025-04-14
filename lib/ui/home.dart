@@ -180,26 +180,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: GestureDetector(
-                      onTap: () {
-                        // Navigate to Profile
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const CircleAvatar(
-                          radius: 18,
-                          backgroundColor: Colors.white,
-                          child: Icon(Icons.person,
-                              color: Color(0xFF9E2A2F), size: 24),
-                        ),
-                      ),
-                    ),
-                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.1,
+                  )
                 ],
               ),
               drawer: const CustomDrawer(),
@@ -266,85 +249,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                             ),
                                         ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SliverToBoxAdapter(
-                                    child: FadeInUp(
-                                      child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.3,
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 16),
-                                        child: Stack(
-                                          children: [
-                                            PageView.builder(
-                                              controller: _pageController,
-                                              itemCount: min(
-                                                  filteredEvents.length,
-                                                  10), // Changed to 10
-                                              onPageChanged: (index) {
-                                                setState(() {
-                                                  _currentCarouselIndex = index;
-                                                });
-                                              },
-                                              itemBuilder: (context, index) {
-                                                final event =
-                                                    filteredEvents[index];
-                                                return FeaturedEventCard(
-                                                  imageUrl:
-                                                      'https://images.tribuneindia.com/cms/gall_content/2019/9/2019_9\$largeimg21_Saturday_2019_070533304.jpg',
-
-                                                  // icon: getEventIcon(
-                                                  //     event['type']),
-                                                  title: event['name'],
-                                                  subtitle: event['description']
-                                                          ?.substring(0, 50) ??
-                                                      'Join the excitement!',
-                                                  color: getEventColor(
-                                                      event['type']),
-                                                );
-                                              },
-                                            ),
-                                            // Carousel Indicators
-                                            Positioned(
-                                              bottom: 8,
-                                              left: 0,
-                                              right: 0,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: List.generate(
-                                                  min(filteredEvents.length,
-                                                      10), // Changed to 10
-                                                  (index) => Container(
-                                                    margin: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 4),
-                                                    width:
-                                                        _currentCarouselIndex ==
-                                                                index
-                                                            ? 12
-                                                            : 8,
-                                                    height: 8,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          _currentCarouselIndex ==
-                                                                  index
-                                                              ? const Color(
-                                                                  0xFF9E2A2F)
-                                                              : Colors.grey
-                                                                  .shade400,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                       ),
                                     ),
                                   ),
@@ -550,33 +454,7 @@ class FeaturedEventCard extends StatelessWidget {
   }
 }
 
-// Pattern Painter for Background Design
-class PatternPainter extends CustomPainter {
-  final Color color;
 
-  PatternPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-
-    final double spacing = 20;
-
-    for (double i = 0; i < size.width + size.height; i += spacing) {
-      canvas.drawLine(
-        Offset(0, i),
-        Offset(i, 0),
-        paint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
 
 // Category Tab Widget
 class CategoryTab extends StatelessWidget {
@@ -831,7 +709,8 @@ class EventCard extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Icon(Icons.add_chart, size: 18),
+                                      Icon(Icons.change_history_outlined,
+                                          size: 18),
                                       SizedBox(width: 8),
                                       Padding(
                                         padding: EdgeInsets.only(top: 2),
