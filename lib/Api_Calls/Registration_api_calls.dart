@@ -60,7 +60,7 @@ class RegistrationApiCalls {
     }
   }
 
-  Future<bool> registerStudentApi(List<String> studentNames, String eventId) async {
+  Future<Map<String,dynamic>> registerStudentApi(List<String> studentNames, String eventId) async {
     try {
       String? tkn = await tokenFetcher();
 
@@ -81,7 +81,7 @@ class RegistrationApiCalls {
       if (response.statusCode == 200 || response.statusCode == 201) {
         log("Registered Successfully");
         log(response.data.toString());
-        return true;
+        return response.data;
       } else {
         log(response.statusMessage.toString());
         log(response.statusCode.toString());
@@ -92,10 +92,56 @@ class RegistrationApiCalls {
       log(e.response!.statusCode.toString());
       log(e.response!.statusMessage.toString());
       log(e.response!.data.toString());
-      return false;
+      throw Exception(e.toString());
     } catch (error) {
       log("Registration Failed : ${error.toString()}");
-      return false;
+      rethrow;
+    }
+  }
+
+
+
+  Future<Map<String,dynamic>> updateRegistrationApi({
+    required List<String> studentNames,
+    required  String eventId,
+    required  String registrationId ,
+    String? classId } ) async {
+    try {
+      String? tkn = await tokenFetcher();
+
+      dio.options.headers['Authorization'] = 'Bearer $tkn';
+
+      Map<String, dynamic> rawJson = {
+        'students': studentNames,
+        'eventId': eventId,
+        'classId' : classId
+      };
+
+      log(rawJson.toString());
+
+      final response = await dio.put(
+        'https://koshish-backend.vercel.app/api/registrations/$registrationId',
+        data: jsonEncode(rawJson),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        log("Registered Successfully");
+        log(response.data.toString());
+        return response.data;
+      } else {
+        log(response.statusMessage.toString());
+        log(response.statusCode.toString());
+        log("Registration Failed");
+        return {};
+      }
+    } on DioException catch (e) {
+      log(e.response!.statusCode.toString());
+      log(e.response!.statusMessage.toString());
+      log(e.response!.data.toString());
+      return {};
+    } catch (error) {
+      log("Registration Failed : ${error.toString()}");
+      rethrow;
     }
   }
 
