@@ -273,38 +273,9 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
                                               eventId: event['_id'],
                                               minStudents: event['minStudents'],
                                               maxStudents: event['maxStudents'],
-<<<<<<< HEAD
                                             ),
                                           ),
                                         );
-=======
-                                            registeredStudentNames: event['register']['students'],
-                                            registrationId: event['register']['_id'],
-                                            classId: event['register']['classId'],
-
-                                          )
-                                      )
-                                  );
-                                  if (result ?? false) {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    getClassEvents();
-                                  }
-                                }
-                                    :
-                                    () async {
-                                  final bool? result = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => StudentRegistrationScreen(
-                                        eventId: event['_id'],
-                                        minStudents: event['minStudents'],
-                                        maxStudents: event['maxStudents'],
-                                      ),
-                                    ),
-                                  );
->>>>>>> 0816f301cc4d210b7d1c6f8eb3af9058f1cf4ca4
 
                                         if (result ?? false) {
                                           setState(() {
