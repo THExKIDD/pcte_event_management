@@ -762,17 +762,6 @@ class _ClassScreenState extends State<ClassScreen> {
                   }),
               ListTile(
                 leading: Icon(
-                  isActive ? Icons.pause_circle : Icons.play_circle,
-                  color: isActive ? Colors.orange[700] : Colors.green[600],
-                ),
-                title: Text(isActive ? "Deactivate Class" : "Activate Class"),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Toggle active status
-                },
-              ),
-              ListTile(
-                leading: Icon(
                   Icons.delete,
                   color: Colors.red[600],
                 ),
