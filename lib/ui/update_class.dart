@@ -40,16 +40,6 @@ class _UpdateClasscreenState extends State<UpdateClasscreen>
   void initState() {
     super.initState();
     startupfunction();
-    // _valueprovider();
-    // inchargeList = itemsGetter();
-    // _animationController = AnimationController(
-    //   vsync: this,
-    //   duration: const Duration(seconds: 5),
-    // )..repeat(reverse: true);
-
-    // _bubbleAnimation = Tween<double>(begin: -20, end: 20).animate(
-    //   CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    // );
   }
 
   void startupfunction() async {
@@ -171,6 +161,7 @@ class _UpdateClasscreenState extends State<UpdateClasscreen>
 
   @override
   Widget build(BuildContext context) {
+    log('class name ${widget.classData.name!.toUpperCase()}');
     var size = MediaQuery.of(context).size;
 
     return GestureDetector(
@@ -290,7 +281,9 @@ class _UpdateClasscreenState extends State<UpdateClasscreen>
         child: Column(
           children: [
             Text(
-              "Update a ${widget.classData.name}",
+              "UPDATE  ${widget.classData.name!.toUpperCase()}",
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
               style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -388,7 +381,7 @@ class _UpdateClasscreenState extends State<UpdateClasscreen>
         hint: const Row(
           children: [
             Icon(
-              Icons.list,
+              Icons.cast_for_education,
               size: 24,
               color: Color.fromARGB(255, 0, 0, 0),
             ),
@@ -397,7 +390,7 @@ class _UpdateClasscreenState extends State<UpdateClasscreen>
             ),
             Expanded(
               child: Text(
-                'Select Item',
+                'Select Teacher',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -429,29 +422,28 @@ class _UpdateClasscreenState extends State<UpdateClasscreen>
           });
         },
         buttonStyleData: ButtonStyleData(
-          height: size.height * 0.08,
+          height: size.height * 0.07,
           width: size.width * 0.8,
           padding: const EdgeInsets.only(left: 20, right: 14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: Colors.black26,
-            ),
-            color: const Color.fromARGB(255, 255, 252, 252),
-          ),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: const Color.fromARGB(158, 0, 0, 0),
+              ),
+              color: Colors.transparent),
           elevation: 0,
         ),
         iconStyleData: const IconStyleData(
           icon: Icon(
-            Icons.arrow_forward_ios_outlined,
+            Icons.arrow_drop_down,
           ),
           iconSize: 18,
           iconEnabledColor: Color.fromARGB(255, 0, 0, 0),
           iconDisabledColor: Colors.grey,
         ),
         dropdownStyleData: DropdownStyleData(
-          maxHeight: 200,
-          width: 300,
+          maxHeight: size.height * 0.2,
+          width: size.width * 0.8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             color: const Color.fromARGB(255, 241, 240, 240),

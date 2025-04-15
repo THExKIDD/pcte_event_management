@@ -53,7 +53,6 @@ class _ClassScreenState extends State<ClassScreen> {
                 fontSize: 22)),
         elevation: 0,
         backgroundColor: Color(0xFF9E2A2F),
-       
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -876,10 +875,11 @@ class _ClassScreenState extends State<ClassScreen> {
           return AlertDialog(
             title: Text(
               'Confirm Delete',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
-                color: Colors.red[700], // Eye-catching color
+                color: Colors.black, // Eye-catching color
               ),
             ),
             content: RichText(
@@ -892,7 +892,7 @@ class _ClassScreenState extends State<ClassScreen> {
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red[700]), // Highlight the ID
+                        color: Colors.red[900]), // Highlight the ID
                   ),
                   // TextSpan(text: '\nThis action cannot be undone.'),
                 ],
@@ -930,7 +930,7 @@ class _ClassScreenState extends State<ClassScreen> {
                     }
                     Navigator.pop(context);
                   },
-                  child: Text('delete')),
+                  child: Text('Delete')),
             ],
           );
         });
