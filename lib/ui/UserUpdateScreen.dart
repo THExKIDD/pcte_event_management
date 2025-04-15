@@ -7,7 +7,10 @@ import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
 class UserUpdateScreen extends StatefulWidget {
   final String userId;
   final bool isActive;
-  const UserUpdateScreen({super.key, required this.userId, required this.isActive});
+  final String name;
+  final String email;
+  final String phone;
+  const UserUpdateScreen({super.key, required this.userId, required this.isActive, required this.name, required this.email, required this.phone});
 
   @override
   State<UserUpdateScreen> createState() => _UserUpdateScreenState();
@@ -31,6 +34,10 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
   @override
   void initState() {
     isChecked = widget.isActive;
+    isChecked = widget.isActive;
+    _controllerUserName.text = widget.name;
+    _controllerEmail.text = widget.email;
+    _controllerPhone.text = widget.phone;
     super.initState();
 
     _animationController =
@@ -239,17 +246,22 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
 
         String? tkn = await secureStorage.getData('jwtToken');
 
-         await apiCalls.updateFaculty(
+         final bool result  = await apiCalls.updateFaculty(
           userid: widget.userId,
             name: _controllerUserName.text,
             email: _controllerEmail.text,
             phoneNumber: _controllerPhone.text,
-            token: tkn!,
           isActive: isChecked,
-        ).then((value){
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Details Updated')));
-          Navigator.pop(context,true);
-        });
+        );
+
+         if(result)
+           {
+             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Updated'),backgroundColor: Colors.green,));
+           }
+         else
+         {
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Updated'),backgroundColor: Colors.red,));
+         }
 
 
       },
@@ -265,6 +277,7 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
     _controllerEmail.dispose();
     _focusNodePhone.dispose();
     _controllerPhone.dispose();
+    _controllerUserName.dispose();
     super.dispose();
   }
 }

@@ -21,13 +21,14 @@ class SignupController {
     required String email,
     required String phn_no,
     required String password,
+    required String userType
   }) async {
     signupCred = UserModel(
-      userType: 'Teacher',
       userName: name,
       email: email,
       phoneNumber: phn_no,
       password: password,
+      userType: userType,
     );
   }
 

@@ -38,6 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerPhone = TextEditingController();
   final SecureStorage secureStorage = SecureStorage();
+  bool isLoading = false;
 
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
@@ -168,7 +169,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
             ),
 
             SizedBox(height: size.height * 0.03),
-            DropDown.showDropDown('Select User Type',Icon(Icons.person_add),dropDownList,_focusNodeUserType), // Ensure this is a valid widget
+            //DropDown.showDropDown('Select User Type',Icon(Icons.person_add),dropDownList,_focusNodeUserType), // Ensure this is a valid widget
             SizedBox(height: size.height * 0.02),
             _buildTextField(
                 (_){},
@@ -264,6 +265,9 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
         elevation: 5,
       ),
       onPressed: () async {
+        setState(() {
+          isLoading = true;
+        });
         final apiCalls = ApiCalls();
         final signupController = SignupController(apiCalls);
         if (_formKey.currentState?.validate() ?? false) {
@@ -272,13 +276,17 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                   name: _controllerUserName.text,
                   email: _controllerEmail.text,
                   password: _controllerPassword.text,
-                  phn_no: _controllerPhone.text
+                  phn_no: _controllerPhone.text,
+                  userType: 'Convenor'
               );
          String? tkn = await secureStorage.getData('jwtToken');
 
           await apiCalls.signupCall(signupController.signupCred, tkn! ).then((value){
             if(value)
             {
+              setState(() {
+                isLoading = false;
+              });
                 ScaffoldMessenger.of(context)
                     .showSnackBar(
                   SnackBar(
@@ -287,6 +295,20 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                   ),
                 );
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BottomNavBar() ));
+            }
+            else
+            {
+              setState(() {
+                isLoading = false;
+              });
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(
+                SnackBar(
+                  content: Text("Convenor Registration Failed"),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+
             }
           });
 

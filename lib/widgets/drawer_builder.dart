@@ -68,6 +68,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ),
 
 
+                    ListTile(
+                      leading: const Icon(Icons.home),
+                      title: const Text("Home"),
+                      onTap: () async {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => BottomNavBar()));
+
+                      },
+                    ),
+
+
                     if(userType == "Admin")
                       ListTile(
                         leading: const Icon(Icons.people),
@@ -80,7 +90,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     if(userType == "Admin")
                       ListTile(
                         leading: const Icon(Icons.person_add),
-                        title: const Text("Add Faculty"),
+                        title: const Text("Add Convenor"),
                         onTap: () {
                           if (mounted) Navigator.pop(context);
                           Navigator.pushReplacement(context,
@@ -115,7 +125,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                     if(userType == "Admin" || userType == "Convenor")
                       ListTile(
-                        leading: const Icon(Icons.library_add),
+                        leading: const Icon(Icons.class_),
                         title: const Text("Get class"),
                         onTap: () {
                           if (mounted) Navigator.pop(context);

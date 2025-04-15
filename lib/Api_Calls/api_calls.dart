@@ -213,19 +213,20 @@ class ApiCalls {
     required String name,
     required String email,
     required String phoneNumber,
-    required String token,
     required String userid,
     required bool isActive,
   }) async {
     try {
-      final userType = await secureStorage.getData('user_type');
       final updateDetails = UserModel(
           userName: name,
           email: email,
           phoneNumber: phoneNumber,
           isActive: isActive,
-          userType: userType);
+        userType: 'Convenor'
+          );
       log(name);
+
+      final String? token = await tokenFetcher();
 
       dio.options.headers['Authorization'] = 'Bearer $token';
 
@@ -244,7 +245,7 @@ class ApiCalls {
       }
     } on Exception catch (e) {
       log('userUpdate Exception : ${e.toString()}');
-      return false;
+      rethrow;
     }
   }
 
