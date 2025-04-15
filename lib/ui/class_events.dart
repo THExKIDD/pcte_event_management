@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:pcte_event_management/Api_Calls/event_api_calls.dart';
 import 'package:pcte_event_management/ui/EventDetails.dart';
+import 'package:pcte_event_management/ui/event_result.dart';
 import 'package:pcte_event_management/ui/student_reg.dart';
 import 'package:pcte_event_management/widgets/drawer_builder.dart';
 import '../LocalStorage/Secure_Store.dart';
@@ -19,7 +20,9 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
   bool isEmpty = false;
   final SecureStorage secureStorage = SecureStorage();
   final Map<String, IconData> eventTypeIcons = {'default': Icons.event};
-  final Map<String, Color> eventColors = {'default': Colors.indigo};
+  final Map<String, Color> eventColors = {
+    'default': const Color.fromARGB(255, 159, 14, 14)
+  };
 
   @override
   void initState() {
@@ -32,7 +35,6 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
       EventApiCalls eventApiCalls = EventApiCalls();
       final result = await eventApiCalls.getAllEventsForClass();
 
-    
       setState(() {
         events = List<Map<String, dynamic>>.from(result);
         isLoading = false;
@@ -208,7 +210,6 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
                           ),
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
-
                               final event = events[index];
 
                               bool isRegistered = event['register'] != null;
@@ -238,49 +239,51 @@ class _ClassEventsScreenState extends State<ClassEventsScreen> {
                                     ),
                                   );
                                 },
-                                onRegisterPressed: isRegistered ?
-                                    () async {
-                                  final bool? result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => StudentRegistrationScreen(
+                                onRegisterPressed: isRegistered
+                                    ? () async {
+                                        final bool? result =
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        StudentRegistrationScreen(
+                                                          eventId: event['_id'],
+                                                          minStudents: event[
+                                                              'minStudents'],
+                                                          maxStudents: event[
+                                                              'maxStudents'],
+                                                          registeredStudentNames:
+                                                              event['register']
+                                                                  ['students'],
+                                                        )));
+                                        if (result ?? false) {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          getClassEvents();
+                                        }
+                                      }
+                                    : () async {
+                                        final bool? result =
+                                            await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                StudentRegistrationScreen(
                                               eventId: event['_id'],
                                               minStudents: event['minStudents'],
                                               maxStudents: event['maxStudents'],
-                                            registeredStudentNames: event['register']['students'],
-                                            registrationId: event['register']['_id'],
-                                            classId: event['register']['classId'],
+                                            ),
+                                          ),
+                                        );
 
-                                          )
-                                      )
-                                  );
-                                  if (result ?? false) {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    getClassEvents();
-                                  }
-                                }
-                                    :
-                                    () async {
-                                  final bool? result = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => StudentRegistrationScreen(
-                                        eventId: event['_id'],
-                                        minStudents: event['minStudents'],
-                                        maxStudents: event['maxStudents'],
-                                      ),
-                                    ),
-                                  );
-
-                                  if (result ?? false) {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    getClassEvents();
-                                  }
-                                },
+                                        if (result ?? false) {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          getClassEvents();
+                                        }
+                                      },
                                 isRegistered: isRegistered,
                               );
                             },
@@ -394,6 +397,41 @@ class EventCard extends StatelessWidget {
                           ),
                         ),
                       ),
+
+                      Positioned(
+                        top: 3,
+                        right: 4,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: PopupMenuButton<String>(
+                            icon: Icon(
+                              Icons.more_vert_outlined,
+                              color: color,
+                            ),
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<String>>[
+                              PopupMenuItem<String>(
+                                value: 'Results',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EventResultScreen(
+                                            eventId: eventId)),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.emoji_events, size: 18),
+                                    SizedBox(width: 8),
+                                    Text('Results'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -490,7 +528,7 @@ class CirclePatternPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(
-      Offset(size.width * 0.8, size.height * 0.2),
+      Offset(size.width * 0.8, size.height * 0.7),
       size.width * 0.15,
       paint,
     );
@@ -502,7 +540,7 @@ class CirclePatternPainter extends CustomPainter {
     );
 
     canvas.drawCircle(
-      Offset(size.width * 0.6, size.height * 0.9),
+      Offset(size.width * 0.7, size.height * 0.1),
       size.width * 0.08,
       paint,
     );
