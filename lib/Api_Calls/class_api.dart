@@ -78,6 +78,7 @@ class ApiService {
         await secureStorage.saveData('jwtToken', data['token']);
         await secureStorage.saveData('user_type', data['data']['type']);
         await secureStorage.saveData('user_id', data['data']['_id']);
+        await secureStorage.saveData('className', data['data']['name']);
         final String? usertype = await secureStorage.getData('user_type');
         final String? jwtToken = await secureStorage.getData('jwtToken');
         log(jwtToken!);

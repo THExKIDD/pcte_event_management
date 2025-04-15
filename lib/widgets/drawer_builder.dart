@@ -28,6 +28,23 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   final SecureStorage secureStorage = SecureStorage();
+   String? className;
+
+
+  Future<void> getClassName () async
+  {
+
+    className = await secureStorage.getData('className');
+
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getClassName();
+  }
 
 
   @override
@@ -39,6 +56,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         return FutureBuilder(
             future: secureStorage.getData('user_type'),
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+
               String? userType = snapshot.data;
               log(userType.toString());
               return Drawer(
@@ -57,6 +75,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           ),
                           SizedBox(height: size.height * .06,),
                           Text(
+                            userType == 'Class' ? className ?? 'Class' :
                             userType ?? "Student",
                             style: TextStyle(
                                 fontSize: 32,
