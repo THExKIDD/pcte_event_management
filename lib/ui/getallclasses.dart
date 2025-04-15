@@ -53,20 +53,7 @@ class _ClassScreenState extends State<ClassScreen> {
                 fontSize: 22)),
         elevation: 0,
         backgroundColor: Color(0xFF9E2A2F),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.analytics_outlined, color: Colors.white),
-            onPressed: () {
-              // Navigate to analytics
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined, color: Colors.white),
-            onPressed: () {
-              // Navigate to settings
-            },
-          ),
-        ],
+       
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -597,7 +584,9 @@ class _ClassScreenState extends State<ClassScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isActive ? Colors.green[600] : Colors.red[400],
+                      color: isActive
+                          ? const Color.fromARGB(255, 90, 162, 93)
+                          : Colors.red[400],
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -801,7 +790,7 @@ class _ClassScreenState extends State<ClassScreen> {
 
     switch (type.toLowerCase()) {
       default:
-        return Colors.indigo[700]!;
+        return Colors.red[900]!;
     }
   }
 

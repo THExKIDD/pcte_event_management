@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pcte_event_management/Api_Calls/class_api.dart';
 import 'package:pcte_event_management/LocalStorage/Secure_Store.dart';
@@ -21,6 +22,7 @@ class _CreateClassScreenState extends State<CreateClassScreen>
   final TextEditingController _controllerPassword = TextEditingController();
   final storage = FlutterSecureStorage();
   final SecureStorage secureStorage = SecureStorage();
+  var isLoading = false;
 
   late AnimationController _animationController;
   late Animation<double> _bubbleAnimation;
@@ -53,6 +55,10 @@ class _CreateClassScreenState extends State<CreateClassScreen>
         return;
       }
 
+      setState(() {
+        isLoading = true;
+      });
+
       final sendData = ClassModel(
           name: _controllerClassName.text,
           email: _controllerEmail.text,
@@ -65,6 +71,10 @@ class _CreateClassScreenState extends State<CreateClassScreen>
       final response = await ApiService.createClass(sendData);
 
       log('response of class : $response');
+
+      setState(() {
+        isLoading = false;
+      });
 
       if (response == 'Successfull') {
         _scaffoldMessanger('class created Successfull ', Colors.green);
@@ -285,11 +295,15 @@ class _CreateClassScreenState extends State<CreateClassScreen>
         elevation: 5,
       ),
       onPressed: _createClass,
-      child: Text(
-        "Create Class",
-        style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-      ),
+      child: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Text(
+              "Create Class",
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
     );
   }
 
