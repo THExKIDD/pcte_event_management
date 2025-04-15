@@ -91,7 +91,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       leading: const Icon(Icons.home),
                       title: const Text("Home"),
                       onTap: () async {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => BottomNavBar()));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BottomNavBar()));
 
                       },
                     ),
