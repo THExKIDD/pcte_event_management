@@ -30,6 +30,7 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
   late Animation<double> _bubbleAnimation;
 
   final dropDownList = ['Convenor'];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -241,6 +242,10 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
         elevation: 5,
       ),
       onPressed: () async {
+
+        setState(() {
+          isLoading = true;
+        });
         final secureStorage = SecureStorage();
         final apiCalls = ApiCalls();
 
@@ -256,16 +261,22 @@ class _UserUpdateScreenState extends State<UserUpdateScreen> with SingleTickerPr
 
          if(result)
            {
+             setState(() {
+               isLoading = false;
+             });
              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Updated'),backgroundColor: Colors.green,));
            }
          else
          {
+           setState(() {
+             isLoading = false;
+           });
            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Updated'),backgroundColor: Colors.red,));
          }
 
 
       },
-      child: const Text("Update", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: isLoading ? Center(child: CircularProgressIndicator(),) :  Text("Update", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 

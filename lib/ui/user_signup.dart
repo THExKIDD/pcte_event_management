@@ -314,7 +314,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
 
         }
       },
-      child: const Text("Sign Up User", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: isLoading ? Center(child: CircularProgressIndicator(),) : Text("Sign Up User", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
     );
   }
 

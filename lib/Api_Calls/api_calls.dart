@@ -241,7 +241,7 @@ class ApiCalls {
         log('User Updated');
         return true;
       } else {
-        throw Exception;
+        return false;
       }
     } on Exception catch (e) {
       log('userUpdate Exception : ${e.toString()}');
